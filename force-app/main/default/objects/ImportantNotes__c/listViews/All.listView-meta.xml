@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Contact__c</columns>
+    <columns>FiscalYear__c</columns>
+    <columns>Class__c</columns>
+    <columns>Teacher__c</columns>
+    <columns>EducationDays__c</columns>
+    <columns>AttendanceDays__c</columns>
+    <columns>GradePointEmphasis__c</columns>
+    <columns>PersonalEmphasis__c</columns>
+    <columns>ReferenceItems__c</columns>
+    <columns>Remarks__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>すべて選択</label>
+</ListView>

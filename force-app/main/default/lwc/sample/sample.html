@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="チェックリストテスト" icon-name="standard:contact">
+    </lightning-card>
+
+    <div class="slds-m-around_medium">
+    <lightning-record-edit-form object-api-name={objectApiName} >   
+        <template if:true={contacts.data}>
+            <template for:each={contacts.data} for:item="contact">
+                <input key={contact.Id} type="checkbox" class="check_box" id={contact.Id} />
+                <label key={contact.Id} class="label" for={contact.Id}>{contact.Name}</label>
+            </template>
+        </template>
+        <lightning-button
+        onclick={handleClick} 
+        variant="brand"
+        type="submit"
+        name="save"
+        label="保存"
+        ></lightning-button>
+    </lightning-record-edit-form>
+    </div>
+
+    <div class="slds-m-vertical_medium">
+        <p>テストボタン: <span class="slds-text-heading_small">{clickedButtonLabel}</span></p>
+    </div>
+
+</template>

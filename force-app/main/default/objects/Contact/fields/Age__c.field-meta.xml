@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Age__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(ISNULL(Birthdate) , 
+&quot;&quot;, 
+IF( LEN(TEXT ( FLOOR (( Today() - Birthdate ) / 365) ) ) == 2, 
+TEXT ( FLOOR (( Today() - Birthdate ) / 365) ) , 
+&quot;0&quot; &amp; TEXT ( FLOOR (( Today() - Birthdate ) / 365) ) 
+) 
+
+&amp; &quot;年&quot; &amp; 
+
+IF( LEN(TEXT ( FLOOR ( MOD (Today() - Birthdate , 365 ) / 30.5 )) ) == 2, 
+TEXT ( FLOOR ( MOD (Today() - Birthdate , 365 ) / 30.5 )) , 
+&quot;0&quot; &amp; TEXT ( FLOOR ( MOD (Today() - Birthdate , 365 ) / 30.5 )) 
+) 
+
+&amp; &quot;ヶ月&quot; 
+
+)</formula>
+    <label>年齢</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

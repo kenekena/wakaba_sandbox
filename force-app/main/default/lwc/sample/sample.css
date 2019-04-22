@@ -1,0 +1,12 @@
+label{
+    cursor: pointer;
+    padding:5px;
+    border: 1px solid #434343;
+    border-radius: 5px;
+  }
+  input{
+    display: none;
+  }
+  .check_box:checked + .label {
+    background-color: orange;
+  }

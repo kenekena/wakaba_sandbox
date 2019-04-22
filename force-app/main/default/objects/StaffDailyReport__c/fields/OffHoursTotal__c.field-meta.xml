@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OffHoursTotal__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF (TotalMinutes__c &gt;  VALUE(TEXT(WorkingHoursTerms__c)) , 
+    TotalMinutes__c - VALUE(TEXT(WorkingHoursTerms__c)), 
+    0
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>時間外（分）</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

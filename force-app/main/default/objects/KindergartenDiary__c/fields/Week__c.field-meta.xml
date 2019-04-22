@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Week__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE( 
+MOD( Date__c - DATE( 1900, 1, 7 ), 7 ), 
+0, &quot;（日）&quot;, 
+1, &quot;（月）&quot;, 
+2, &quot;（火）&quot;, 
+3, &quot;（水）&quot;, 
+4, &quot;（木）&quot;, 
+5, &quot;（金）&quot;, 
+&quot;（土）&quot; 
+)</formula>
+    <label>曜日</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

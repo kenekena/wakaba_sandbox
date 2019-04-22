@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>StaffCode__c</columns>
+    <columns>Staff__c</columns>
+    <columns>Date__c</columns>
+    <columns>Week__c</columns>
+    <columns>SType__c</columns>
+    <columns>StartWork__c</columns>
+    <columns>StartWorkTimeStamp__c</columns>
+    <columns>EndWork__c</columns>
+    <columns>WorkTime__c</columns>
+    <columns>BreakTime__c</columns>
+    <columns>OffHours__c</columns>
+    <columns>LateNight__c</columns>
+    <columns>NAME</columns>
+    <filterScope>Everything</filterScope>
+    <label>すべて選択</label>
+</ListView>
