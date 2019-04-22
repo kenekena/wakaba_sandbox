@@ -32,6 +32,19 @@ public with sharing class TestContactController {
 
     }
 
+    @isTest static void findContacts() {
+
+        TestContactController.createContacts(10);
+
+        Test.startTest();
+        List<Contact> conts = ContactController.findContacts('Last');
+        Test.stopTest();
+
+        System.assertEquals(conts.size(), 10);
+
+    }
+
+
 
    
 

@@ -5,10 +5,15 @@
 
     <div class="slds-modal__content" id="welcome-mat-118-content">
     <div class="slds-welcome-mat">
+
+      <div><lightning-button onclick={jamping} value="true" type="submit" label="トップへ"></lightning-button></div>
+     
+        <lightning-button onclick={jamping} value="false" type="submit" label="それ以外"></lightning-button>
+    
   
     <ul class="slds-welcome-mat__tiles">
     <li class="slds-welcome-mat__tile">
-    <a href="javascript:void(0);" class="slds-box slds-box_link slds-media">
+    <a href="javascript:void(0);" vlue="menu1" class="slds-box slds-box_link slds-media">
     <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
     <div class="slds-welcome-mat__tile-figure">
     <div class="slds-welcome-mat__tile-icon-container">
@@ -25,14 +30,14 @@
     <div class="slds-media__body">
     <div class="slds-welcome-mat__tile-body">
     <h3 class="slds-welcome-mat__tile-title">出席管理</h3>
-    <p class="slds-welcome-mat__tile-description">園児は俺たちが守る<!DOCTYPE html></p>
+    <p class="slds-welcome-mat__tile-description">園児は俺たちが守る</p>
     </div>
     </div>
     </a>
     </li>
 
     <li class="slds-welcome-mat__tile">
-    <a href="javascript:void(0);" class="slds-box slds-box_link slds-media">
+    <a href="javascript:void(0);" vlue="menu2" class="slds-box slds-box_link slds-media">
     <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
     <div class="slds-welcome-mat__tile-figure">
     <div class="slds-welcome-mat__tile-icon-container">
@@ -56,7 +61,7 @@
     </li>
 
     <li class="slds-welcome-mat__tile">
-    <a href="javascript:void(0);" class="slds-box slds-box_link slds-media">
+    <a href="javascript:void(0);" value="menu3" class="slds-box slds-box_link slds-media">
     <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
     <div class="slds-welcome-mat__tile-figure">
     <div class="slds-welcome-mat__tile-icon-container">
@@ -83,8 +88,6 @@
     </ul>
 
     </div>
-
-
     </div>
   
 </template>
