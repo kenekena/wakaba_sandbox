@@ -1,0 +1,26 @@
+<template>
+        <div class="slds-modal__content" id="welcome-mat-118-content">
+
+                <div class="slds-welcome-mat">
+                <div>
+                  
+                    <template if:false={isPage}>
+                    <lightning-button onclick={jamping} value="true" type="submit" label="トップへ"></lightning-button>
+                    </template>
+                  
+                    <template if:true={isPage}>
+                    <lightning-button onclick={jamping} value="false" type="submit" label="それ以外"></lightning-button>
+                    </template>
+                  
+            
+                  <template if:true={isPage}>
+                      <p>trueだと燃えるisPageは：{isPage}</p>
+                  </template>
+            
+                  <template if:false={isPage}>
+                      <p>falseだと燃えるisPageは：{isPage}</p>
+                  </template>
+                </div>
+                </div>
+        </div>
+</template>

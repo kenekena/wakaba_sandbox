@@ -29,6 +29,9 @@
             ],
             "c/contactListItemBubbling": [
                 "contactListItemBubbling/contactListItemBubbling.js"
+            ],
+            "c/pegeLinktest": [
+                "pegeLinktest/pegeLinktest.js"
             ]
         }
     },

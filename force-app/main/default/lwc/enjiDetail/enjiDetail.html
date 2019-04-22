@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="PubsubContactDetails" icon-name="custom:custom30">
+        <div class="slds-m-around_medium">
+            <template if:true={picture}>
+                <img src={picture} alt="Profile photo" />
+            </template>
+            <p>{name}</p>
+            <p>
+                <lightning-formatted-phone
+                    value={phone}
+                ></lightning-formatted-phone>
+            </p>
+            <p>
+                <lightning-formatted-text value={memo} ></lightning-formatted-text>
+            </p>
+        </div>
+
+        
+    </lightning-card>
+</template>

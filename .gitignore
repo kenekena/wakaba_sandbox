@@ -1,0 +1,16 @@
+.sfdx/typings/lwc/user.d.ts
+.DS_Store
+.forceignore
+.sfdx/sfdx-config.json
+.sfdx/orgs/info-zsfi@force.com.sandboxdev/metadataTypeInfos.json
+.sfdx/tools/apex.db
+.sfdx/tools/testresults/apex/test-result.txt
+.sfdx/tools/testresults/apex/test-result-7070p000002e2Zh.json
+.sfdx/tools/testresults/apex/test-result-7070p000002e2Zh-junit.xml
+.sfdx/tools/testresults/apex/test-run-id.txt
+.sfdx/typings/lwc/apex.d.ts
+.sfdx/typings/lwc/engine.d.ts
+.sfdx/typings/lwc/lds.d.ts
+.sfdx/typings/lwc/schema.d.ts
+.sfdx/typings/lwc/apex/ContactController.d.ts
+.vscode/settings.json

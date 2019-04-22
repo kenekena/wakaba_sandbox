@@ -1,0 +1,46 @@
+{
+    "summary": {
+        "outcome": "Passed",
+        "testsRan": 1,
+        "passing": 1,
+        "failing": 0,
+        "skipped": 0,
+        "passRate": "100%",
+        "failRate": "0%",
+        "testStartTime": "Apr 22, 2019 1:01 PM",
+        "testExecutionTime": "345 ms",
+        "testTotalTime": "345 ms",
+        "commandTime": "5175 ms",
+        "hostname": "https://wakabasb--sandboxdev.my.salesforce.com",
+        "orgId": "00D0p0000008bzJEAQ",
+        "username": "info-zsfi@force.com.sandboxdev",
+        "testRunId": "7070p000002fDwu",
+        "userId": "0050o00000WAIyMAAX"
+    },
+    "tests": [
+        {
+            "attributes": {
+                "type": "ApexTestResult",
+                "url": "/services/data/v45.0/tooling/sobjects/ApexTestResult/07M0p000000SqqAEAS"
+            },
+            "Id": "07M0p000000SqqAEAS",
+            "QueueItemId": "7090p00000054x2AAA",
+            "StackTrace": null,
+            "Message": null,
+            "AsyncApexJobId": "7070p000002fDwuAAE",
+            "MethodName": "getContactList",
+            "Outcome": "Pass",
+            "ApexClass": {
+                "attributes": {
+                    "type": "ApexClass",
+                    "url": "/services/data/v45.0/tooling/sobjects/ApexClass/01p0p0000006gDGAAY"
+                },
+                "Id": "01p0p0000006gDGAAY",
+                "Name": "TestContactController",
+                "NamespacePrefix": null
+            },
+            "RunTime": 345,
+            "FullName": "TestContactController.getContactList"
+        }
+    ]
+}

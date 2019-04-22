@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+    <testsuite name="force.apex" timestamp="2019-04-22T11:15:57+09:00" hostname="https://wakabasb--sandboxdev.my.salesforce.com" tests="1" failures="0"  errors="0"  time="0">
+        <properties>
+            <property name="outcome" value="Passed"/>
+            <property name="testsRan" value="1"/>
+            <property name="passing" value="0"/>
+            <property name="failing" value="0"/>
+            <property name="skipped" value="1"/>
+            <property name="passRate" value="NaN%"/>
+            <property name="failRate" value="NaN%"/>
+            <property name="testStartTime" value="Apr 22, 2019 11:15 AM"/>
+            <property name="testExecutionTime" value="0 s"/>
+            <property name="testTotalTime" value="0 s"/>
+            <property name="commandTime" value="4.01 s"/>
+            <property name="hostname" value="https://wakabasb--sandboxdev.my.salesforce.com"/>
+            <property name="orgId" value="00D0p0000008bzJEAQ"/>
+            <property name="username" value="info-zsfi@force.com.sandboxdev"/>
+            <property name="testRunId" value="7070p000002f9r4"/>
+            <property name="userId" value="0050o00000WAIyMAAX"/>
+        </properties>
+        <testcase name="findContacts" classname="TestContactController" time="0">
+            <failure message="メソッド findContacts は ID 01p0p0000006gDG の Apex クラス内に存在しません"></failure>
+        </testcase>
+    </testsuite>
+</testsuites>

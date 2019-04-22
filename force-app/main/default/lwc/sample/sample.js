@@ -7,6 +7,6 @@ export default class sample extends LightningElement {
     @track clickedButtonLabel;
     
     handleClick(event) {
-        this.clickedButtonLabel = event.target.value;
+        this.clickedButtonLabel = event.target.label;
     }
 }

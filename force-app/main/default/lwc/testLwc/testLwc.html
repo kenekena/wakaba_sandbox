@@ -1,16 +1,49 @@
 <template>
   <lightning-card title="職員用メニュー" icon-name="custom:custom14"></lightning-card>
 
+  <div class="slds-m-around_medium">
+      <lightning-input
+          type="checkbox"
+          label="詳細を表示"
+          onchange={handleChange}
+      ></lightning-input>
 
+      <div class="slds-m-vertical_medium">
+          <template if:true={areDetailsVisible}>
+              詳細を表示しています!
+          </template>
+          <template if:false={areDetailsVisible}>
+              詳細は表示されていません。
+          </template>
+      </div>
+  </div>
 
     <div class="slds-modal__content" id="welcome-mat-118-content">
-    <div class="slds-welcome-mat">
 
-      <div><lightning-button onclick={jamping} value="true" type="submit" label="トップへ"></lightning-button></div>
+    <div class="slds-welcome-mat">
+    <div>
+      <ul>
+
+      <li>トップへ：
+      
+        <lightning-button onclick={jamping} value="true" type="submit" label=true></lightning-button>
      
-        <lightning-button onclick={jamping} value="false" type="submit" label="それ以外"></lightning-button>
-    
-  
+      </li>
+      <li>それ以外：
+      
+        <lightning-button onclick={jamping} value="false" type="submit" label=false></lightning-button>
+      
+      </li>
+      </ul>
+
+      <template if:true={isPages}>
+          <p>trueだと燃えるisPageは：{isPages}</p>
+      </template>
+
+      <template if:false={isPages}>
+          <p>falseだと燃えるisPageは：{isPages}</p>
+      </template>
+    </div>
     <ul class="slds-welcome-mat__tiles">
     <li class="slds-welcome-mat__tile">
     <a href="javascript:void(0);" vlue="menu1" class="slds-box slds-box_link slds-media">
