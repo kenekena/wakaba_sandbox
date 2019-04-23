@@ -3,6 +3,24 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/contactListItemBubbling": [
+                "contactListItemBubbling/contactListItemBubbling.js"
+            ],
+            "c/enJiList": [
+                "enJiList/enJiList.js"
+            ],
+            "c/enjiDetail": [
+                "enjiDetail/enjiDetail.js"
+            ],
+            "c/ldsUtils": [
+                "ldsUtils/ldsUtils.js"
+            ],
+            "c/pegeLinktest": [
+                "pegeLinktest/pegeLinktest.js"
+            ],
+            "c/pubsub": [
+                "pubsub/pubsub.js"
+            ],
             "c/sample": [
                 "sample/sample.js"
             ],
@@ -11,27 +29,6 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
-            ],
-            "c/enJiList": [
-                "enJiList/enJiList.js"
-            ],
-            "c/pubsub": [
-                "pubsub/pubsub.js"
-            ],
-            "c/EnjiDetail": [
-                "EnjiDetail/EnjiDetail.js"
-            ],
-            "c/enjiDetail": [
-                "enjiDetail/enjiDetail.js"
-            ],
-            "c/ldsUtils": [
-                "ldsUtils/ldsUtils.js"
-            ],
-            "c/contactListItemBubbling": [
-                "contactListItemBubbling/contactListItemBubbling.js"
-            ],
-            "c/pegeLinktest": [
-                "pegeLinktest/pegeLinktest.js"
             ]
         }
     },
