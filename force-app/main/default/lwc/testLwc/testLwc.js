@@ -1,19 +1,26 @@
-import { LightningElement, track } from 'lwc';
-export default class HelloWorld extends LightningElement {
-  @track greeting = 'World';
-  @track isPages = false;
-  @track areDetailsVisible = false;
+import { LightningElement,track, wire } from 'lwc';
 
-  changeHandler(event) {
-    this.greeting = event.target.value;
+import {
+  CurrentPageReference
+} from 'lightning/navigation';
+import {
+  fireEvent
+} from 'c/pubsub';
+
+
+export default class testLwc extends LightningElement {
+  @wire(CurrentPageReference) pageRef;
+  @track isPageGo;
+
+  jamping2(event){
+    /* hrefのクリック時のデフォルト動作を防ぐ */
+    event.preventDefault();
+    if(event.target.value === 'true')
+      this.isPageGo = true;
+    else
+      this.isPageGo = false;
+    fireEvent(this.pageRef, 'menu1', this.isPageGo);
+    
   }
-
-  jamping(event) {
-    this.isPages = event.target.value;
-  }
-
-  handleChange(event) {
-    this.areDetailsVisible = event.target.checked;
-  }
-
+ 
 }

@@ -29,6 +29,15 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
+            ],
+            "c/test01": [
+                "test01/test01.js"
+            ],
+            "c/publishsource": [
+                "publishsource/publishsource.js"
+            ],
+            "c/publishreceiver": [
+                "publishreceiver/publishreceiver.js"
             ]
         }
     },

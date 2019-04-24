@@ -1,0 +1,19 @@
+<template>
+    <lightning-card title="メニューボタン" icon-name="custom:custom14"></lightning-card>
+    <div class="slds-modal__content" id="welcome-mat-118-content">
+      <template if:false={isPage}>
+        <lightning-button onclick={jamping} value="true" type="submit" label="トップへ"></lightning-button>
+      </template>
+    </div>
+    <template if:true={isPage}>
+      <c-test-lwc></c-test-lwc>
+    </template>
+
+    <template if:false={isPage}>
+    <lightning-card title="組選択メニュー" icon-name="custom:custom14"></lightning-card>
+    <div class="slds-modal__content">
+      ああああああああああ
+    </div>
+    </template>
+    
+</template>
