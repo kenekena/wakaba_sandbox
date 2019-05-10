@@ -1,21 +1,21 @@
 /* eslint-disable no-console */
 import { LightningElement,wire,track } from 'lwc';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import TYPE_Class from '@salesforce/schema/ImportantNotes__c.Class__c';
-import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
-import findKindergartenDiary from '@salesforce/apex/ImportantNotesController.findKindergartenDiary';
+import TYPE_Class from 'staffAttendanceMenu03/node_modules/@salesforce/schema/ImportantNotes__c.Class__c';
+import findImportantNotes from 'staffAttendanceMenu03/node_modules/@salesforce/apex/ImportantNotesController.findImportantNotes2';
+import findKindergartenDiary from 'staffAttendanceMenu03/node_modules/@salesforce/apex/ImportantNotesController.findKindergartenDiary';
 /* ポップアップメッセージ表示 */
-import {ShowToastEvent} from 'lightning/platformShowToastEvent';
+import {ShowToastEvent} from 'staffAttendanceMenu03/node_modules/lightning/platformShowToastEvent';
 /* /ポップアップメッセージ表示 */
 
 /* 要録アップデート */
 import { createRecord } from 'lightning/uiRecordApi';
 import { updateRecord } from 'lightning/uiRecordApi';
-import KindergartenDiary_OBJECT from '@salesforce/schema/KindergartenDiary__c';
-import ID_FIELD from '@salesforce/schema/KindergartenDiary__c.Id';
-import AS_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendanceSchedule__c';
-import ENGJIID_FIELD from '@salesforce/schema/KindergartenDiary__c.Contact__c';
-import DATE_FIELD from '@salesforce/schema/KindergartenDiary__c.Date__c';
+import KindergartenDiary_OBJECT from 'staffAttendanceMenu03/node_modules/@salesforce/schema/KindergartenDiary__c';
+import ID_FIELD from 'staffAttendanceMenu03/node_modules/@salesforce/schema/KindergartenDiary__c.Id';
+import AS_FIELD from 'staffAttendanceMenu03/node_modules/@salesforce/schema/KindergartenDiary__c.AttendanceSchedule__c';
+import ENGJIID_FIELD from 'staffAttendanceMenu03/node_modules/@salesforce/schema/KindergartenDiary__c.Contact__c';
+import DATE_FIELD from 'staffAttendanceMenu03/node_modules/@salesforce/schema/KindergartenDiary__c.Date__c';
 /* 要録アップデート */
 
 
