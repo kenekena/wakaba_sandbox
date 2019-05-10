@@ -1,0 +1,88 @@
+/* ボタンレイアウト */
+  .btn-social-isometric { 
+    color: #484848;
+    display: inline-block;
+    height: 50px;
+    font-size: 25px;
+    line-height: 50px;
+    background: #eaeef1;
+    text-decoration: none;
+    box-sizing: border-box; 
+    
+    margin: 1em;
+  }
+  .btn-social-isometric-icon {
+    display: inline-block;
+    /* width: 50px; */
+    height: 50px;
+    text-align: center;
+    color: white;
+  }
+  .btn-social-isometric-icon i {
+    line-height: 46px;
+    font-size: 25px;
+  }
+  .btn-social-isometric-text {
+    display: inline-block;
+    /* width: 120px;*/
+    height: 50px;
+    padding: 0 1em;
+    text-align: center;
+    /*border-bottom: solid 4px #dcdcdc;*/
+  }
+  .btn-social-isometric-icon--twitter {
+    background:#1da1f3;
+    /*border-bottom: solid 4px #1484ca;*/
+  }
+  .btn-social-isometric-icon--facebook {
+    background:#3b75d4;
+    border-bottom: solid 4px #2a5caf;
+  }
+  .btn-social-isometric-icon--feedly {
+    background:#7ece46;
+    border-bottom: solid 4px #65b130;
+  }
+  .btn-social-isometric-icon--pocket {
+    background:#fd7171;
+    border-bottom: solid 4px #ef4d4d;
+  }
+  /* 
+  .btn-social-isometric:hover {
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+  }
+  .btn-social-isometric:hover .btn-social-isometric-text, .btn-social-isometric:hover .btn-social-isometric-icon {
+    border-bottom: none;
+  }
+  */
+
+/* 出席・欠席ボタンレイアウト */
+  .btn-square {
+    display: inline-block;
+    /* padding: 0.5em 1em; */
+    text-decoration: none;
+    
+    color: #FFF;
+    border-bottom: solid 5px;
+    border-radius: 3px;
+    /* 追記 */
+    padding: 0 1em;
+    margin-right:15px;
+    line-height: 50px;
+  }
+  .btn-square:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);/*下に動く*/
+    border-bottom: none;/*線を消す*/
+  }
+
+  .blue {
+    background: #668ad8;/*ボタン色*/
+    border-bottom-color: #627295;
+  }
+
+  .yellow {
+    background: #fFA000;/*ボタン色*/
+    border-bottom-color:rgb(160, 102, 3);
+  }

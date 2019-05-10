@@ -1,0 +1,15 @@
+<template>
+    <lightning-card title="学級一覧" icon-name="custom:custom67"></lightning-card>
+    <div class="slds-welcome-mat__tiles">
+        <template if:true={picklistValues.data}>
+            <template for:each={picklistValues.data.values} for:item="item">
+                <lightning-button key={item.value} onclick={links} data-value2={item.label} type="submit" label={item.label}></lightning-button>
+            </template> 
+        </template>
+
+        <template if:true={picklistValues.error}>
+            <p></p>エラーです</p>
+        </template>
+    </div>
+    
+</template>

@@ -1,0 +1,65 @@
+<template>
+    <lightning-card title="◯◯くみ一覧" icon-name="custom:custom67"></lightning-card>
+    <div class="slds-welcome-mat__tiles">
+        <template for:each={importantNotes.data} for:item="ImportantNotes">
+            <input id={ImportantNotes.Id} type="checkbox" name="btn1" key={ImportantNotes.Id}>
+                <label key={ImportantNotes.Id} for={ImportantNotes.Id}>{ImportantNotes.Contact__r.kana__c}</label>
+        </template>
+    </div>
+    <lightning-button
+        label="作成"
+        variant="brand"
+        onclick={upsertImportantNotes}
+    ></lightning-button>
+    <lightning-button
+        label="名前変更"
+        variant="brand"
+        onclick={ContactNameUpdateTest}
+    ></lightning-button>
+
+    <lightning-card title="jsから配列取得" icon-name="custom:custom67">
+        <template for:each={test.data} for:item="test1">
+            <p key={test1.id}>
+            <a href="#" class="btn-social-isometric">
+                <span class="btn-social-isometric-icon btn-social-isometric-icon--twitter">
+                    {test1.now}
+                </span>
+            <span class="btn-social-isometric-text">{test1.name}</span>
+            </a>
+            <a href="#" onclick={changeType} class="btn-square" data-value="出席" data-id={test1.Id}>出席</a>
+            <a href="#" onclick={changeType} class="btn-square" data-value="欠席" data-id={test1.Id}>欠席</a>
+            
+            </p>
+        </template>
+        </lightning-card>
+
+
+    <lightning-card title="jsから配列取得" icon-name="custom:custom67">
+    <template for:each={test.data} for:item="test1">
+        <p key={test1.name}> {test1.name} ：{test1.test__c}</p>
+    </template>
+    </lightning-card>
+    
+    <lightning-card title="ベタ打ち表示" icon-name="custom:custom67">
+        <a href="#" class="btn-social-isometric">
+            <span class="btn-social-isometric-icon btn-social-isometric-icon--twitter">
+                出席
+            </span>
+        <span class="btn-social-isometric-text">すずき　たろう</span>
+        </a>
+
+        <a href="#" class="btn-square">出席</a>
+        <a href="#" class="btn-square">欠席</a>
+
+        <a href="#" class="btn-social-isometric">
+            <span class="btn-social-isometric-icon btn-social-isometric-icon--twitter">
+                出席
+            </span>
+        <span class="btn-social-isometric-text">しみず　けんすけ</span>
+        </a>
+        
+        <a href="#" class="btn-square">出席</a>
+        <a href="#" class="btn-square">欠席</a>
+        
+    </lightning-card>
+</template>

@@ -18,11 +18,32 @@
             "c/pegeLinktest": [
                 "pegeLinktest/pegeLinktest.js"
             ],
+            "c/publishreceiver": [
+                "publishreceiver/publishreceiver.js"
+            ],
+            "c/publishsource": [
+                "publishsource/publishsource.js"
+            ],
             "c/pubsub": [
                 "pubsub/pubsub.js"
             ],
             "c/sample": [
                 "sample/sample.js"
+            ],
+            "c/sample_CreateOpportunity": [
+                "sample_CreateOpportunity/sample_CreateOpportunity.js"
+            ],
+            "c/sample_listViewDatatable": [
+                "sample_listViewDatatable/sample_listViewDatatable.js"
+            ],
+            "c/staffAttendanceMenu01": [
+                "staffAttendanceMenu01/staffAttendanceMenu01.js"
+            ],
+            "c/staffAttendanceMenu02": [
+                "staffAttendanceMenu02/staffAttendanceMenu02.js"
+            ],
+            "c/test01": [
+                "test01/test01.js"
             ],
             "c/testLwc": [
                 "testLwc/testLwc.js"
@@ -30,14 +51,8 @@
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
             ],
-            "c/test01": [
-                "test01/test01.js"
-            ],
-            "c/publishsource": [
-                "publishsource/publishsource.js"
-            ],
-            "c/publishreceiver": [
-                "publishreceiver/publishreceiver.js"
+            "c/staffAttendanceMenu03": [
+                "staffAttendanceMenu03/staffAttendanceMenu03.js"
             ]
         }
     },

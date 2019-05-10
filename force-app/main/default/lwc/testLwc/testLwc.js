@@ -15,10 +15,16 @@ export default class testLwc extends LightningElement {
   jamping2(event){
     /* hrefのクリック時のデフォルト動作を防ぐ */
     event.preventDefault();
+    if(event.target.value === 'false')
+      this.isPageGo = false;
+    else
+      this.isPageGo = true;
+    /*
     if(event.target.value === 'true')
       this.isPageGo = true;
     else
       this.isPageGo = false;
+      */
     fireEvent(this.pageRef, 'menu1', this.isPageGo);
     
   }

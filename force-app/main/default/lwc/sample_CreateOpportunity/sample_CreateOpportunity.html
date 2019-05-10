@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="商談ベタ打ちした一覧" icon-name="custom:custom14">
+        <ul class="slds-m-around_medium">
+            <template for:each={Opportunitys} for:item="Opportunity">
+                <li key={Opportunity.Name}>
+                    {Opportunity.Name}, {Opportunity.CloseDate}
+                </li>
+            </template>
+        </ul>
+    </lightning-card>
+    <lightning-card title="商談を登録" icon-name="custom:custom14">
+        <lightning-button label="商談作成" variant="brand" onclick={createOpportunity}></lightning-button>
+    </lightning-card>
+</template>

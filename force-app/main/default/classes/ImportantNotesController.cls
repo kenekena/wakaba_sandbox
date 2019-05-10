@@ -1,0 +1,49 @@
+public with sharing class ImportantNotesController {
+
+    @AuraEnabled(cacheable=true)
+    public static List<ImportantNotes__c> getImportantNotesList() {
+        return [SELECT Id, Name,Class__c FROM ImportantNotes__c];
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<ImportantNotes__c> findImportantNotes(String searchKey) {
+        if (String.isBlank(searchKey)) {
+            return new List<ImportantNotes__c>();
+        }
+        String key = searchKey;
+        return [SELECT Id, Name , Contact__r.kana__c , Class__c,Remarks__c FROM ImportantNotes__c WHERE Class__c =: searchKey];
+    }
+    /* ------------------------------------------------
+        staffAttendanceMenu03:要録一覧を取得
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static List<ImportantNotes__c> findImportantNotes2(String searchClass,String searchYear) {
+        //!!!!!　年度と会計年度をあわせる処理を加える!!!!!!!!
+        return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchClass AND FiscalYear__c =:searchYear];
+
+        /* 別パターンの記述
+            List<ImportantNotes__c> ImportantNoteList = new List<ImportantNotes__c> ();
+            ImportantNoteList = [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c,Remarks__c FROM ImportantNotes__c WHERE Class__c =: searchKey AND FiscalYear__c =:searchYear];
+            return ImportantNoteList;
+        */
+
+    }
+
+    /* ------------------------------------------------
+        staffAttendanceMenu03:園児日報一覧を取得
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static List<KindergartenDiary__c> findKindergartenDiary(String searchDate) {
+        Date myDate = Date.valueOf(searchDate);
+        system.debug(searchDate);
+        return [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
+
+        /* 別パターンの記述
+            List<KindergartenDiary__c> KindergartenDiaryList = new List<KindergartenDiary__c>();
+            KindergartenDiaryList = [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
+            return KindergartenDiaryList;
+        */
+
+    }
+    
+}
