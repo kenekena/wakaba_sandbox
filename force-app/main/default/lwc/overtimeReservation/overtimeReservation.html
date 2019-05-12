@@ -1,0 +1,28 @@
+<template>
+    <div class="slds-welcome-mat__tiles">
+        <template if:true={picklistValues.data}>
+        <h2 class="title slds-m-bottom_medium">
+            <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
+            出席簿：くみ一覧
+        </h2>
+        <p class="slds-m-bottom_large">
+            <template for:each={picklistValues.data.values} for:item="item">
+                <lightning-button data-group="class" key={item.value} onclick={links} data-value={item.label} type="submit" label={item.label} class="menubotton"></lightning-button>
+            </template> 
+        </p>
+        </template>
+        <template if:true={picklistValues.error}>
+            <p></p>エラーです</p>
+        </template>
+        <lightning-combobox
+            name="progress"
+            label="Status"
+            value=""
+            placeholder="Select Progress"
+            options={options}
+            onchange={handleChange}
+        ></lightning-combobox>
+        <p>Selected value is: {value}</p>
+        <br /> <br /> <br /> <br /> <br /> <br />
+    </div>
+</template>

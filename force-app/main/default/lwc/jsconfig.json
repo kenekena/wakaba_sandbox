@@ -53,6 +53,12 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
+            ],
+            "c/OvertimeReservation": [
+                "OvertimeReservation/OvertimeReservation.js"
+            ],
+            "c/overtimeReservation": [
+                "overtimeReservation/overtimeReservation.js"
             ]
         }
     },
