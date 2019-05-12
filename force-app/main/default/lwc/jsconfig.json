@@ -42,6 +42,9 @@
             "c/staffAttendanceMenu02": [
                 "staffAttendanceMenu02/staffAttendanceMenu02.js"
             ],
+            "c/staffAttendanceMenu03": [
+                "staffAttendanceMenu03/staffAttendanceMenu03.js"
+            ],
             "c/test01": [
                 "test01/test01.js"
             ],
@@ -50,9 +53,6 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
-            ],
-            "c/staffAttendanceMenu03": [
-                "staffAttendanceMenu03/staffAttendanceMenu03.js"
             ]
         }
     },

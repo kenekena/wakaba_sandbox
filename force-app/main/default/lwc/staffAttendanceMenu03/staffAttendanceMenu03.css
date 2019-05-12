@@ -1,3 +1,26 @@
+.title{
+  background:#a4bcff7a;
+  position: relative;
+  padding:0.5em 0.5em 0.5em 1.4em;
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  font-size:1em;
+}
+
+.title:after {
+  position: absolute;
+  top: 50%;
+  left:0.7em;
+  transform:translateY(-50%);
+  content: '';
+  width: 5px;
+  height:25px;
+  background-color: #446689;
+}
+.menubotton button{
+  line-height: 65px !important;
+}
+
 /* ボタンレイアウト */
   .btn-social-isometric { 
     color: #484848;

@@ -17,9 +17,33 @@ public with sharing class ImportantNotesController {
         staffAttendanceMenu03:要録一覧を取得
     ------------------------------------------------ */
     @AuraEnabled
-    public static List<ImportantNotes__c> findImportantNotes2(String searchClass,String searchYear) {
+    public static List<ImportantNotes__c> findImportantNotes2(String searchValue,String searchYear,String searchGroup) {
         //!!!!!　年度と会計年度をあわせる処理を加える!!!!!!!!
-        return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchClass AND FiscalYear__c =:searchYear];
+        // 基準日の設定（本日）
+        Date TDY = Date.today();
+        // 会計年度期首月を取得
+        Organization organization = [SELECT Id, Name,FiscalYearStartMonth FROM Organization LIMIT 1];
+        // 会計年度期首月日を設定
+        integer StartFYSM = organization.FiscalYearStartMonth;
+        date StartDate = date.newInstance(TDY.year(), StartFYSM, 1);
+        // 会計年度期末月日を設定
+        date EndDate = (StartDate.addYears(1)).addDays(-1);
+        //期末より月が小さかったらマイナス1年 
+        if(EndDate.month() >TDY.month()){
+            TDY = TDY.addYears(1); 
+        }
+        // 文字列に変化して頭4文字でYYYYを取得
+        String searchYears = TDY.format();
+        searchYears = searchYears.left(4);
+        
+        if(searchGroup == 'bus'){
+            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Contact__r.PassageRoute__c =: searchValue AND FiscalYear__c =:searchYears];
+        }
+        if(searchGroup == 'class'){
+            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchValue AND FiscalYear__c =:searchYears];
+        }else{
+            return new List<ImportantNotes__c>();
+        }
 
         /* 別パターンの記述
             List<ImportantNotes__c> ImportantNoteList = new List<ImportantNotes__c> ();
@@ -36,7 +60,7 @@ public with sharing class ImportantNotesController {
     public static List<KindergartenDiary__c> findKindergartenDiary(String searchDate) {
         Date myDate = Date.valueOf(searchDate);
         system.debug(searchDate);
-        return [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
+        return [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c , attendingSchoolTime__c , GoingBack__c , GoingBackTime__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
 
         /* 別パターンの記述
             List<KindergartenDiary__c> KindergartenDiaryList = new List<KindergartenDiary__c>();

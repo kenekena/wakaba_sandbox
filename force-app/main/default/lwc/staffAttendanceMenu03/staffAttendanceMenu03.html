@@ -1,47 +1,75 @@
 <template>
     <div class="slds-welcome-mat__tiles">
         <template if:true={picklistValues.data}>
-        <p>くみ：
+        <h2 class="title slds-m-bottom_medium">
+            <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
+            出席簿：くみ一覧
+        </h2>
+        <p class="slds-m-bottom_large">
             <template for:each={picklistValues.data.values} for:item="item">
-                <lightning-button key={item.value} onclick={links} data-value={item.label} type="submit" label={item.label}></lightning-button>
+                <lightning-button data-group="class" key={item.value} onclick={links} data-value={item.label} type="submit" label={item.label} class="menubotton"></lightning-button>
             </template> 
         </p>
         </template>
-        
-
         <template if:true={picklistValues.error}>
             <p></p>エラーです</p>
         </template>
-        <template if:true={picklistValues.data}>
-                <p>バス：
-                    <template for:each={picklistValues.data.values} for:item="item">
-                        <lightning-button key={item.value} onclick={links} data-value={item.label} type="submit" label={item.label}></lightning-button>
-                    </template> 
-                </p>
-                </template>
-                
-        
-                <template if:true={picklistValues.error}>
-                    <p></p>エラーです</p>
-                </template>
+        <template if:true={PickBuslist.data}>
+        <h2 class="title slds-m-bottom_medium">
+            <!--<lightning-icon icon-name="utility:travel_and_places" ariant="Success" alternative-text="Audio file" ></lightning-icon>-->
+            乗車管理：バス一覧
+        </h2>
+        <p class="slds-m-bottom_medium">
+            <template for:each={PickBuslist.data.values} for:item="item">
+                <lightning-button data-group="bus" key={item.value} onclick={links} data-value={item.label} type="submit" label={item.label} class="menubotton"></lightning-button>
+            </template> 
+        </p>
+        </template>
+        <template if:true={PickBuslist.error}>
+            <p></p>エラーです</p>
+        </template>
     </div>
 
     <lightning-card title={titleDate} icon-name="custom:custom68"></lightning-card>
-    <div class="slds-welcome-mat__tiles">
-        
+
+    <template if:true={ClassList}>
+        <lightning-card title="出席簿" icon-name="custom:custom68"></lightning-card>
+        <div class="slds-welcome-mat__tiles">
             <template for:each={importantNotes} for:item="item">
                 <p key={item.Id} class="slds-m-bottom_large">
-                    <a href="#" onclick={changeType} class="btn-square blue" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</a>
-                    <a href="#" onclick={changeType} class="btn-square yellow" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</a>
+                    <button onclick={changeType} type=button class="btn-square blue" data-group="class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
+                    <button onclick={changeType} type=button class="btn-square yellow" data-group="class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
                     【{item.AttendanceSchedule}】{item.Contact__r.kana__c}
                 </p>
             </template> 
-       
+            <template if:true={error}>
+                <p></p>エラーですimportantNotes：{error}</p>
+            </template>
+        </div>
+    </template>
 
-        <template if:true={error}>
-            <p></p>エラーですimportantNotes：{error}</p>
-        </template>
-    </div>
+    <template if:true={BusList}>
+        <lightning-card title="バス乗車管理" icon-name="custom:custom68"></lightning-card>
+        <div class="slds-welcome-mat__tiles">
+            <template for:each={importantNotes} for:item="item">
+                <p key={item.Id} class="slds-m-bottom_large">
+                    <button onclick={changeType} type=button class="btn-square blue" data-group="bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
+                    <button onclick={changeType} type=button class="btn-square yellow" data-group="bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
+                    【{item.AttendingSchool}】【{item.GoingBack}】{item.Contact__r.kana__c}
+                </p>
+            </template> 
+            <template if:true={error}>
+                <p></p>エラーですimportantNotes：{error}</p>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={firstDisplay}>
+        <div class="slds-welcome-mat__tiles">
+            クラスかバスを選択してください。
+        </div>
+
+    </template>
 
 
 
