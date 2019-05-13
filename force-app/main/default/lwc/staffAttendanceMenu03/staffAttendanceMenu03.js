@@ -36,7 +36,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     @track firstDisplay = true;
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate();
     @track titleDate = this.today.getFullYear() + "年" + (this.today.getMonth() + 1) + "月"+ this.today.getDate() + "日の出席簿";
-    @track searchYear = this.today.getFullYear();
+
     @track importantNotes;
     @track error = false;
 
@@ -58,7 +58,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     })
     PickBuslist;
 
-    //現在時刻取得（yyyy/mm/dd hh:mm:ss）
+    //現在時刻取得（yyyy/mm/ddThh:mm:ss.000Z）
     getCurrentTime() {
         var now = new Date();
         var res;
@@ -93,13 +93,13 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         //var setsCheck;              //forループで要録と日報がマッチしたかどうかをチェック
         var group =event.target.dataset.group;//クラス選択かバス選択か
         //並列処理?的な
-        async function merge(searchYear,searchDate){
+        async function merge(searchDate){
             //クラスで条件を絞り要録一覧を取得
             ImportantNoteList = await (
                 //Apexを呼び出し
                 findImportantNotes({
                         searchValue: event.target.dataset.value,
-                        searchYear: searchYear,
+                        searchDate: searchDate,
                         searchGroup: event.target.dataset.group
                     })
                     .then(result => {
@@ -123,7 +123,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         }
 
         //要録一覧と日報一覧を取得した後に処理を開始する
-        merge(this.searchYear,this.searchDate).then(
+        merge(this.searchDate).then(
             () => {
                 //merge()の処理が終わった後に開始する
                 //console.log(ImportantNoteList);       //要録一覧確認
@@ -141,11 +141,18 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                             ImportantNoteList[i].AttendanceSchedule = KindergartenDiaryList[i2].AttendanceSchedule__c;
                             if(KindergartenDiaryList[i2].AttendingSchool__c){ImportantNoteList[i].AttendingSchool='登園'}
                             if(KindergartenDiaryList[i2].GoingBack__c){ImportantNoteList[i].GoingBack='降園'}
+                            if(KindergartenDiaryList[i2].AbsentSchedule__c){ImportantNoteList[i].AbsentSchedule=true}
                             //setsCheck =true;//マッチしたらtrue
                         }
                     }
                     
-                    if(!(ImportantNoteList[i].AttendanceSchedule)){ImportantNoteList[i].AttendanceSchedule='未定'}
+                    if(!(ImportantNoteList[i].AttendanceSchedule)){
+                        if(ImportantNoteList[i].AbsentSchedule){    //欠席予定がtrueなら
+                            ImportantNoteList[i].AttendanceSchedule='欠席予定'
+                        }else{
+                            ImportantNoteList[i].AttendanceSchedule='未定'
+                        }
+                    }
                     if(!(ImportantNoteList[i].AttendingSchool)){ImportantNoteList[i].AttendingSchool='ーー'}
                     if(!(ImportantNoteList[i].GoingBack)){ImportantNoteList[i].GoingBack='ーー'}
                     

@@ -15,14 +15,42 @@
             <p></p>エラーです</p>
         </template>
         <lightning-combobox
-            name="progress"
+            name="changeName"
             label="Status"
-            value=""
-            placeholder="Select Progress"
+            value={nameValue}
+            placeholder={placeholder}
             options={options}
             onchange={handleChange}
         ></lightning-combobox>
         <p>Selected value is: {value}</p>
-        <br /> <br /> <br /> <br /> <br /> <br />
+        <template if:false={listDisplay}>
+            <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+        </template>
+        <template if:true={listDisplay}>
+            <lightning-button onclick={handleChange} data-value="先月" type="button" label="先月"></lightning-button>
+            <lightning-button onclick={handleChange} data-value="今月" type="button" label="今月"></lightning-button>
+            <lightning-button onclick={handleChange} data-value="翌月" type="button" label="翌月"></lightning-button>
+
+            <template for:each={overtimeReservationList} for:item="item">
+                <p key={item.date}>{item.date}：{item.week}</p>
+                <lightning-combobox
+                    key={item.date}
+                    name="changeName"
+                    label="時間外朝"
+                    value={nameValue}
+                    placeholder="選択してちょ"
+                    options={OutsideFast.data.values}
+                ></lightning-combobox>
+                <lightning-combobox
+                    key={item.date}
+                    name="changeName"
+                    label="時間外"
+                    value={nameValue}
+                    placeholder="選択してちょ"
+                    options={Outside.data.values}
+                ></lightning-combobox>
+            </template> 
+        </template>
+
     </div>
 </template>

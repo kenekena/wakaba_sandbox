@@ -17,10 +17,10 @@ public with sharing class ImportantNotesController {
         staffAttendanceMenu03:要録一覧を取得
     ------------------------------------------------ */
     @AuraEnabled
-    public static List<ImportantNotes__c> findImportantNotes2(String searchValue,String searchYear,String searchGroup) {
+    public static List<ImportantNotes__c> findImportantNotes2(String searchValue,String searchDate,String searchGroup) {
         //!!!!!　年度と会計年度をあわせる処理を加える!!!!!!!!
         // 基準日の設定（本日）
-        Date TDY = Date.today();
+        Date TDY =Date.valueOf(searchDate);
         // 会計年度期首月を取得
         Organization organization = [SELECT Id, Name,FiscalYearStartMonth FROM Organization LIMIT 1];
         // 会計年度期首月日を設定
@@ -30,7 +30,7 @@ public with sharing class ImportantNotesController {
         date EndDate = (StartDate.addYears(1)).addDays(-1);
         //期末より月が小さかったらマイナス1年 
         if(EndDate.month() >TDY.month()){
-            TDY = TDY.addYears(1); 
+            TDY = TDY.addYears(-1); 
         }
         // 文字列に変化して頭4文字でYYYYを取得
         String searchYears = TDY.format();
@@ -60,7 +60,7 @@ public with sharing class ImportantNotesController {
     public static List<KindergartenDiary__c> findKindergartenDiary(String searchDate) {
         Date myDate = Date.valueOf(searchDate);
         system.debug(searchDate);
-        return [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c , attendingSchoolTime__c , GoingBack__c , GoingBackTime__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
+        return [SELECT Id,AttendanceSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , attendingSchoolTime__c , GoingBack__c , GoingBackTime__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
 
         /* 別パターンの記述
             List<KindergartenDiary__c> KindergartenDiaryList = new List<KindergartenDiary__c>();
