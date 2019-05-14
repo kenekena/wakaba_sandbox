@@ -1,5 +1,6 @@
 <template>
     <div class="slds-welcome-mat__tiles">
+        
         <template if:true={picklistValues.data}>
         <h2 class="title slds-m-bottom_medium">
             <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
@@ -19,10 +20,9 @@
             label="Status"
             value={nameValue}
             placeholder={placeholder}
-            options={options}
+            options={EnjiListValue}
             onchange={handleChange}
         ></lightning-combobox>
-        <p>Selected value is: {value}</p>
         <template if:false={listDisplay}>
             <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
         </template>
@@ -32,23 +32,97 @@
             <lightning-button onclick={handleChange} data-value="翌月" type="button" label="翌月"></lightning-button>
 
             <template for:each={overtimeReservationList} for:item="item">
-                <p key={item.date}>{item.date}：{item.week}</p>
-                <lightning-combobox
-                    key={item.date}
-                    name="changeName"
-                    label="時間外朝"
-                    value={nameValue}
-                    placeholder="選択してちょ"
-                    options={OutsideFast.data.values}
-                ></lightning-combobox>
-                <lightning-combobox
-                    key={item.date}
-                    name="changeName"
-                    label="時間外"
-                    value={nameValue}
-                    placeholder="選択してちょ"
-                    options={Outside.data.values}
-                ></lightning-combobox>
+                <div key={item.date} class="slds-grid slds-gutters">
+                    <p class="slds-col slds-size_1-of-4 flex-ceter">{item.date}：{item.week}</p>
+
+                    <div class="slds-form-element slds-col slds-size_1-of-4">
+                        <label class="slds-form-element__label" for="select-01">時間外保育：早朝</label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-select_container">
+                            <select class={item.OutsideFastClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="OutsideFast">
+                                <template for:each={item.OutsideFastListValue} for:item="lists">
+                                    <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                                </template>
+                            </select>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-form-element slds-col slds-size_1-of-4">
+                        <label class="slds-form-element__label" for="select-01">時間外保育</label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-select_container">
+                            <select class={item.OutsideClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="Outside">
+                                <template for:each={item.OutsideListValue} for:item="lists">
+                                    <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                                </template>
+                            </select>
+                        </div>
+                        </div>
+                    </div>
+
+                    <p class="slds-col slds-size_1-of-4 flex-ceter">
+                        <button  onclick={upsertEvent} type="button" class={item.AbsentScheduleClass} value={item.AbsentSchedule} data-kdid={item.KdID} data-date2={item.date2} data-type="Absent">欠席</button>
+                    </p>
+                    <p class="slds-col slds-size_1-of-4 flex-ceter">{item.AbsentScheduleClass}</p>
+
+                    <!-- レコードありの選択フォーム
+                    <template if:true={item.KdID}>
+                            <div class="slds-col slds-size_2-of-4">
+                            
+                            <lightning-record-edit-form
+                                record-id={item.KdID}
+                                object-api-name="KindergartenDiary__c">
+      
+                                <div class="slds-grid">
+                                    <div class="slds-col slds-size_1-of-2">
+                             
+                                    <lightning-input-field field-name="OutsideFast__c"></lightning-input-field>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Outside__c"></lightning-input-field>
+                                    </div>
+                                </div>
+                                
+                            </lightning-record-edit-form>
+                            
+                            </div>
+                            <p class="slds-col slds-size_1-of-4 flex-ceter">
+                                <button onclick={changeType} type=button class="btn-square yellow">欠席予定</button>
+                            </p>
+                            
+                    </template>
+                    -->
+                
+                    <!-- レコードなしの選択フォーム
+                    <template if:false={item.KdID}>
+                    <div class="slds-col slds-size_1-of-4">
+                        <lightning-combobox
+                            name="changeName"
+                            label="時間外保育：早朝"
+                            value={nameValue}
+                            placeholder="-- なし --"
+                            options={OutsideFast.data.values}
+                        ></lightning-combobox>
+                    </div>
+                    
+                    <div class="slds-col slds-size_1-of-4">
+                        <lightning-combobox
+                            name="changeName"
+                            label="時間外"
+                            value={nameValue}
+                            placeholder="選択してちょ"
+                            options={Outside.data.values}
+                        ></lightning-combobox>
+                    </div>
+                    <p class="slds-col slds-size_1-of-4 flex-ceter">
+                        <button onclick={changeType} type=button class="btn-square yellow">欠席予定</button>
+                    </p>
+                    </template>
+                    -->
+
+                </div>
+                
             </template> 
         </template>
 

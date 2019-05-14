@@ -14,6 +14,25 @@ public with sharing class ImportantNotesController {
         return [SELECT Id, Name , Contact__r.kana__c , Class__c,Remarks__c FROM ImportantNotes__c WHERE Class__c =: searchKey];
     }
     /* ------------------------------------------------
+        overtimeReservation:園児日誌一覧を取得
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static List<KindergartenDiary__c> findKindergartenDiary_OrList(String StartDate,String EndDate,String EnjiID) {
+        Date StartDateS = Date.valueOf(StartDate);
+        Date EndDateS = Date.valueOf(EndDate);
+
+        system.debug('StartDateS' + StartDateS);
+        system.debug('EndDateS' + EndDateS);
+        system.debug('EnjiID' + EnjiID);
+        return [SELECT Id,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Contact__r.Id =:EnjiID AND Date__c >= :StartDateS AND Date__c <= :EndDateS];
+
+
+    }
+
+
+
+
+    /* ------------------------------------------------
         staffAttendanceMenu03:要録一覧を取得
     ------------------------------------------------ */
     @AuraEnabled

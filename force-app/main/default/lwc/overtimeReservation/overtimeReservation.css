@@ -1,0 +1,42 @@
+.flex-ceter{
+    display: flex;
+    /* justify-content: center; */
+    /*padding-top: 1.5em;*/
+    align-items: center;
+}
+
+/* 出席・欠席ボタンレイアウト */
+.btn-square {
+    display: inline-block;
+    /* padding: 0.5em 1em; */
+    text-decoration: none;
+    
+    color: #FFF;
+    border-bottom: solid 5px;
+    border-radius: 3px;
+    /* 追記 */
+    padding: 0 1em;
+    margin-right:15px;
+    line-height: 50px;
+  }
+  .btn-square:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);/*下に動く*/
+    border-bottom: none;/*線を消す*/
+  }
+
+  .blue {
+    background: #668ad8;/*ボタン色*/
+    border-bottom-color: #627295;
+  }
+
+  .yellow {
+    background: #fFA000;/*ボタン色*/
+    border-bottom-color:#a06603;
+  }
+
+  .gray {
+    background: #8f8f8f;/*ボタン色*/
+    border-bottom-color: #666666;
+  }
