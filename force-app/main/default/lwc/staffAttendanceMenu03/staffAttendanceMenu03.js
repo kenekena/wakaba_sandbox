@@ -37,6 +37,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate();
     @track titleDate = this.today.getFullYear() + "年" + (this.today.getMonth() + 1) + "月"+ this.today.getDate() + "日の出席簿";
 
+    
     @track importantNotes;
     @track error = false;
 
