@@ -1,4 +1,19 @@
 <template>
+    <template if:false={mainmenu}>
+        <div class="slds-welcome-mat__tiles">
+        <lightning-combobox
+            name="changeNames"
+            label="職員一覧"
+            value={nameValues}
+            placeholder="職員を選択"
+            options={StaffList}
+            onchange={selectStaff}
+        ></lightning-combobox>
+        <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /><br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+        </div>
+    </template>
+
+    <template if:true={mainmenu}>
     <div class="slds-welcome-mat__tiles">
         <template if:true={picklistValues.data}>
         <h2 class="title slds-m-bottom_medium">
@@ -28,6 +43,7 @@
         <template if:true={PickBuslist.error}>
             <p></p>エラーです</p>
         </template>
+    
     </div>
 
     <lightning-card title={titleDate} icon-name="custom:custom68"></lightning-card>
@@ -72,6 +88,7 @@
     
     </template>
 
+    </template><!-- /実際画面 -->
 
 
     

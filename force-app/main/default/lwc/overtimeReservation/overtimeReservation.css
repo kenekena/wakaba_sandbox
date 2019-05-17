@@ -4,6 +4,11 @@
     /*padding-top: 1.5em;*/
     align-items: center;
 }
+.mybutton{
+  height: 60px;
+  width: 65px;
+  margin-left: 0;
+}
 
 /* 出席・欠席ボタンレイアウト */
 .btn-square {

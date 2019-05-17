@@ -6,9 +6,10 @@ import TYPE_Class from '@salesforce/schema/ImportantNotes__c.Class__c';
 import TYPE_OUTSIDEFAST from '@salesforce/schema/KindergartenDiary__c.OutsideFast__c';
 import TYPE_OUTSIDE from '@salesforce/schema/KindergartenDiary__c.Outside__c';
 
-/* APEX呼び出し */
+/* APEX Class呼び出し */
 import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
 import findKindergartenDiary from '@salesforce/apex/ImportantNotesController.findKindergartenDiary_OrList';
+import findStaff from '@salesforce/apex/ImportantNotesController.findStaff';
 
 /* ポップアップメッセージ表示 */
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
@@ -23,12 +24,16 @@ import DATE_FIELD from '@salesforce/schema/KindergartenDiary__c.Date__c';       
 import ABSENT_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsentSchedule__c';                    
 import OUTSIDEFAST_FIELD from '@salesforce/schema/KindergartenDiary__c.OutsideFast__c';
 import OUTSIDE_FIELD from '@salesforce/schema/KindergartenDiary__c.Outside__c'; 
+import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';
 
 export default class OvertimeReservation extends LightningElement {
     today = new Date();
     valuenone = '-- なし --';
+    
+    @track mainmenu = false;                    /* 職員選択用 */
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate(); /* 要録の年度取得に使用 */
     @track searchMonth = this.today;            /* どの月の情報を見るかの初期値 */
+    @track Nend;
     @track EnjiListValue = [];                  /* 園児リストの値を収納 */
     @track overtimeReservationList = [];        /* 日毎リスト */
     @track listDisplay = false;                 /* 日毎の一覧画面は最初は非表示 */
@@ -36,7 +41,24 @@ export default class OvertimeReservation extends LightningElement {
     @track EnjiID;                              /* 日毎リスト検索用に使用 */
     @track OutsideFast;                         /* 園児日誌の時間外保育：早朝の選択リストの値を保有 */
     @track Outside;                             /* 園児日誌の時間外保育の選択リストの値を保有 */
-    @track nameValue;
+    @track nameValue;   
+    @track StaffList;                           /* 職員選択用 */
+    @track mainmenu = false;                    /* 職員選択用 */
+    @track errorSfattMenu;                      /* 職員選択用 */
+    StaffId;                                    /* 職員選択用：ID保持 */
+
+
+    /* onload初回の処理 */
+    connectedCallback() {
+        //今日の年度を設定 1~3月なら年度は-1
+        if(this.searchMonth.getMonth() < 3 ){
+             this.Nend = this.today.getFullYear()-1;
+        }else{
+            this.Nend = this.today.getFullYear();
+        }
+
+    }
+
 
 
 
@@ -55,8 +77,25 @@ export default class OvertimeReservation extends LightningElement {
     /* END:先頭ゼロ付加 */
 
     /* ------------------------
-        学級一覧を取得：初回のみ
+        職員一覧を取得：初回のみ
     ------------------------ */
+    @wire(findStaff)
+    findStaffs({ error, data }) {
+        var i;var karilist = [];
+        if (data) {
+            for(i = 0 ;i<data.length;i++){
+                karilist[i] = {
+                    label : data[i].Name,
+                    value : data[i].Id,
+                }
+            }
+      
+            this.StaffList = karilist;
+        } else if (error) {
+            this.errorSfattMenu = error;
+        }   
+    }
+
     //要録obj クラスの値を取得
     @wire(getPicklistValues, {
         recordTypeId: '012000000000000AAA',
@@ -78,6 +117,15 @@ export default class OvertimeReservation extends LightningElement {
     })
     Outside;
     /* END:学級一覧を取得 */
+
+
+    /* ------------------------
+        クラス選択で 園児一覧を取得
+    ------------------------ */
+    selectStaff(event){
+        this.StaffId = event.target.value;
+        this.mainmenu = true;
+    }
 
 
     /* ------------------------
@@ -167,6 +215,11 @@ export default class OvertimeReservation extends LightningElement {
         this.listDisplay = true;                      //初回のみ、一覧リストエリアを表示にする
         this.overtimeReservationList =[];             //日毎リストを初期化
 
+        /*
+        if(this.searchMonth.getMonth() < 3){
+            this.nend.setFullYear(this.searchMonth.getFullYear() - 1);
+        }else{ this.nend.setFullYear(this.searchMonth.getFullYear());}
+        */
         /* 時間外保育早朝の選択リストの値を設定⇒必要かな？
         var OutsideFastList = [];
         OutsideFastList[0] = {value: '-- なし -- ',selected: ''};
@@ -189,10 +242,36 @@ export default class OvertimeReservation extends LightningElement {
         }
         */
 
-        /* 月変更ボタンを押したらthis.searchMonthの月を変更する */
-        if(event.target.dataset.value === '先月'){this.searchMonth.setMonth(this.searchMonth.getMonth() -1)}
-        if(event.target.dataset.value === '今月'){this.searchMonth = new Date()}
-        if(event.target.dataset.value === '翌月'){this.searchMonth.setMonth(this.searchMonth.getMonth() +1)}
+
+        /* 
+            年度に表示月をあわせる
+            月変更ボタンを押したらthis.searchMonthの月を変更する
+        */
+        if(!(event.target.dataset.value === undefined)){
+            if(event.target.dataset.value === 'ToMonth'){
+                this.searchMonth = new Date();
+            }else{
+                this.searchMonth.setMonth(event.target.dataset.value -1);
+            }
+            
+            //年度に合わせる
+            if(this.searchMonth.getMonth() < 3 ){
+                this.searchMonth.setFullYear(this.Nend + 1);
+            }else{
+                this.searchMonth.setFullYear(this.Nend);
+            }
+        }
+
+        
+
+
+        
+        
+
+    
+        //if(event.target.dataset.value === '先月'){this.searchMonth.setMonth(this.searchMonth.getMonth() -1)}
+        //if(event.target.dataset.value === '今月'){this.searchMonth = new Date()}
+        //if(event.target.dataset.value === '翌月'){this.searchMonth.setMonth(this.searchMonth.getMonth() +1)}
         
         /* this.searchMonthを元に月初めと月末を取得 */
         toMonthStart = new Date(this.searchMonth.getFullYear(), this.searchMonth.getMonth(), 1);
@@ -201,7 +280,7 @@ export default class OvertimeReservation extends LightningElement {
         /* 園児日誌検索に必要な情報をセット */
         StartDate = toMonthStart.getFullYear() + "-" + (toMonthStart.getMonth() + 1) + "-"+ toMonthStart.getDate();
         EndDate = ToMonthEnd.getFullYear() + "-" + (ToMonthEnd.getMonth() + 1) + "-"+ ToMonthEnd.getDate();
-        if(changetype === 'changeName'){ this.EnjiID = event.target.value }
+        if(changetype === 'changeName'){ this.EnjiID = event.target.value}
 
         /* 並列処理?的な */
         async function merge2(StartDate2,EndDate2,EnjiID2){
@@ -371,6 +450,7 @@ export default class OvertimeReservation extends LightningElement {
             fields[ID_FIELD.fieldApiName] = event.target.dataset.kdid;      //日報ID
             fields[DATE_FIELD.fieldApiName] = event.target.dataset.date2;   //今日の日付
             fields[ENGJIID_FIELD.fieldApiName] = this.EnjiID;               //関連園児ID
+            fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
 
         /* 時間外保育：早朝 */
         if(choiseType === 'OutsideFast'){

@@ -7,6 +7,7 @@ import BUSTYPE_Class from '@salesforce/schema/Contact.PassageRoute__c';
 
 import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
 import findKindergartenDiary from '@salesforce/apex/ImportantNotesController.findKindergartenDiary';
+import findStaff from '@salesforce/apex/ImportantNotesController.findStaff';
 
 /* ポップアップメッセージ表示 */
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
@@ -24,10 +25,7 @@ import TOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendingSchool
 import TOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.attendingSchoolTime__c';//園児日誌obj:登園時間
 import KOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBack__c';              //園児日誌obj:降園
 import KOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBackTime__c';      //園児日誌obj:降園時間
-
-
-
-
+import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';              //職員名簿obj:
 
 export default class StaffAttendanceMenu03 extends LightningElement {
     today = new Date();
@@ -36,10 +34,33 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     @track firstDisplay = true;
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate();
     @track titleDate = this.today.getFullYear() + "年" + (this.today.getMonth() + 1) + "月"+ this.today.getDate() + "日の出席簿";
-
-    
     @track importantNotes;
     @track error = false;
+    @track StaffList;                           /* 職員選択用 */
+    @track mainmenu = false;                    /* 職員選択用 */
+    @track errorSfattMenu;                      /* 職員選択用 */
+    StaffId;                                    /* 職員選択用：ID保持 */
+
+    /* ------------------------
+        職員一覧を取得：初回のみ
+    ------------------------ */
+    @wire(findStaff)
+    findStaffs({ error, data }) {
+        var i;var karilist = [];
+        if (data) {
+            for(i = 0 ;i<data.length;i++){
+                karilist[i] = {
+                    label : data[i].Name,
+                    value : data[i].Id,
+                }
+            }
+      
+            this.StaffList = karilist;
+        } else if (error) {
+            this.errorSfattMenu = error;
+        }   
+    }
+
 
     /* ------------------------
         学級一覧を取得：初回のみ
@@ -79,6 +100,15 @@ export default class StaffAttendanceMenu03 extends LightningElement {
             result = "" + num;
         }
         return result;
+    }
+
+
+    /* ------------------------
+        クラス選択で 園児一覧を取得
+    ------------------------ */
+    selectStaff(event){
+        this.StaffId = event.target.value;
+        this.mainmenu = true;
     }
 
 
@@ -201,6 +231,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
             fields[ID_FIELD.fieldApiName] = event.target.dataset.kindergartendiaryid;       //日報ID
             fields[DATE_FIELD.fieldApiName] = this.searchDate;                              //今日の日付
             fields[ENGJIID_FIELD.fieldApiName] = this.importantNotes[indexs].Contact__r.Id; //関連園児ID
+            fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
         /* 出席簿の場合 */
         if(event.target.dataset.group === 'class'){
             fields[AS_FIELD.fieldApiName] = event.target.dataset.value;                     //出席予定

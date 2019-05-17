@@ -1,5 +1,5 @@
 public with sharing class ImportantNotesController {
-
+    /* 使わない
     @AuraEnabled(cacheable=true)
     public static List<ImportantNotes__c> getImportantNotesList() {
         return [SELECT Id, Name,Class__c FROM ImportantNotes__c];
@@ -13,6 +13,18 @@ public with sharing class ImportantNotesController {
         String key = searchKey;
         return [SELECT Id, Name , Contact__r.kana__c , Class__c,Remarks__c FROM ImportantNotes__c WHERE Class__c =: searchKey];
     }
+    */
+
+    /* ------------------------------------------------------------------------
+        共通：職員一覧を呼び出し　overtimeReservation / staffAttendanceMenu03
+    ------------------------------------------------------------------------ */
+    @AuraEnabled(cacheable=true)
+    public static List<Staff__c> findStaff() {
+        return [SELECT Id,Name FROM Staff__c WHERE ListDisplayCheck__c = true ];
+    }
+    
+
+
     /* ------------------------------------------------
         overtimeReservation:園児日誌一覧を取得
     ------------------------------------------------ */

@@ -1,6 +1,19 @@
 <template>
     <div class="slds-welcome-mat__tiles">
+        <template if:false={mainmenu}>
+            <lightning-combobox
+                name="changeNames"
+                label="職員一覧"
+                value={nameValues}
+                placeholder="職員を選択"
+                options={StaffList}
+                onchange={selectStaff}
+            ></lightning-combobox>
+            <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /><br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+        </template>
         
+        <template if:true={mainmenu}>
+
         <template if:true={picklistValues.data}>
         <h2 class="title slds-m-bottom_medium">
             <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
@@ -26,14 +39,44 @@
         <template if:false={listDisplay}>
             <div class="slds-m-top_large">
                 <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
-                
+
             </div>
         </template>
         <template if:true={listDisplay}>
             <div class="slds-m-top_large">
+                <button onclick={handleChange} data-label="今月" data-value="ToMonth" type="button"  class="slds-m-right_large slds-button slds-button_neutral mybutton">今月</button><br/>
+                <button onclick={handleChange} data-label="4月" data-value="4" type="button"  class="slds-button slds-button_neutral mybutton">4月</button>
+                <button onclick={handleChange} data-label="5月" data-value="5" type="button"  class="slds-button slds-button_neutral mybutton">5月</button>
+                <button onclick={handleChange} data-label="6月" data-value="6" type="button"  class="slds-button slds-button_neutral mybutton">6月</button>
+                <button onclick={handleChange} data-label="7月" data-value="7" type="button"  class="slds-button slds-button_neutral mybutton">7月</button>
+                <button onclick={handleChange} data-label="8月" data-value="8" type="button"  class="slds-button slds-button_neutral mybutton">8月</button>
+                <button onclick={handleChange} data-label="9月" data-value="9" type="button"  class="slds-button slds-button_neutral mybutton">9月</button><br />
+                <button onclick={handleChange} data-label="10月" data-value="10" type="button"  class="slds-button slds-button_neutral mybutton">10月</button>
+                <button onclick={handleChange} data-label="11月" data-value="11" type="button"  class="slds-button slds-button_neutral mybutton">11月</button>
+                <button onclick={handleChange} data-label="12月" data-value="12" type="button"  class="slds-button slds-button_neutral mybutton">12月</button>
+                <button onclick={handleChange} data-label="1月" data-value="1" type="button"  class="slds-button slds-button_neutral mybutton">1月</button>
+                <button onclick={handleChange} data-label="2月" data-value="2" type="button"  class="slds-button slds-button_neutral mybutton">2月</button>
+                <button onclick={handleChange} data-label="3月" data-value="3" type="button"  class="slds-button slds-button_neutral mybutton">3月</button>
+                <!--
+                <lightning-button height="100px" onclick={handleChange} data-value="ToMonth" type="button" label="今月" class="slds-m-right_large"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="4" type="button" label="4月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="5" type="button" label="5月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="6" type="button" label="6月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="7" type="button" label="7月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="8" type="button" label="8月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="9" type="button" label="9月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="10" type="button" label="10月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="11" type="button" label="11月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="12" type="button" label="12月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="1" type="button" label="1月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="2" type="button" label="2月"></lightning-button>
+                <lightning-button onclick={handleChange} data-value="3" type="button" label="3月"></lightning-button>
+                -->
+                <!--
                 <lightning-button onclick={handleChange} data-value="先月" type="button" label="先月"></lightning-button>
                 <lightning-button onclick={handleChange} data-value="今月" type="button" label="今月"></lightning-button>
                 <lightning-button onclick={handleChange} data-value="翌月" type="button" label="翌月"></lightning-button>
+                -->
             </div>
 
             <div class="slds-m-top_large slds-border_bottom slds-m-horizontal_large">
@@ -76,6 +119,6 @@
             </template> 
             </div>
         </template>
-
+    </template><!-- /実際画面 -->
     </div>
 </template>
