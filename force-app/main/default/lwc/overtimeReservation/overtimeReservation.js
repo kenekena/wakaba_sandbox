@@ -29,7 +29,7 @@ import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';
 export default class OvertimeReservation extends LightningElement {
     today = new Date();
     valuenone = '-- なし --';
-    
+    todayDate = this.today.getFullYear() + this.padZero((this.today.getMonth() + 1)) + this.padZero(this.today.getDate());
     @track mainmenu = false;                    /* 職員選択用 */
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate(); /* 要録の年度取得に使用 */
     @track searchMonth = this.today;            /* どの月の情報を見るかの初期値 */
@@ -199,6 +199,7 @@ export default class OvertimeReservation extends LightningElement {
         var toMonthStart;                             //月初めjsループ用
         var toMonthStartText;                         //月初め表示用：「YYYY年M月D日」
         var toMonthStartText2;                        //月初め検索用：「YYYY-MM-DD」
+        var ThisDate;
         var StartDate;                                //月初めSOQL検索用
         var ToMonthEnd;                               //月末jsループ用
         var EndDate;                                  //月末SOQL検索用
@@ -332,6 +333,7 @@ export default class OvertimeReservation extends LightningElement {
                         }
                     }
                     /* 日付と検索用の日付をセット */
+                    ThisDate = toMonthStart.getFullYear() + this.padZero((toMonthStart.getMonth() + 1)) + this.padZero(toMonthStart.getDate());
                     toMonthStartText = toMonthStart.getFullYear() + '年' + (toMonthStart.getMonth() + 1) + '月'+ toMonthStart.getDate()+ '日' ;
                     toMonthStartText2= toMonthStart.getFullYear() + '-' + this.padZero((toMonthStart.getMonth() + 1)) + '-' + this.padZero(toMonthStart.getDate());
 
@@ -389,6 +391,19 @@ export default class OvertimeReservation extends LightningElement {
                     }else{
                         OnedayBox.OutsideClass += ' slds-select';
                     }
+        
+
+                    //過去だったらdisabled
+                    
+                        if( ThisDate < this.todayDate ){
+                            OnedayBox.OutsideFastDisabled = 'disabled';
+                            OnedayBox.OutsideDisabled = 'disabled';
+                            OnedayBox.AbsentDisabled = 'disabled';
+                        }
+                    
+                    
+
+
 
                     /* 一日の情報を取りまとめる */
                     TemporarilyOvertimeReservationList[i] = {
@@ -403,7 +418,10 @@ export default class OvertimeReservation extends LightningElement {
                         AbsentSchedule : OnedayBox.AbsentSchedule,
                         AbsentScheduleClass :OnedayBox.AbsentScheduleClass,
                         OutsideListValue : OutsideListNow,
-                        OutsideFastListValue : OutsideFastListNow
+                        OutsideFastListValue : OutsideFastListNow,
+                        OutsideFastDisabled : OnedayBox.OutsideFastDisabled,
+                        OutsideDisabled : OnedayBox.OutsideDisabled,
+                        AbsentDisabled : OnedayBox.AbsentDisabled
                     };
                     
                     

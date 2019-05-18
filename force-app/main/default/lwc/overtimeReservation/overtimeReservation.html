@@ -89,7 +89,7 @@
                         <label class="slds-form-element__label" for="select-01">時間外保育：早朝</label>
                         <div class="slds-form-element__control">
                             <div class="slds-select_container">
-                            <select class={item.OutsideFastClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="OutsideFast">
+                            <select class={item.OutsideFastClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="OutsideFast" disabled={item.OutsideFastDisabled}>
                                 <template for:each={item.OutsideFastListValue} for:item="lists">
                                     <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
                                 </template>
@@ -102,7 +102,7 @@
                         <label class="slds-form-element__label" for="select-01">時間外保育</label>
                         <div class="slds-form-element__control">
                             <div class="slds-select_container">
-                            <select class={item.OutsideClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="Outside">
+                            <select class={item.OutsideClass} onchange={upsertEvent} data-kdid={item.KdID} data-date2={item.date2} data-type="Outside" disabled={item.OutsideDisabled}>
                                 <template for:each={item.OutsideListValue} for:item="lists">
                                     <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
                                 </template>
@@ -112,7 +112,7 @@
                     </div>
 
                     <p class="slds-col slds-size_1-of-4 flex-ceter">
-                        <button  onclick={upsertEvent} type="button" class={item.AbsentScheduleClass} value={item.AbsentSchedule} data-kdid={item.KdID} data-date2={item.date2} data-type="Absent">欠席</button>
+                        <button  onclick={upsertEvent} type="button" class={item.AbsentScheduleClass} value={item.AbsentSchedule} data-kdid={item.KdID} data-date2={item.date2} data-type="Absent" disabled={item.AbsentDisabled}>欠席</button>
                     </p>
                 </div>
                 

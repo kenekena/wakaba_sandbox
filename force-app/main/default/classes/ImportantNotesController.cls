@@ -20,7 +20,7 @@ public with sharing class ImportantNotesController {
     ------------------------------------------------------------------------ */
     @AuraEnabled(cacheable=true)
     public static List<Staff__c> findStaff() {
-        return [SELECT Id,Name FROM Staff__c WHERE ListDisplayCheck__c = true ];
+        return [SELECT Id,Name FROM Staff__c WHERE ListDisplayCheck__c = true  ];
     }
     
 
@@ -69,10 +69,10 @@ public with sharing class ImportantNotesController {
         searchYears = searchYears.left(4);
         
         if(searchGroup == 'bus'){
-            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Contact__r.PassageRoute__c =: searchValue AND FiscalYear__c =:searchYears];
+            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Contact__r.PassageRoute__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY PickUpTime__c ASC NULLS LAST];
         }
         if(searchGroup == 'class'){
-            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchValue AND FiscalYear__c =:searchYears];
+            return [SELECT Id, Name ,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY DisplayOrder__c ASC NULLS LAST];
         }else{
             return new List<ImportantNotes__c>();
         }
