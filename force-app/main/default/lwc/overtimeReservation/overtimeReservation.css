@@ -46,5 +46,22 @@
     border-bottom-color: #666666;
   }
 
+  .border_Red{
+    border: 1px solid #ff0000;
+  }
 
-  
+  .ikkatu {
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 1.5em;
+    position: relative;
+  }
+
+  .ikkatu .title {
+    color: #000;
+    background: rgb(243, 242, 242);
+    font-size: 14px;
+    padding: 0 0.5em;
+    position: absolute;
+    top: -0.7em;
+  }

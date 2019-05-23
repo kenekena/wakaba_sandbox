@@ -7,6 +7,7 @@
     <columns>BreakTimeTarget__c</columns>
     <columns>School__c</columns>
     <columns>CardNumber__c</columns>
+    <columns>ListDisplayCheck__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>School__c</field>

@@ -25,6 +25,16 @@
                 <default>false</default>
                 <label>▼▼ぐみ</label>
             </value>
+            <value>
+                <fullName>ゆり</fullName>
+                <default>false</default>
+                <label>ゆり</label>
+            </value>
+            <value>
+                <fullName>きく</fullName>
+                <default>false</default>
+                <label>きく</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

@@ -43,6 +43,28 @@
             </div>
         </template>
         <template if:true={listDisplay}>
+            <lightning-layout>
+            <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="3" >
+                <div class="slds-m-top_large ikkatu">
+                <p class="title">一括登録</p>
+                <select>
+                    <option value="">{valuenone}</option>
+                    <template for:each={OutsideFast.data.values} for:item="lists">
+                        <option key={lists.value} value={lists.value}>{lists.value}</option>
+                    </template>
+                </select>
+                <select>
+                    <option value="">{valuenone}</option>
+                    <template for:each={Outside.data.values} for:item="lists">
+                        <option key={lists.value} value={lists.value}>{lists.value}</option>
+                    </template>
+                </select>
+                <button onclick={AllCreate}>登録</button>
+                </div>
+            </lightning-layout-item>
+            </lightning-layout>
+        
+
             <div class="slds-m-top_large">
                 <button onclick={handleChange} data-label="今月" data-value="ToMonth" type="button"  class="slds-m-right_large slds-button slds-button_neutral mybutton">今月</button><br/>
                 <button onclick={handleChange} data-label="4月" data-value="4" type="button"  class="slds-button slds-button_neutral mybutton">4月</button>
@@ -57,35 +79,15 @@
                 <button onclick={handleChange} data-label="1月" data-value="1" type="button"  class="slds-button slds-button_neutral mybutton">1月</button>
                 <button onclick={handleChange} data-label="2月" data-value="2" type="button"  class="slds-button slds-button_neutral mybutton">2月</button>
                 <button onclick={handleChange} data-label="3月" data-value="3" type="button"  class="slds-button slds-button_neutral mybutton">3月</button>
-                <!--
-                <lightning-button height="100px" onclick={handleChange} data-value="ToMonth" type="button" label="今月" class="slds-m-right_large"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="4" type="button" label="4月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="5" type="button" label="5月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="6" type="button" label="6月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="7" type="button" label="7月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="8" type="button" label="8月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="9" type="button" label="9月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="10" type="button" label="10月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="11" type="button" label="11月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="12" type="button" label="12月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="1" type="button" label="1月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="2" type="button" label="2月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="3" type="button" label="3月"></lightning-button>
-                -->
-                <!--
-                <lightning-button onclick={handleChange} data-value="先月" type="button" label="先月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="今月" type="button" label="今月"></lightning-button>
-                <lightning-button onclick={handleChange} data-value="翌月" type="button" label="翌月"></lightning-button>
-                -->
             </div>
 
             <div class="slds-m-top_large slds-border_bottom slds-m-horizontal_large">
             <template for:each={overtimeReservationList} for:item="item" >
             
                 <div key={item.date} class="slds-grid slds-gutters slds-p-vertical_medium slds-border_top ">
-                    <p class="slds-col slds-size_1-of-4 flex-ceter">{item.date}：{item.week}</p>
+                    <p class="slds-col slds-size_1-of-6 flex-ceter">{item.date}：{item.week}</p>
 
-                    <div class="slds-form-element slds-col slds-size_1-of-4">
+                    <div class="slds-form-element slds-col slds-size_2-of-6">
                         <label class="slds-form-element__label" for="select-01">時間外保育：早朝</label>
                         <div class="slds-form-element__control">
                             <div class="slds-select_container">
@@ -98,7 +100,7 @@
                         </div>
                     </div>
 
-                    <div class="slds-form-element slds-col slds-size_1-of-4">
+                    <div class="slds-form-element slds-col slds-size_2-of-6">
                         <label class="slds-form-element__label" for="select-01">時間外保育</label>
                         <div class="slds-form-element__control">
                             <div class="slds-select_container">
@@ -111,8 +113,15 @@
                         </div>
                     </div>
 
-                    <p class="slds-col slds-size_1-of-4 flex-ceter">
+                    <p class="slds-col slds-size_3-of-6 flex-ceter">
                         <button  onclick={upsertEvent} type="button" class={item.AbsentScheduleClass} value={item.AbsentSchedule} data-kdid={item.KdID} data-date2={item.date2} data-type="Absent" disabled={item.AbsentDisabled}>欠席</button>
+                        <select onchange={upsertEvent} class={item.AbsenceReasonListClass} data-type="reason" data-id={item.Id} data-kdid={item.KdID} data-date2={item.date2} disabled={item.AbsenceReasonDisabled}>
+                            <template for:each={item.AbsenceReasonList} for:item="lists">
+                                <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                            </template>
+                        </select>
+                        <button onclick={upsertEvent} type=button class={item.NoAttendingSchoolClass}  data-type="bus" data-value="行き利用しない" data-id={item.Id} data-kdid={item.KdID} data-date2={item.date2} disabled={item.NoAttendingSchoolDisabled}>行き✕</button>
+                        <button onclick={upsertEvent} type=button class={item.NoGoingBackClass}  data-type="bus" data-value="帰り利用しない" data-id={item.Id} data-kdid={item.KdID} data-date2={item.date2} disabled={item.NoGoingBackDisabled}>帰り✕</button>
                     </p>
                 </div>
                 

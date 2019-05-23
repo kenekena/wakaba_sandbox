@@ -1,5 +1,5 @@
 import { LightningElement, track, wire } from 'lwc';
-import { CurrentPageReference } from 'enJiList/node_modules/lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';

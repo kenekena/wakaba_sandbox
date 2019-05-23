@@ -110,3 +110,11 @@
     border-bottom-color:rgb(160, 102, 3);
   }
 
+  .gray {
+    background: #8f8f8f;/*ボタン色*/
+    border-bottom-color: #666666;
+  }
+
+  .border_Red{
+    border: 1px solid #ff0000;
+  }

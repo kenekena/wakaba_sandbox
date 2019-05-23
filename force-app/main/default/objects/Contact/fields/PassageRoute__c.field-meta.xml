@@ -15,6 +15,26 @@
                 <default>false</default>
                 <label>コース１</label>
             </value>
+            <value>
+                <fullName>コース2</fullName>
+                <default>false</default>
+                <label>コース2</label>
+            </value>
+            <value>
+                <fullName>コース3</fullName>
+                <default>false</default>
+                <label>コース3</label>
+            </value>
+            <value>
+                <fullName>コース4</fullName>
+                <default>false</default>
+                <label>コース4</label>
+            </value>
+            <value>
+                <fullName>コース5</fullName>
+                <default>false</default>
+                <label>コース5</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

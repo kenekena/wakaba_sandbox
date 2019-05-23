@@ -4,6 +4,7 @@ import { LightningElement,wire,track } from 'lwc';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import TYPE_Class from '@salesforce/schema/ImportantNotes__c.Class__c';
 import BUSTYPE_Class from '@salesforce/schema/Contact.PassageRoute__c';
+import ABSENCE_REASON from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';
 
 import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
 import findKindergartenDiary from '@salesforce/apex/ImportantNotesController.findKindergartenDiary';
@@ -25,10 +26,15 @@ import TOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendingSchool
 import TOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.attendingSchoolTime__c';//園児日誌obj:登園時間
 import KOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBack__c';              //園児日誌obj:降園
 import KOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBackTime__c';      //園児日誌obj:降園時間
+import GONOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusGoingNotUse__c';      //園児日誌obj:行き利用しない
+import BACKNOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusBackNotUse__c';     //園児日誌obj:帰り使用しない
+import ABSENCEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';  //園児日誌obj:欠席理由
 import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';              //職員名簿obj:
 
 export default class StaffAttendanceMenu03 extends LightningElement {
+    processing = false;
     today = new Date();
+    valuenone = '-- なし --';
     @track ClassList;
     @track BusList;
     @track firstDisplay = true;
@@ -80,6 +86,16 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     })
     PickBuslist;
 
+    /* ------------------------
+        欠席理由の値を取得：初回のみ
+    ------------------------ */
+    @wire(getPicklistValues, {
+        recordTypeId: '012000000000000AAA',
+        fieldApiName: ABSENCE_REASON
+    })
+    AbsenceReasonList;
+
+
     //現在時刻取得（yyyy/mm/ddThh:mm:ss.000Z）
     getCurrentTime() {
         var now = new Date();
@@ -121,6 +137,11 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         var KindergartenDiaryList;  //園児日報一覧を一旦格納
         var i;                      //forループ用1
         var i2;                     //forループ用2
+        var i3;                     //forループ用3
+        var AbsenceReasonListNow = [];    //欠席理由の値とselected情報を一時格納
+        var AbsenceReasonListClass;  //欠席理由のスタイル
+        var AbsenceReasonNow;        //selectされている値
+
         //var setsCheck;              //forループで要録と日報がマッチしたかどうかをチェック
         var group =event.target.dataset.group;//クラス選択かバス選択か
         //並列処理?的な
@@ -163,30 +184,100 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 //要録を一覧をループ、その中で園児日報一覧をループさせ、
                 //お互いの園児ID（Contact.ID）がマッチしたらImportantNoteList側に日報情報（日報IDと現在の出席情報）を追記する
                 for(i = 0; i< ImportantNoteList.length; i++){
-                    
-                    //setsCheck =false;   //マッチ情報を初期化
+                    /* 初期化 */
+                    AbsenceReasonListNow=[]; /* 欠席理由を初期化 */
+                    AbsenceReasonListClass ='';
+                    AbsenceReasonNow = '';
+
+                    /* 欠席理由の選択リストの値を再取得 */
+                    AbsenceReasonListNow[0] = {value: this.valuenone ,selected: ''};
+                    for(i3 = 0; i3< this.AbsenceReasonList.data.values.length; i3++){
+                        AbsenceReasonListNow[i3+1] = {
+                            value : this.AbsenceReasonList.data.values[i3].value,
+                            selected: ''
+                        }
+                    }
 
                     for(i2 = 0; i2< KindergartenDiaryList.length; i2++){
                         if(ImportantNoteList[i].Contact__r.Id === KindergartenDiaryList[i2].Contact__r.Id){
                             ImportantNoteList[i].kindergartenDiaryId = KindergartenDiaryList[i2].Id;
                             ImportantNoteList[i].AttendanceSchedule = KindergartenDiaryList[i2].AttendanceSchedule__c;
-                            if(KindergartenDiaryList[i2].AttendingSchool__c){ImportantNoteList[i].AttendingSchool='登園'}
-                            if(KindergartenDiaryList[i2].GoingBack__c){ImportantNoteList[i].GoingBack='降園'}
-                            if(KindergartenDiaryList[i2].AbsentSchedule__c){ImportantNoteList[i].AbsentSchedule=true}
-                            //setsCheck =true;//マッチしたらtrue
+                            ImportantNoteList[i].AttendingSchool = KindergartenDiaryList[i2].AttendingSchool__c;
+                            ImportantNoteList[i].GoingBack = KindergartenDiaryList[i2].GoingBack__c;
+                            ImportantNoteList[i].AbsentSchedule = KindergartenDiaryList[i2].AbsentSchedule__c;
+                            ImportantNoteList[i].NoAttendingSchool = KindergartenDiaryList[i2].BusGoingNotUse__c;
+                            ImportantNoteList[i].NoGoingBack = KindergartenDiaryList[i2].BusBackNotUse__c;
+
+                            /*  欠席理由の値の数だけループ */  
+                            for(i3 = 0; i3< AbsenceReasonListNow.length; i3++){
+                                /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                                if(AbsenceReasonListNow[i3].value === KindergartenDiaryList[i2].AbsenceReason__c){
+                                    AbsenceReasonListNow[i3].selected = 'selected';
+                                    AbsenceReasonNow = AbsenceReasonListNow[i3].value;
+                                    ImportantNoteList[i].selectedValue = AbsenceReasonListNow[i3].value;
+                                    //AbsenceReasonListClass='blue';
+                                }
+                            }
                         }
                     }
-                    
-                    if(!(ImportantNoteList[i].AttendanceSchedule)){
-                        if(ImportantNoteList[i].AbsentSchedule){    //欠席予定がtrueなら
-                            ImportantNoteList[i].AttendanceSchedule='欠席予定'
-                        }else{
-                            ImportantNoteList[i].AttendanceSchedule='未定'
-                        }
+
+                    /* ひとり事の情報を取りまとめる */
+
+                    /* 出席簿の処理 */
+                    ImportantNoteList[i].AbsenceClass='btn-square gray';
+                    ImportantNoteList[i].AttendanceClass='btn-square gray';
+                    if(ImportantNoteList[i].AbsentSchedule){
+                        ImportantNoteList[i].AbsenceClass='btn-square blue';
                     }
-                    if(!(ImportantNoteList[i].AttendingSchool)){ImportantNoteList[i].AttendingSchool='ーー'}
-                    if(!(ImportantNoteList[i].GoingBack)){ImportantNoteList[i].GoingBack='ーー'}
+                    if(ImportantNoteList[i].AttendanceSchedule==='出席'){
+                        ImportantNoteList[i].AttendanceClass='btn-square yellow';     
+                    }
+                    if(ImportantNoteList[i].AttendanceSchedule==='欠席'){
+                        ImportantNoteList[i].AbsenceClass='btn-square yellow';
+                    }
+
+                    /* バス乗車 */
+                    if(ImportantNoteList[i].NoAttendingSchool){
+                        ImportantNoteList[i].NoAttendingSchoolClass='btn-square blue';
+                    }else{
+                        ImportantNoteList[i].NoAttendingSchool=false;
+                        ImportantNoteList[i].NoAttendingSchoolClass='btn-square gray';
+                    }
+                    if(ImportantNoteList[i].NoGoingBack){
+                        ImportantNoteList[i].NoGoingBackClass='btn-square blue';
+                    }else{
+                        ImportantNoteList[i].NoGoingBack=false;
+                        ImportantNoteList[i].NoGoingBackClass='btn-square gray';
+                    }
+
+                    /* バス乗車：登園ボタン処理 */
+                    if(ImportantNoteList[i].AttendingSchool){
+                        ImportantNoteList[i].AttendingSchoolClass='btn-square yellow';
+                    }else{
+                        ImportantNoteList[i].AttendingSchool=false;
+                        ImportantNoteList[i].AttendingSchoolClass='btn-square gray';
+                    }
+
+                    /* バス乗車：下車ボタン処理 */
+                    if(ImportantNoteList[i].GoingBack){
+                        ImportantNoteList[i].GoingBackClass='btn-square yellow';
+                    }else{
+                        ImportantNoteList[i].GoingBack=false;
+                        ImportantNoteList[i].GoingBackClass='btn-square gray';
+                    }
+
+                    /* 欠席理由 */ 
+                    if(ImportantNoteList[i].AttendanceSchedule ==='欠席' && AbsenceReasonNow === '' ){
+                        ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass + 'border_Red';
+                    }else{
+                        ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass;
+                    }
+                    ImportantNoteList[i].AbsenceReasonList = AbsenceReasonListNow;
+
                     
+                    
+
+
                     
                 }
 
@@ -212,9 +303,21 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         var i ;                 //ループ用
         var recordInput = {};   //レコード作成・更新用
         var timesstump = this.getCurrentTime();
-        var AttendingSchool = 'ーー';var GoingBack = 'ーー';
-        event.preventDefault();
+        var AttendingSchool;var GoingBack;
+        var AttendingSchoolClass;var GoingBackClass;
+        var NoAttendingSchool;var NoGoingBack;
+        var NoAttendingSchoolClass;var NoGoingBackClass;
+        var AttendanceClass;var AbsenceClass;
+        var AbsenceReason; var AbsenceReasonListClass;
+        var AttendanceSchedule;
+        
+        /* 連打禁止 */
+        if(this.processing){return}
+        /* 処理中フラグ */
+        this.processing =true;
 
+        event.preventDefault();
+        
         //  this.importantNotes.data.Id -> クリックした要素のカスタム要素 data-Idのこと
         //  this.importantNotes.dataをループさせてthis.importantNotes[i].Idとマッチしたものが選んだ順番
         //  this.importantNotes[indexs]で表示される
@@ -223,39 +326,166 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 indexs = i;
             }
         }
+        /* 初期値設定 */
+        
+        AttendingSchool = this.importantNotes[indexs].AttendingSchool;
+        GoingBack = this.importantNotes[indexs].GoingBack;
+        AttendingSchoolClass = this.importantNotes[indexs].AttendingSchoolClass;
+        GoingBackClass = this.importantNotes[indexs].GoingBackClass;
+        NoAttendingSchool = this.importantNotes[indexs].NoAttendingSchool;     
+        NoGoingBack = this.importantNotes[indexs].NoGoingBack;
+        NoAttendingSchoolClass = this.importantNotes[indexs].NoAttendingSchoolClass;   
+        NoGoingBackClass = this.importantNotes[indexs].NoGoingBackClass;
+        AttendanceClass = this.importantNotes[indexs].AttendanceClass;
+        AbsenceClass = this.importantNotes[indexs].AbsenceClass;
+        AbsenceReason = this.importantNotes[indexs].selectedValue;
+        AttendanceSchedule = this.importantNotes[indexs].AttendanceSchedule;
+
 
         /* 日報レコード作成や更新に必要な項目を代入  */
         /* バス（登園）かバス（降園）かクラスかでセットする項目を変える */
         const fields = {};
+
+        
+
         /* 共通 */
             fields[ID_FIELD.fieldApiName] = event.target.dataset.kindergartendiaryid;       //日報ID
             fields[DATE_FIELD.fieldApiName] = this.searchDate;                              //今日の日付
             fields[ENGJIID_FIELD.fieldApiName] = this.importantNotes[indexs].Contact__r.Id; //関連園児ID
             fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
+
+        
+
         /* 出席簿の場合 */
         if(event.target.dataset.group === 'class'){
             fields[AS_FIELD.fieldApiName] = event.target.dataset.value;                     //出席予定
+            AttendanceSchedule = event.target.dataset.value;
             fields[ASTIME_FIELD.fieldApiName] = timesstump;                                 //出席欠席した時間
+            if(event.target.dataset.value ==='出席'){
+                //すでに出席だったら
+                if(this.importantNotes[indexs].AttendanceSchedule === '出席'){
+                    fields[AS_FIELD.fieldApiName] ='';
+                    AttendanceSchedule ='';
+                    fields[ASTIME_FIELD.fieldApiName] ='';
+                    AttendanceClass='btn-square gray';
+                //出席
+                }else{
+                    AttendanceClass='btn-square yellow';
+                    AbsenceReasonListClass='';
+                    if(this.importantNotes[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
+                        AbsenceClass='btn-square blue';
+                    }else{
+                        AbsenceClass='btn-square gray';  
+                    }
+                }
+            }else{
+                //すでに欠席だったら
+                if(this.importantNotes[indexs].AttendanceSchedule === '欠席'){
+                    fields[AS_FIELD.fieldApiName] ='';
+                    AttendanceSchedule ='';
+                    fields[ASTIME_FIELD.fieldApiName] ='';
+                    AbsenceReasonListClass='';
+                    if(this.importantNotes[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
+                        AbsenceClass='btn-square blue';
+                    }else{
+                        AbsenceClass='btn-square gray';  
+                    }
+                    
+                //欠席
+                }else{
+                    AttendanceClass='btn-square gray';  
+                    AbsenceClass='btn-square yellow';
+                    //欠席理由がなしなら赤枠に切り替える
+                    if(AbsenceReason===undefined || AbsenceReason===''){
+                        AbsenceReasonListClass='border_Red';
+                    }
+                }
+            }
         }
+
+
+        /* クラス：欠席理由の場合 */
+        if(event.target.dataset.group === 'reason'){
+            if(event.target.value===this.valuenone || event.target.value==='' || event.target.value===undefined){
+                fields[ABSENCEREASON_FIELD.fieldApiName] = '';
+                AbsenceReason = '';
+
+                if(this.importantNotes[indexs].AttendanceSchedule ==='欠席'){
+                    AbsenceReasonListClass='border_Red';
+                }else{
+                    AbsenceReasonListClass='';
+                }
+            }else{
+                fields[ABSENCEREASON_FIELD.fieldApiName] = event.target.value;
+                AbsenceReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }  
+ 
         /* バス：登園の場合 */
         if(event.target.dataset.group === 'bus' && event.target.dataset.value === '登園'){
-            fields[TOUEN_FIELD.fieldApiName] = true;                                        //登園チェック
-            fields[TOUENTIME_FIELD.fieldApiName] = timesstump;                              //登園時間
-            AttendingSchool= '登園';
+            /* ON・OFFスイッチ */
+            if(this.importantNotes[indexs].AttendingSchool){
+                fields[TOUEN_FIELD.fieldApiName] = false;                                       //登園チェック
+                fields[TOUENTIME_FIELD.fieldApiName] = '';                                      //登園時間
+                AttendingSchool=false;
+                AttendingSchoolClass='btn-square gray';
+            }else{
+                fields[TOUEN_FIELD.fieldApiName] = true;                                         //登園チェック
+                fields[TOUENTIME_FIELD.fieldApiName] = timesstump;                               //登園時間
+                AttendingSchool=true;
+                AttendingSchoolClass='btn-square yellow';
+            }
         }
         /* バス：降園の場合 */
         if(event.target.dataset.group === 'bus' && event.target.dataset.value === '降園'){
-            fields[KOUEN_FIELD.fieldApiName] = true;                                        //降園チェック
-            fields[KOUENTIME_FIELD.fieldApiName] = timesstump;                              //降園時間 
-            GoingBack= '降園';
+             /* ON・OFFスイッチ */
+             if(this.importantNotes[indexs].GoingBack){
+                fields[KOUEN_FIELD.fieldApiName] = false;                                        //登園チェック
+                fields[KOUENTIME_FIELD.fieldApiName] = '';                                       //登園時間
+                GoingBack=false;
+                GoingBackClass='btn-square gray';
+            }else{
+                fields[KOUEN_FIELD.fieldApiName] = true;                                         //登園チェック
+                fields[KOUENTIME_FIELD.fieldApiName] = timesstump;                               //登園時間
+                GoingBack=true;
+                GoingBackClass='btn-square yellow';
+            }
         }
-        if(this.importantNotes[indexs].AttendingSchool === '登園'){AttendingSchool= '登園'}
-        if(this.importantNotes[indexs].GoingBack === '降園'){GoingBack= '降園'}
+
+        /* バス：行き利用なし */
+        if(event.target.dataset.group === 'bus' && event.target.dataset.value === '行き利用しない'){
+            /* ON・OFFスイッチ */
+            if(this.importantNotes[indexs].NoAttendingSchool){
+               fields[GONOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
+               NoAttendingSchool=false;
+               NoAttendingSchoolClass='btn-square gray';
+           }else{
+               fields[GONOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
+               NoAttendingSchool=true;
+               NoAttendingSchoolClass='btn-square blue';
+           }
+        }
+        /* バス：行き利用なし */
+        if(event.target.dataset.group === 'bus' && event.target.dataset.value === '帰り利用しない'){
+            /* ON・OFFスイッチ */
+            if(this.importantNotes[indexs].NoGoingBack){
+            fields[BACKNOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
+            NoGoingBack=false;
+            NoGoingBackClass='btn-square gray';
+        }else{
+            fields[BACKNOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
+            NoGoingBack=true;
+            NoGoingBackClass='btn-square blue';
+        }
+    }
+        //if(this.importantNotes[indexs].AttendingSchool === '登園'){AttendingSchool= '登園'}
+        //if(this.importantNotes[indexs].GoingBack === '降園'){GoingBack= '降園'}
 
         
         //console.log(fields[ID_FIELD.fieldApiName]);
         //もし選んだ要録に日報IDがセットされてなかったら日報を作成し、セットされてたら日報を更新
-        if(fields[ID_FIELD.fieldApiName]=== undefined){
+        if(fields[ID_FIELD.fieldApiName]=== undefined || fields[ID_FIELD.fieldApiName]=== ''){
 
             recordInput = {apiName: KindergartenDiary_OBJECT.objectApiName, fields };   //作成する情報をセット
 
@@ -263,9 +493,20 @@ export default class StaffAttendanceMenu03 extends LightningElement {
             .then(result => {   //レコード作成に成功したら
                 //表示用の配列情報を更新する
                 this.importantNotes[indexs].kindergartenDiaryId = result.id;                   //作成したレコードIDを表示用の変数に戻してあげる：再描写
-                this.importantNotes[indexs].AttendanceSchedule = fields[AS_FIELD.fieldApiName];//作成した出席情報を表示用の変数に戻してあげる：再描写
+                this.importantNotes[indexs].AttendanceSchedule = AttendanceSchedule;//作成した出席情報を表示用の変数に戻してあげる：再描写
                 this.importantNotes[indexs].AttendingSchool = AttendingSchool;
+                this.importantNotes[indexs].AttendingSchoolClass = AttendingSchoolClass;
                 this.importantNotes[indexs].GoingBack = GoingBack;
+                this.importantNotes[indexs].GoingBackClass = GoingBackClass;
+                this.importantNotes[indexs].NoAttendingSchool = NoAttendingSchool;
+                this.importantNotes[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.importantNotes[indexs].NoGoingBack = NoGoingBack;
+                this.importantNotes[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.importantNotes[indexs].AttendanceClass = AttendanceClass;
+                this.importantNotes[indexs].AbsenceClass = AbsenceClass;
+                this.importantNotes[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.importantNotes[indexs].selectedValue = AbsenceReason;
+                this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('作成OK');
 
@@ -285,9 +526,20 @@ export default class StaffAttendanceMenu03 extends LightningElement {
             recordInput = { fields };
             updateRecord(recordInput)
             .then(() => {
-                this.importantNotes[indexs].AttendanceSchedule = fields[AS_FIELD.fieldApiName];
+                this.importantNotes[indexs].AttendanceSchedule = AttendanceSchedule;
                 this.importantNotes[indexs].AttendingSchool = AttendingSchool;
+                this.importantNotes[indexs].AttendingSchoolClass = AttendingSchoolClass;
                 this.importantNotes[indexs].GoingBack = GoingBack;
+                this.importantNotes[indexs].GoingBackClass = GoingBackClass;
+                this.importantNotes[indexs].NoAttendingSchool = NoAttendingSchool;
+                this.importantNotes[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.importantNotes[indexs].NoGoingBack = NoGoingBack;
+                this.importantNotes[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.importantNotes[indexs].AttendanceClass = AttendanceClass;
+                this.importantNotes[indexs].AbsenceClass = AbsenceClass;
+                this.importantNotes[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.importantNotes[indexs].selectedValue = AbsenceReason;
+                this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('更新OK');
             })

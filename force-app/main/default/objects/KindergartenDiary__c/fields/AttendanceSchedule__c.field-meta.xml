@@ -21,6 +21,16 @@
                 <default>false</default>
                 <label>欠席予定</label>
             </value>
+            <value>
+                <fullName>出席</fullName>
+                <default>false</default>
+                <label>出席</label>
+            </value>
+            <value>
+                <fullName>欠席</fullName>
+                <default>false</default>
+                <label>欠席</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

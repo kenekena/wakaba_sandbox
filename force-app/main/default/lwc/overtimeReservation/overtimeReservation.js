@@ -5,6 +5,8 @@ import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import TYPE_Class from '@salesforce/schema/ImportantNotes__c.Class__c';
 import TYPE_OUTSIDEFAST from '@salesforce/schema/KindergartenDiary__c.OutsideFast__c';
 import TYPE_OUTSIDE from '@salesforce/schema/KindergartenDiary__c.Outside__c';
+import ABSENCE_REASON from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';
+
 
 /* APEX Class呼び出し */
 import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
@@ -24,9 +26,13 @@ import DATE_FIELD from '@salesforce/schema/KindergartenDiary__c.Date__c';       
 import ABSENT_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsentSchedule__c';                    
 import OUTSIDEFAST_FIELD from '@salesforce/schema/KindergartenDiary__c.OutsideFast__c';
 import OUTSIDE_FIELD from '@salesforce/schema/KindergartenDiary__c.Outside__c'; 
+import GONOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusGoingNotUse__c';      //園児日誌obj:行き利用しない
+import BACKNOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusBackNotUse__c';     //園児日誌obj:帰り使用しない
+import ABSENCEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';  //園児日誌obj:欠席理由
 import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';
 
 export default class OvertimeReservation extends LightningElement {
+    processing = false;
     today = new Date();
     valuenone = '-- なし --';
     todayDate = this.today.getFullYear() + this.padZero((this.today.getMonth() + 1)) + this.padZero(this.today.getDate());
@@ -95,6 +101,15 @@ export default class OvertimeReservation extends LightningElement {
             this.errorSfattMenu = error;
         }   
     }
+
+    /* ------------------------
+        欠席理由の値を取得：初回のみ
+    ------------------------ */
+    @wire(getPicklistValues, {
+        recordTypeId: '012000000000000AAA',
+        fieldApiName: ABSENCE_REASON
+    })
+    AbsenceReasonList;
 
     //要録obj クラスの値を取得
     @wire(getPicklistValues, {
@@ -211,38 +226,14 @@ export default class OvertimeReservation extends LightningElement {
         var OnedayBox =[];                            //一日ごとの情報を一時格納
         var OutsideFastListNow = [];                  //時間外保育：早朝の値とselected情報を一時格納
         var OutsideListNow = [];                      //時間外保育の値とselected情報を一時格納
+        var AbsenceReasonListNow = [];                //欠席理由の値とselected情報を一時格納
+        var AbsenceReasonListClass;                   //欠席理由のスタイル
+        var AbsenceReasonNow;                         //欠席理由のselectされている値
+
         
         /* 初期化 */
         this.listDisplay = true;                      //初回のみ、一覧リストエリアを表示にする
         this.overtimeReservationList =[];             //日毎リストを初期化
-
-        /*
-        if(this.searchMonth.getMonth() < 3){
-            this.nend.setFullYear(this.searchMonth.getFullYear() - 1);
-        }else{ this.nend.setFullYear(this.searchMonth.getFullYear());}
-        */
-        /* 時間外保育早朝の選択リストの値を設定⇒必要かな？
-        var OutsideFastList = [];
-        OutsideFastList[0] = {value: '-- なし -- ',selected: ''};
-        for(i3 = 0; i3< this.OutsideFast.data.values.length; i3++){
-            OutsideFastList[i3+1] = {
-                value : this.OutsideFast.data.values[i3].value,
-                selected: ''
-            }
-        }
-        */
-
-        /* 時間外保育の選択リストの値を設定⇒必要かな？
-        var OutsideList = [];   
-        OutsideList[0] = {value: '-- なし -- ',selected: ''};
-        for(i = 0; i< this.Outside.data.values.length; i++){
-            OutsideList[i+1] = {
-                value : this.Outside.data.values[i].value,
-                selected: ''
-            }
-        }
-        */
-
 
         /* 
             年度に表示月をあわせる
@@ -262,17 +253,6 @@ export default class OvertimeReservation extends LightningElement {
                 this.searchMonth.setFullYear(this.Nend);
             }
         }
-
-        
-
-
-        
-        
-
-    
-        //if(event.target.dataset.value === '先月'){this.searchMonth.setMonth(this.searchMonth.getMonth() -1)}
-        //if(event.target.dataset.value === '今月'){this.searchMonth = new Date()}
-        //if(event.target.dataset.value === '翌月'){this.searchMonth.setMonth(this.searchMonth.getMonth() +1)}
         
         /* this.searchMonthを元に月初めと月末を取得 */
         toMonthStart = new Date(this.searchMonth.getFullYear(), this.searchMonth.getMonth(), 1);
@@ -315,6 +295,9 @@ export default class OvertimeReservation extends LightningElement {
                     OnedayBox=[];             //一日ごとの一時格納情報を初期化
                     OutsideListNow =[];       //時間外保育の値を初期化
                     OutsideFastListNow =[];   //時間外保育：早朝の値を初期化
+                    AbsenceReasonListNow=[]; /* 欠席理由を初期化 */
+                    AbsenceReasonListClass ='';
+                    AbsenceReasonNow = '';
 
                     /* 時間外保育の選択リストの値を再取得 */
                     OutsideListNow[0] = {value: this.valuenone ,selected: ''};
@@ -332,6 +315,16 @@ export default class OvertimeReservation extends LightningElement {
                             selected: ''
                         }
                     }
+
+                    /* 欠席理由の選択リストの値を再取得 */
+                    AbsenceReasonListNow[0] = {value: this.valuenone ,selected: ''};
+                    for(i3 = 0; i3< this.AbsenceReasonList.data.values.length; i3++){
+                        AbsenceReasonListNow[i3+1] = {
+                            value : this.AbsenceReasonList.data.values[i3].value,
+                            selected: ''
+                        }
+                    }
+
                     /* 日付と検索用の日付をセット */
                     ThisDate = toMonthStart.getFullYear() + this.padZero((toMonthStart.getMonth() + 1)) + this.padZero(toMonthStart.getDate());
                     toMonthStartText = toMonthStart.getFullYear() + '年' + (toMonthStart.getMonth() + 1) + '月'+ toMonthStart.getDate()+ '日' ;
@@ -347,6 +340,8 @@ export default class OvertimeReservation extends LightningElement {
                             OnedayBox.OutsideFast  = KindergartenDiaryList[i2].OutsideFast__c;
                             OnedayBox.Outside = KindergartenDiaryList[i2].Outside__c;
                             OnedayBox.AbsentSchedule = KindergartenDiaryList[i2].AbsentSchedule__c;
+                            OnedayBox.NoAttendingSchool = KindergartenDiaryList[i2].BusGoingNotUse__c;
+                            OnedayBox.NoGoingBack = KindergartenDiaryList[i2].BusBackNotUse__c;
 
                             /* 時間外保育：早朝の値の数だけループ */  
                             for(i3 = 0; i3< OutsideFastListNow.length; i3++){
@@ -364,6 +359,17 @@ export default class OvertimeReservation extends LightningElement {
                                 if(OutsideListNow[i3].value === KindergartenDiaryList[i2].Outside__c){
                                     OutsideListNow[i3].selected = 'selected';
                                     OnedayBox.OutsideClass='blue';
+                                }
+                            }
+
+                            /*  欠席理由の値の数だけループ */  
+                            for(i3 = 0; i3< AbsenceReasonListNow.length; i3++){
+                                /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                                if(AbsenceReasonListNow[i3].value === KindergartenDiaryList[i2].AbsenceReason__c){
+                                    AbsenceReasonListNow[i3].selected = 'selected';
+                                    AbsenceReasonNow = AbsenceReasonListNow[i3].value;
+                                    OnedayBox.selectedValue = AbsenceReasonListNow[i3].value;
+                                    //AbsenceReasonListClass='blue';
                                 }
                             }
 
@@ -391,19 +397,37 @@ export default class OvertimeReservation extends LightningElement {
                     }else{
                         OnedayBox.OutsideClass += ' slds-select';
                     }
-        
+                    if(OnedayBox.NoAttendingSchool){
+                        OnedayBox.NoAttendingSchoolClass ='btn-square yellow'
+                    }else{
+                        OnedayBox.NoAttendingSchoolClass ='btn-square gray'
+                    }
+                    if(OnedayBox.NoGoingBack){
+                        OnedayBox.NoGoingBackClass ='btn-square yellow'
+                    }else{
+                        OnedayBox.NoGoingBackClass ='btn-square gray'
+                    }
+                    /* 欠席理由 */ 
+                    if(OnedayBox.AbsentSchedule ===true && AbsenceReasonNow === '' ){
+                        OnedayBox.AbsenceReasonListClass = 'border_Red';
+                    }else{
+                        OnedayBox.AbsenceReasonListClass = AbsenceReasonListClass;
+                    }
+                    OnedayBox.AbsenceReasonList = AbsenceReasonListNow;
+
+
+
 
                     //過去だったらdisabled
-                    
-                        if( ThisDate < this.todayDate ){
-                            OnedayBox.OutsideFastDisabled = 'disabled';
-                            OnedayBox.OutsideDisabled = 'disabled';
-                            OnedayBox.AbsentDisabled = 'disabled';
-                        }
-                    
-                    
-
-
+                    if( ThisDate < this.todayDate ){
+                        OnedayBox.OutsideFastDisabled = 'disabled';
+                        OnedayBox.OutsideDisabled = 'disabled';
+                        OnedayBox.AbsentDisabled = 'disabled';
+                        OnedayBox.AbsenceReasonDisabled = 'disabled';
+                        OnedayBox.NoAttendingSchoolDisabled = 'disabled';
+                        OnedayBox.NoGoingBackDisabled = 'disabled';
+                        
+                    }
 
                     /* 一日の情報を取りまとめる */
                     TemporarilyOvertimeReservationList[i] = {
@@ -421,7 +445,17 @@ export default class OvertimeReservation extends LightningElement {
                         OutsideFastListValue : OutsideFastListNow,
                         OutsideFastDisabled : OnedayBox.OutsideFastDisabled,
                         OutsideDisabled : OnedayBox.OutsideDisabled,
-                        AbsentDisabled : OnedayBox.AbsentDisabled
+                        AbsentDisabled : OnedayBox.AbsentDisabled,
+                        AbsenceReasonDisabled : OnedayBox.AbsenceReasonDisabled,
+                        NoAttendingSchoolDisabled : OnedayBox.NoAttendingSchoolDisabled,
+                        NoGoingBackDisabled : OnedayBox.NoGoingBackDisabled,
+                        selectedValue :OnedayBox.selectedValue,
+                        AbsenceReasonList : AbsenceReasonListNow,
+                        NoAttendingSchool : OnedayBox.NoAttendingSchool,
+                        NoGoingBack : OnedayBox.NoGoingBack,
+                        NoAttendingSchoolClass : OnedayBox.NoAttendingSchoolClass,
+                        NoGoingBackClass : OnedayBox.NoGoingBackClass,
+                        AbsenceReasonListClass : OnedayBox.AbsenceReasonListClass,
                     };
                     
                     
@@ -447,11 +481,24 @@ export default class OvertimeReservation extends LightningElement {
         var i ;                 //ループ用
         var recordInput = {};   //レコード作成・更新用
         var choiseType;
+        var AbsentSchedule;
         var AbsentScheduleClassNow;
         var OutsideFastClassNow;
         var OutsideClassNow;
+        var NoAttendingSchoolClass;
+        var NoGoingBackClass;
+        var NoAttendingSchool;
+        var NoGoingBack;
+        var AbsenceReason;
+        var AbsenceReasonListClass;
+
+        /* 連打禁止 */
+        if(this.processing){return}
+        /* 処理中フラグ */
+        this.processing =true;
 
         /* 条件をセット */        
+        
         choiseType = event.target.dataset.type;
 
         for(i = 0; i < this.overtimeReservationList.length; i++) {
@@ -460,6 +507,17 @@ export default class OvertimeReservation extends LightningElement {
             }
         }
 
+        /* 初期値セット */
+        AbsentSchedule = this.overtimeReservationList[indexs].AbsentSchedule;
+        AbsentScheduleClassNow = this.overtimeReservationList[indexs].AbsentScheduleClass;
+        OutsideClassNow = this.overtimeReservationList[indexs].OutsideClass;
+        OutsideFastClassNow = this.overtimeReservationList[indexs].OutsideFastClass;
+        NoAttendingSchool = this.overtimeReservationList[indexs].NoAttendingSchool;
+        NoGoingBack = this.overtimeReservationList[indexs].NoGoingBack;
+        NoAttendingSchoolClass = this.overtimeReservationList[indexs].NoAttendingSchoolClass;
+        NoGoingBackClass = this.overtimeReservationList[indexs].NoGoingBackClass;
+        AbsenceReason = this.overtimeReservationList[indexs].AbsenceReason;
+        AbsenceReasonListClass = this.overtimeReservationList[indexs].AbsenceReasonListClass;
 
         /* 項目の値をセット */
         const fields = {};
@@ -469,12 +527,8 @@ export default class OvertimeReservation extends LightningElement {
             fields[DATE_FIELD.fieldApiName] = event.target.dataset.date2;   //今日の日付
             fields[ENGJIID_FIELD.fieldApiName] = this.EnjiID;               //関連園児ID
             fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
-
         /* 時間外保育：早朝 */
         if(choiseType === 'OutsideFast'){
-            AbsentScheduleClassNow = this.overtimeReservationList[indexs].AbsentScheduleClass;
-            OutsideClassNow = this.overtimeReservationList[indexs].OutsideClass;
-
             if(event.target.value === this.valuenone){
                 fields[OUTSIDEFAST_FIELD.fieldApiName] = '';
                 OutsideFastClassNow = 'slds-select';
@@ -487,9 +541,6 @@ export default class OvertimeReservation extends LightningElement {
 
         /* 時間外保育 */
         if(choiseType === 'Outside'){
-            AbsentScheduleClassNow = this.overtimeReservationList[indexs].AbsentScheduleClass;
-            OutsideFastClassNow = this.overtimeReservationList[indexs].OutsideFastClass;
-
             if(event.target.value===this.valuenone){
                 fields[OUTSIDE_FIELD.fieldApiName] = '';
                 OutsideClassNow = 'slds-select';
@@ -501,17 +552,69 @@ export default class OvertimeReservation extends LightningElement {
 
         /* 欠席ボタン */
         if(choiseType === 'Absent'){
-            OutsideClassNow = this.overtimeReservationList[indexs].OutsideClass;
-            OutsideFastClassNow = this.overtimeReservationList[indexs].OutsideFastClass;
-
             if(event.target.value==='true'){
                 fields[ABSENT_FIELD.fieldApiName] = false;
+                AbsentSchedule = false;
                 AbsentScheduleClassNow = 'btn-square gray';
+                AbsenceReasonListClass='';
             }else{
                 fields[ABSENT_FIELD.fieldApiName] = true;
+                AbsentSchedule = true;
                 AbsentScheduleClassNow = 'btn-square yellow';
+                //欠席理由がなしなら赤枠に切り替える
+                if(AbsenceReason===undefined || AbsenceReason===''){
+                    AbsenceReasonListClass='border_Red';
+                }
             }
         }
+
+        /* 欠席理由ボタン */
+        if(choiseType === 'reason'){
+            if(event.target.value===this.valuenone || event.target.value==='' || event.target.value===undefined){
+                fields[ABSENCEREASON_FIELD.fieldApiName] = '';
+                AbsenceReason = '';
+
+                if(AbsentSchedule){
+                    AbsenceReasonListClass='border_Red';
+                }else{
+                    AbsenceReasonListClass='';
+                }
+            }else{
+                fields[ABSENCEREASON_FIELD.fieldApiName] = event.target.value;
+                AbsenceReasonListClass='';
+                AbsenceReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }
+
+        /* バス行き帰り */
+        if(choiseType === 'bus'){
+            if(event.target.dataset.value==='行き利用しない'){
+                if(NoAttendingSchool){
+                    fields[GONOTUSE_FIELD.fieldApiName] = false;
+                    NoAttendingSchool = false;
+                    NoAttendingSchoolClass = 'btn-square gray';
+                }else{
+                    fields[GONOTUSE_FIELD.fieldApiName] = true;
+                    NoAttendingSchool = true;
+                    NoAttendingSchoolClass = 'btn-square yellow';
+                }         
+            }else if(event.target.dataset.value==='帰り利用しない'){
+                if(NoGoingBack){
+                    fields[BACKNOTUSE_FIELD.fieldApiName] = false;
+                    NoGoingBack = false;
+                    NoGoingBackClass = 'btn-square gray';
+                }else{
+                    fields[BACKNOTUSE_FIELD.fieldApiName] = true;
+                    NoGoingBack = true;
+                    NoGoingBackClass = 'btn-square yellow';
+                }
+
+            }  
+        }
+
+
+
 
         /* IDを見て、新規作成か更新か */
         if(fields[ID_FIELD.fieldApiName] === 'false' || fields[ID_FIELD.fieldApiName] === undefined){
@@ -526,6 +629,13 @@ export default class OvertimeReservation extends LightningElement {
                 this.overtimeReservationList[indexs].AbsentScheduleClass = AbsentScheduleClassNow;
                 this.overtimeReservationList[indexs].OutsideFastClass = OutsideFastClassNow;
                 this.overtimeReservationList[indexs].OutsideClass = OutsideClassNow;
+                this.overtimeReservationList[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.overtimeReservationList[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.overtimeReservationList[indexs].NoAttendingSchool = NoAttendingSchool;
+                this.overtimeReservationList[indexs].NoGoingBack = NoGoingBack;
+                this.overtimeReservationList[indexs].AbsenceReason = AbsenceReason;
+                this.overtimeReservationList[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('作成OK');
 
@@ -547,12 +657,15 @@ export default class OvertimeReservation extends LightningElement {
             recordInput = { fields };
             updateRecord(recordInput)
             .then(() => {
-                this.overtimeReservationList[indexs].AbsentSchedule = fields[ABSENT_FIELD.fieldApiName];
+                this.overtimeReservationList[indexs].AbsentSchedule = AbsentSchedule;
                 this.overtimeReservationList[indexs].AbsentScheduleClass = AbsentScheduleClassNow;
                 this.overtimeReservationList[indexs].OutsideFastClass = OutsideFastClassNow;
                 this.overtimeReservationList[indexs].OutsideClass = OutsideClassNow;
-                
-                
+                this.overtimeReservationList[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.overtimeReservationList[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.overtimeReservationList[indexs].AbsenceReason = AbsenceReason;
+                this.overtimeReservationList[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('更新OK');
                 
@@ -572,6 +685,25 @@ export default class OvertimeReservation extends LightningElement {
 
     }
     /* END:園児日誌を作成 OR 更新 */
+
+    /* ------------------------
+        一括登録
+    ------------------------ */
+    AllCreate(event){
+        // eslint-disable-next-line no-alert
+        var result = confirm('一括登録しますか？');
+ 
+        if( result ) {
+        
+            console.log('しました。');
+        
+        }
+        else {
+        
+            console.log('しませんでした。');
+        
+        }
+    }
 
     
 

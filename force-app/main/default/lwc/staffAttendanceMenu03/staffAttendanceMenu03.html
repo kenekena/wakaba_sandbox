@@ -53,9 +53,14 @@
         <div class="slds-welcome-mat__tiles">
             <template for:each={importantNotes} for:item="item">
                 <p key={item.Id} class="slds-m-bottom_large">
-                    <button onclick={changeType} type=button class="btn-square blue" data-group="class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
-                    <button onclick={changeType} type=button class="btn-square yellow" data-group="class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
                     【{item.AttendanceSchedule}】{item.Contact__r.kana__c}
+                    <button onclick={changeType} type=button class={item.AttendanceClass}  data-group="class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
+                    <button onclick={changeType} type=button class={item.AbsenceClass} data-group="class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
+                    <select onchange={changeType} class={item.AbsenceReasonListClass} data-group="reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AbsenceReason">
+                        <template for:each={item.AbsenceReasonList} for:item="lists">
+                            <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                        </template>
+                    </select>
                 </p>
             </template> 
             <template if:true={error}>
@@ -69,9 +74,12 @@
         <div class="slds-welcome-mat__tiles">
             <template for:each={importantNotes} for:item="item">
                 <p key={item.Id} class="slds-m-bottom_large">
-                    <button onclick={changeType} type=button class="btn-square blue" data-group="bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
-                    <button onclick={changeType} type=button class="btn-square yellow" data-group="bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
-                    【{item.AttendingSchool}】【{item.GoingBack}】{item.Contact__r.kana__c}
+                    {item.Contact__r.kana__c}／迎え：{item.PickUpTimeText__c}／送り{item.DropOffText__c}
+                    <button onclick={changeType} type=button class={item.AttendingSchoolClass} data-group="bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
+                    <button onclick={changeType} type=button class={item.GoingBackClass}  data-group="bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
+                    <button onclick={changeType} type=button class={item.NoAttendingSchoolClass}  data-group="bus" data-value="行き利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >行き✕</button>
+                    <button onclick={changeType} type=button class={item.NoGoingBackClass}  data-group="bus" data-value="帰り利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >帰り✕</button>
+                    
                 </p>
             </template> 
             <template if:true={error}>
@@ -79,7 +87,7 @@
             </template>
         </div>
     </template>
-
+    
     <template if:true={firstDisplay}>
         <div class="slds-welcome-mat__tiles">
             クラスかバスを選択してください。

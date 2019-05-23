@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Class__c</fullName>
+    <fullName>AbsenceReason__c</fullName>
     <externalId>false</externalId>
-    <label>学級</label>
+    <label>欠席理由</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
@@ -12,24 +12,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>ばら</fullName>
+                <fullName>病気のため</fullName>
                 <default>false</default>
-                <label>ばら</label>
+                <label>病気のため</label>
             </value>
             <value>
-                <fullName>さくら</fullName>
+                <fullName>保護者がお休みのため</fullName>
                 <default>false</default>
-                <label>さくら</label>
-            </value>
-            <value>
-                <fullName>ゆり</fullName>
-                <default>false</default>
-                <label>ゆり</label>
-            </value>
-            <value>
-                <fullName>きく</fullName>
-                <default>false</default>
-                <label>きく</label>
+                <label>保護者がお休みのため</label>
             </value>
         </valueSetDefinition>
     </valueSet>
