@@ -47,19 +47,22 @@
             <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="3" >
                 <div class="slds-m-top_large ikkatu">
                 <p class="title">一括登録</p>
-                <select>
+                <from id="ikkatuForm">
+                <select onchange={iikatuOutsideFastChange}>
                     <option value="">{valuenone}</option>
                     <template for:each={OutsideFast.data.values} for:item="lists">
                         <option key={lists.value} value={lists.value}>{lists.value}</option>
                     </template>
                 </select>
-                <select>
+                <select onchange={iikatuOutsideChange}>
                     <option value="">{valuenone}</option>
                     <template for:each={Outside.data.values} for:item="lists">
                         <option key={lists.value} value={lists.value}>{lists.value}</option>
                     </template>
                 </select>
                 <button onclick={AllCreate}>登録</button>
+                </from>
+                <p>※一括登録は今日以降の日曜日を除く、時間外/欠席予約が未入力の日を登録します。</p>
                 </div>
             </lightning-layout-item>
             </lightning-layout>

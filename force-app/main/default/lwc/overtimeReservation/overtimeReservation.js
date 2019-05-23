@@ -12,6 +12,7 @@ import ABSENCE_REASON from '@salesforce/schema/KindergartenDiary__c.AbsenceReaso
 import findImportantNotes from '@salesforce/apex/ImportantNotesController.findImportantNotes2';
 import findKindergartenDiary from '@salesforce/apex/ImportantNotesController.findKindergartenDiary_OrList';
 import findStaff from '@salesforce/apex/ImportantNotesController.findStaff';
+import upsertKindergartenDiary from '@salesforce/apex/ImportantNotesController.upsertKindergartenDiary';
 
 /* ポップアップメッセージ表示 */
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
@@ -39,6 +40,7 @@ export default class OvertimeReservation extends LightningElement {
     @track mainmenu = false;                    /* 職員選択用 */
     @track searchDate = this.today.getFullYear() + "-" + (this.today.getMonth() + 1) + "-"+ this.today.getDate(); /* 要録の年度取得に使用 */
     @track searchMonth = this.today;            /* どの月の情報を見るかの初期値 */
+    @track monthnow;                            /* 今開いている月 */
     @track Nend;
     @track EnjiListValue = [];                  /* 園児リストの値を収納 */
     @track overtimeReservationList = [];        /* 日毎リスト */
@@ -205,22 +207,22 @@ export default class OvertimeReservation extends LightningElement {
     /* END:クラス選択で 園児一覧を取得 */
 
 
-
     /* ------------------------------------------------
         園児リスト選択 OR 月変更で1ヶ月分の予定をだす
     ------------------------------------------------ */
-    handleChange(event){
+    handleChange(event,Redes){
         /* 変数をセット */
         var toMonthStart;                             //月初めjsループ用
         var toMonthStartText;                         //月初め表示用：「YYYY年M月D日」
         var toMonthStartText2;                        //月初め検索用：「YYYY-MM-DD」
+        var toMonthStartText3;                        //月初め検索用：「YYYYMMDD」
         var ThisDate;
         var StartDate;                                //月初めSOQL検索用
         var ToMonthEnd;                               //月末jsループ用
         var EndDate;                                  //月末SOQL検索用
         var week = ["日","月","火","水","木","金","土"];//曜日
         var i;var i2;var i3;                          //ループ用1、2、3
-        var changetype = event.target.name;           //園児リストを選択した場合は、園児IDが入る
+        var changetype ;                              //園児リストを選択した場合は、園児IDが入る
         var KindergartenDiaryList;                    //園児日誌主著区
         var TemporarilyOvertimeReservationList =[];   //日毎リストの一時格納
         var OnedayBox =[];                            //一日ごとの情報を一時格納
@@ -229,7 +231,19 @@ export default class OvertimeReservation extends LightningElement {
         var AbsenceReasonListNow = [];                //欠席理由の値とselected情報を一時格納
         var AbsenceReasonListClass;                   //欠席理由のスタイル
         var AbsenceReasonNow;                         //欠席理由のselectされている値
-
+        var events;
+        if(Redes === undefined){
+            events = event.target.dataset.value;
+            changetype = event.target.name;
+        }else{
+            events = Redes;
+            changetype = '';
+        }
+        // eslint-disable-next-line no-console
+        console.log('events'+events);
+        // eslint-disable-next-line no-console
+        console.log('changetype'+changetype);
+        
         
         /* 初期化 */
         this.listDisplay = true;                      //初回のみ、一覧リストエリアを表示にする
@@ -239,11 +253,11 @@ export default class OvertimeReservation extends LightningElement {
             年度に表示月をあわせる
             月変更ボタンを押したらthis.searchMonthの月を変更する
         */
-        if(!(event.target.dataset.value === undefined)){
-            if(event.target.dataset.value === 'ToMonth'){
+        if(!(events === undefined)){
+            if(events === 'ToMonth'){
                 this.searchMonth = new Date();
             }else{
-                this.searchMonth.setMonth(event.target.dataset.value -1);
+                this.searchMonth.setMonth(events -1);
             }
             
             //年度に合わせる
@@ -253,6 +267,8 @@ export default class OvertimeReservation extends LightningElement {
                 this.searchMonth.setFullYear(this.Nend);
             }
         }
+
+        this.monthnow = events;
         
         /* this.searchMonthを元に月初めと月末を取得 */
         toMonthStart = new Date(this.searchMonth.getFullYear(), this.searchMonth.getMonth(), 1);
@@ -288,6 +304,7 @@ export default class OvertimeReservation extends LightningElement {
                 
                 /* toMonthStartText2をループ用に形成 */
                 toMonthStartText2= toMonthStart.getFullYear() + '-' + this.padZero((toMonthStart.getMonth() + 1)) + '-' + this.padZero(toMonthStart.getDate());
+
 
                 /* 1日~末日まで一日ごとにループ */
                 for(i=0;toMonthStart <= ToMonthEnd; toMonthStart.setDate(toMonthStart.getDate() + 1),i++){
@@ -329,6 +346,7 @@ export default class OvertimeReservation extends LightningElement {
                     ThisDate = toMonthStart.getFullYear() + this.padZero((toMonthStart.getMonth() + 1)) + this.padZero(toMonthStart.getDate());
                     toMonthStartText = toMonthStart.getFullYear() + '年' + (toMonthStart.getMonth() + 1) + '月'+ toMonthStart.getDate()+ '日' ;
                     toMonthStartText2= toMonthStart.getFullYear() + '-' + this.padZero((toMonthStart.getMonth() + 1)) + '-' + this.padZero(toMonthStart.getDate());
+                    toMonthStartText3= toMonthStart.getFullYear() + this.padZero((toMonthStart.getMonth() + 1)) + this.padZero(toMonthStart.getDate());
 
                     
                     /* 園児日誌をループ */
@@ -433,7 +451,9 @@ export default class OvertimeReservation extends LightningElement {
                     TemporarilyOvertimeReservationList[i] = {
                         date : toMonthStartText,
                         date2 : toMonthStartText2,
+                        date3 : toMonthStartText3,
                         week : '（' + week[toMonthStart.getDay()] + '）',
+                        weeknum : toMonthStart.getDay(),
                         KdID : OnedayBox.Id,
                         OutsideClass :OnedayBox.OutsideClass,
                         OutsideFastClass : OnedayBox.OutsideFastClass,
@@ -491,6 +511,7 @@ export default class OvertimeReservation extends LightningElement {
         var NoGoingBack;
         var AbsenceReason;
         var AbsenceReasonListClass;
+        
 
         /* 連打禁止 */
         if(this.processing){return}
@@ -527,6 +548,7 @@ export default class OvertimeReservation extends LightningElement {
             fields[DATE_FIELD.fieldApiName] = event.target.dataset.date2;   //今日の日付
             fields[ENGJIID_FIELD.fieldApiName] = this.EnjiID;               //関連園児ID
             fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
+
         /* 時間外保育：早朝 */
         if(choiseType === 'OutsideFast'){
             if(event.target.value === this.valuenone){
@@ -689,23 +711,115 @@ export default class OvertimeReservation extends LightningElement {
     /* ------------------------
         一括登録
     ------------------------ */
-    AllCreate(event){
-        // eslint-disable-next-line no-alert
-        var result = confirm('一括登録しますか？');
- 
-        if( result ) {
+    @track iikatuOutsideFast;
+    @track iikatuOutside;
+
+    iikatuOutsideFastChange(event) {
+        this.iikatuOutsideFast = event.target.value;
+    }
+    iikatuOutsideChange(event) {
+        this.iikatuOutside = event.target.value;
+    }
+
+    AllCreate(){
+        var result1;
+        var insertList = [];
+        var updateList = [];
+        var i;var insertNum =0;var updateNum =0;
+        var ikkatu;
+        var Id;
+
         
-            console.log('しました。');
+        // eslint-disable-next-line no-alert
+        //result1 = confirm('一括登録しますか？\n※一度登録すると取り消しはできません');
+        result1 = true;
+        if( result1 ) {
+            // eslint-disable-next-line no-console
+            console.log('日付一覧をループ');
+
+            
+
+
+            const p = new Promise((resolve, reject) => {
+            
+            for(i=0; i < this.overtimeReservationList.length; i++) {
+                
+                /* 日曜日以外 */
+                if(!(this.overtimeReservationList[i].weeknum === 0)){
+                    /* 今日以降 */
+                    if(this.todayDate <= this.overtimeReservationList[i].date3){
+
+                        /* すでに時間外早朝/時間外/欠席予定が設定されいるものは省く */
+                        if(
+                            !(this.overtimeReservationList[i].AbsentSchedule) && 
+                            (this.overtimeReservationList[i].Outside === undefined || this.overtimeReservationList[i].Outside === '') &&
+                            (this.overtimeReservationList[i].OutsideFast === undefined || this.overtimeReservationList[i].OutsideFast === '')
+                        ){
+
+                            
+                            if(this.iikatuOutsideFast === undefined){this.iikatuOutsideFast = '';}
+                            if(this.iikatuOutside === undefined){this.iikatuOutside = '';}
+                            if(this.overtimeReservationList[i].KdID === undefined){
+                                insertList[insertNum] ={ 
+                                    Date__c : this.overtimeReservationList[i].date2,
+                                    Contact__c : this.EnjiID,
+                                    Outside__c : this.iikatuOutside,
+                                    OutsideFast__c : this.iikatuOutsideFast,
+                                }
+                                insertNum ++;
+
+                            }else{
+                                updateList[updateNum] ={ 
+                                    Id : this.overtimeReservationList[i].KdID,
+                                    Date__c : this.overtimeReservationList[i].date2,
+                                    Contact__c : this.EnjiID,
+                                    Outside__c : this.iikatuOutside,
+                                    OutsideFast__c : this.iikatuOutsideFast,
+                                }
+                                updateNum ++;
+                            }
+
+
+                        }
+
+                    }
+                }
+            }
+                resolve(insertList,updateList);
+            });
+            
+            p.then(() => {
+                // eslint-disable-next-line no-console
+                upsertKindergartenDiary({insertList:insertList ,updateList : updateList})
+                .then(result => {
+                    this.contacts = result;
+                    if(this.monthnow === undefined){
+                        ikkatu = 'ToMonth';
+                    }else{
+                        ikkatu = this.monthnow;
+                    }
+                    this.handleChange(0,ikkatu);
+                })
+                .catch(error => {
+                    this.error = error;
+                });
+                
+            })
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.log(error);
+            })
+
         
         }
         else {
-        
+            // eslint-disable-next-line no-console
             console.log('しませんでした。');
         
         }
     }
 
-    
-
 
 }
+
+

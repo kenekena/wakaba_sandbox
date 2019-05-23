@@ -37,10 +37,17 @@ public with sharing class ImportantNotesController {
         system.debug('EndDateS' + EndDateS);
         system.debug('EnjiID' + EnjiID);
         return [SELECT Id,AbsenceReason__c,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Contact__r.Id =:EnjiID AND Date__c >= :StartDateS AND Date__c <= :EndDateS];
-
-
     }
     
+    /* ------------------------------------------------
+        overtimeReservation:園児日誌を一括upsert
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static String upsertKindergartenDiary(List<KindergartenDiary__c> upsertList) {
+        system.debug('これこれupsertList');
+        system.debug(upsertList);
+        return 'あああ';
+    }
 
 
 
