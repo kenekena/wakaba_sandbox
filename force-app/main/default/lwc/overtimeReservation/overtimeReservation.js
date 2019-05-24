@@ -47,6 +47,7 @@ export default class OvertimeReservation extends LightningElement {
     @track listDisplay = false;                 /* 日毎の一覧画面は最初は非表示 */
     @track placeholder = "クラスを選択してください";/* 園児リストの初期メッセージ */
     @track EnjiID;                              /* 日毎リスト検索用に使用 */
+    @track PassageRoute =false;                 /* 通園コースのありなし判定 */
     @track OutsideFast;                         /* 園児日誌の時間外保育：早朝の選択リストの値を保有 */
     @track Outside;                             /* 園児日誌の時間外保育の選択リストの値を保有 */
     @track nameValue;   
@@ -160,6 +161,7 @@ export default class OvertimeReservation extends LightningElement {
         this.placeholder = value + '一覧';
         this.nameValue = '';
         
+        
         /* 並列処理?的な */
         async function merge(searchDate){
             ImportantNoteList = await (
@@ -187,7 +189,8 @@ export default class OvertimeReservation extends LightningElement {
                 for(i = 0; i< ImportantNoteList.length; i++){
                     TemporarilyEnjiList[i] = { 
                         label: ImportantNoteList[i].Contact__r.kana__c, 
-                        value: ImportantNoteList[i].Contact__r.Id 
+                        value: ImportantNoteList[i].Contact__r.Id,
+                        route: ImportantNoteList[i].Contact__r.PassageRoute__c
                     };
  
                     //if(i =1){this.placeholder = value + '一覧';}      //選択リストの初期メッセージを変更
@@ -231,7 +234,7 @@ export default class OvertimeReservation extends LightningElement {
         var AbsenceReasonListNow = [];                //欠席理由の値とselected情報を一時格納
         var AbsenceReasonListClass;                   //欠席理由のスタイル
         var AbsenceReasonNow;                         //欠席理由のselectされている値
-        var events;
+        var events;                                   //トリガーとなったイベント情報をセット
         if(Redes === undefined){
             events = event.target.dataset.value;
             changetype = event.target.name;
@@ -239,10 +242,23 @@ export default class OvertimeReservation extends LightningElement {
             events = Redes;
             changetype = '';
         }
-        // eslint-disable-next-line no-console
-        console.log('events'+events);
-        // eslint-disable-next-line no-console
-        console.log('changetype'+changetype);
+
+        
+        if(changetype === 'changeName'){
+            this.EnjiID = event.target.value;
+            if(event.target.dataset.route2 === undefined || event.target.dataset.route2===''){
+                this.PassageRoute = true;
+            }else{
+                this.PassageRoute = true;
+            }
+            
+        }
+       
+        //選択リスト●●くみ弊害。EnjiIDがNoareaなら処理をしない
+        if(this.EnjiID === 'Noarea') {
+            this.overtimeReservationList=[];
+            return
+        }
         
         
         /* 初期化 */
@@ -277,7 +293,7 @@ export default class OvertimeReservation extends LightningElement {
         /* 園児日誌検索に必要な情報をセット */
         StartDate = toMonthStart.getFullYear() + "-" + (toMonthStart.getMonth() + 1) + "-"+ toMonthStart.getDate();
         EndDate = ToMonthEnd.getFullYear() + "-" + (ToMonthEnd.getMonth() + 1) + "-"+ ToMonthEnd.getDate();
-        if(changetype === 'changeName'){ this.EnjiID = event.target.value}
+        
 
         /* 並列処理?的な */
         async function merge2(StartDate2,EndDate2,EnjiID2){
@@ -313,7 +329,7 @@ export default class OvertimeReservation extends LightningElement {
                     OutsideListNow =[];       //時間外保育の値を初期化
                     OutsideFastListNow =[];   //時間外保育：早朝の値を初期化
                     AbsenceReasonListNow=[]; /* 欠席理由を初期化 */
-                    AbsenceReasonListClass ='';
+                    AbsenceReasonListClass ='selecttype02';
                     AbsenceReasonNow = '';
 
                     /* 時間外保育の選択リストの値を再取得 */
@@ -366,7 +382,7 @@ export default class OvertimeReservation extends LightningElement {
                                 /* 園児日誌の時間外保育：早朝の情報と値の情報が一致したらseletedにして、CSSも追加する */
                                 if(OutsideFastListNow[i3].value === KindergartenDiaryList[i2].OutsideFast__c){
                                     OutsideFastListNow[i3].selected = 'selected';
-                                    OnedayBox.OutsideFastClass='blue';
+                                    OnedayBox.OutsideFastClass='selecttype02 blue';
                                 }
                             }
 
@@ -376,7 +392,7 @@ export default class OvertimeReservation extends LightningElement {
                                 /* 園児日誌の時間外保育の情報と値の情報が一致したらseletedにして、CSSも追加する */
                                 if(OutsideListNow[i3].value === KindergartenDiaryList[i2].Outside__c){
                                     OutsideListNow[i3].selected = 'selected';
-                                    OnedayBox.OutsideClass='blue';
+                                    OnedayBox.OutsideClass='selecttype02 blue';
                                 }
                             }
 
@@ -406,14 +422,14 @@ export default class OvertimeReservation extends LightningElement {
                         OnedayBox.AbsentScheduleClass ='btn-square yellow'
                     }
                     if(!OnedayBox.OutsideFastClass){
-                        OnedayBox.OutsideFastClass = 'slds-select';
+                        OnedayBox.OutsideFastClass = 'slds-select selecttype02';
                     }else{
-                        OnedayBox.OutsideFastClass += ' slds-select';
+                        OnedayBox.OutsideFastClass += ' slds-select selecttype02';
                     }
                     if(!OnedayBox.OutsideClass){
-                        OnedayBox.OutsideClass = 'slds-select';
+                        OnedayBox.OutsideClass = 'slds-select selecttype02';
                     }else{
-                        OnedayBox.OutsideClass += ' slds-select';
+                        OnedayBox.OutsideClass += ' slds-select selecttype02';
                     }
                     if(OnedayBox.NoAttendingSchool){
                         OnedayBox.NoAttendingSchoolClass ='btn-square yellow'
@@ -427,7 +443,7 @@ export default class OvertimeReservation extends LightningElement {
                     }
                     /* 欠席理由 */ 
                     if(OnedayBox.AbsentSchedule ===true && AbsenceReasonNow === '' ){
-                        OnedayBox.AbsenceReasonListClass = 'border_Red';
+                        OnedayBox.AbsenceReasonListClass = 'border_Red selecttype02';
                     }else{
                         OnedayBox.AbsenceReasonListClass = AbsenceReasonListClass;
                     }
@@ -476,6 +492,7 @@ export default class OvertimeReservation extends LightningElement {
                         NoAttendingSchoolClass : OnedayBox.NoAttendingSchoolClass,
                         NoGoingBackClass : OnedayBox.NoGoingBackClass,
                         AbsenceReasonListClass : OnedayBox.AbsenceReasonListClass,
+                        PassageRoute : this.PassageRoute
                     };
                     
                     
@@ -553,10 +570,10 @@ export default class OvertimeReservation extends LightningElement {
         if(choiseType === 'OutsideFast'){
             if(event.target.value === this.valuenone){
                 fields[OUTSIDEFAST_FIELD.fieldApiName] = '';
-                OutsideFastClassNow = 'slds-select';
+                OutsideFastClassNow = 'slds-select selecttype02';
             }else{
                 fields[OUTSIDEFAST_FIELD.fieldApiName] = event.target.value;
-                OutsideFastClassNow = 'blue slds-select';
+                OutsideFastClassNow = 'blue slds-select selecttype02';
             }
             
         }
@@ -565,10 +582,10 @@ export default class OvertimeReservation extends LightningElement {
         if(choiseType === 'Outside'){
             if(event.target.value===this.valuenone){
                 fields[OUTSIDE_FIELD.fieldApiName] = '';
-                OutsideClassNow = 'slds-select';
+                OutsideClassNow = 'slds-select selecttype02';
             }else{
                 fields[OUTSIDE_FIELD.fieldApiName] = event.target.value;
-                OutsideClassNow = 'blue slds-select';
+                OutsideClassNow = 'blue slds-select selecttype02';
             }
         }
 
@@ -577,15 +594,15 @@ export default class OvertimeReservation extends LightningElement {
             if(event.target.value==='true'){
                 fields[ABSENT_FIELD.fieldApiName] = false;
                 AbsentSchedule = false;
-                AbsentScheduleClassNow = 'btn-square gray';
-                AbsenceReasonListClass='';
+                AbsentScheduleClassNow = 'btn-square gray ';
+                AbsenceReasonListClass='selecttype02';
             }else{
                 fields[ABSENT_FIELD.fieldApiName] = true;
                 AbsentSchedule = true;
                 AbsentScheduleClassNow = 'btn-square yellow';
                 //欠席理由がなしなら赤枠に切り替える
                 if(AbsenceReason===undefined || AbsenceReason===''){
-                    AbsenceReasonListClass='border_Red';
+                    AbsenceReasonListClass='border_Red selecttype02';
                 }
             }
         }
@@ -597,13 +614,13 @@ export default class OvertimeReservation extends LightningElement {
                 AbsenceReason = '';
 
                 if(AbsentSchedule){
-                    AbsenceReasonListClass='border_Red';
+                    AbsenceReasonListClass='border_Red selecttype02';
                 }else{
-                    AbsenceReasonListClass='';
+                    AbsenceReasonListClass='selecttype02';
                 }
             }else{
                 fields[ABSENCEREASON_FIELD.fieldApiName] = event.target.value;
-                AbsenceReasonListClass='';
+                AbsenceReasonListClass='selecttype02';
                 AbsenceReason = event.target.value;
                 //AbsenceReasonListClass='blue';
             }
@@ -684,6 +701,8 @@ export default class OvertimeReservation extends LightningElement {
                 this.overtimeReservationList[indexs].OutsideFastClass = OutsideFastClassNow;
                 this.overtimeReservationList[indexs].OutsideClass = OutsideClassNow;
                 this.overtimeReservationList[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.overtimeReservationList[indexs].NoGoingBack = NoGoingBack;
+                this.overtimeReservationList[indexs].NoAttendingSchool = NoAttendingSchool;
                 this.overtimeReservationList[indexs].NoGoingBackClass = NoGoingBackClass;
                 this.overtimeReservationList[indexs].AbsenceReason = AbsenceReason;
                 this.overtimeReservationList[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
@@ -727,12 +746,15 @@ export default class OvertimeReservation extends LightningElement {
         var updateList = [];
         var i;var insertNum =0;var updateNum =0;
         var ikkatu;
-        var Id;
+
+        //選択リスト●●くみ弊害。EnjiIDがNoareaなら処理をしない
+        if(this.EnjiID === 'Noarea') { 
+            return
+        }
 
         
         // eslint-disable-next-line no-alert
-        //result1 = confirm('一括登録しますか？\n※一度登録すると取り消しはできません');
-        result1 = true;
+        result1 = confirm('一括登録しますか？\n※一度登録すると取り消しはできません');
         if( result1 ) {
             // eslint-disable-next-line no-console
             console.log('日付一覧をループ');
@@ -740,7 +762,7 @@ export default class OvertimeReservation extends LightningElement {
             
 
 
-            const p = new Promise((resolve, reject) => {
+            const p = new Promise((resolve) => {
             
             for(i=0; i < this.overtimeReservationList.length; i++) {
                 
@@ -765,6 +787,7 @@ export default class OvertimeReservation extends LightningElement {
                                     Contact__c : this.EnjiID,
                                     Outside__c : this.iikatuOutside,
                                     OutsideFast__c : this.iikatuOutsideFast,
+                                    StaffId__c : this.StaffId
                                 }
                                 insertNum ++;
 
@@ -775,6 +798,7 @@ export default class OvertimeReservation extends LightningElement {
                                     Contact__c : this.EnjiID,
                                     Outside__c : this.iikatuOutside,
                                     OutsideFast__c : this.iikatuOutsideFast,
+                                    StaffId__c : this.StaffId
                                 }
                                 updateNum ++;
                             }
@@ -799,6 +823,13 @@ export default class OvertimeReservation extends LightningElement {
                         ikkatu = this.monthnow;
                     }
                     this.handleChange(0,ikkatu);
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: '成功',
+                            message: '一括登録に成功しました。',
+                            variant: 'success'
+                        })
+                    );
                 })
                 .catch(error => {
                     this.error = error;
@@ -812,11 +843,13 @@ export default class OvertimeReservation extends LightningElement {
 
         
         }
+        /*
         else {
             // eslint-disable-next-line no-console
             console.log('しませんでした。');
         
         }
+        */
     }
 
 

@@ -186,7 +186,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 for(i = 0; i< ImportantNoteList.length; i++){
                     /* 初期化 */
                     AbsenceReasonListNow=[]; /* 欠席理由を初期化 */
-                    AbsenceReasonListClass ='';
+                    AbsenceReasonListClass ='selecttype01';
                     AbsenceReasonNow = '';
 
                     /* 欠席理由の選択リストの値を再取得 */
@@ -268,7 +268,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
 
                     /* 欠席理由 */ 
                     if(ImportantNoteList[i].AttendanceSchedule ==='欠席' && AbsenceReasonNow === '' ){
-                        ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass + 'border_Red';
+                        ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass + 'border_Red ';
                     }else{
                         ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass;
                     }
@@ -368,10 +368,11 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                     AttendanceSchedule ='';
                     fields[ASTIME_FIELD.fieldApiName] ='';
                     AttendanceClass='btn-square gray';
+                    AbsenceReasonListClass='selecttype01';
                 //出席
                 }else{
                     AttendanceClass='btn-square yellow';
-                    AbsenceReasonListClass='';
+                    AbsenceReasonListClass='selecttype01';
                     if(this.importantNotes[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
                         AbsenceClass='btn-square blue';
                     }else{
@@ -384,7 +385,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                     fields[AS_FIELD.fieldApiName] ='';
                     AttendanceSchedule ='';
                     fields[ASTIME_FIELD.fieldApiName] ='';
-                    AbsenceReasonListClass='';
+                    AbsenceReasonListClass='selecttype01';
                     if(this.importantNotes[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
                         AbsenceClass='btn-square blue';
                     }else{
@@ -397,7 +398,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                     AbsenceClass='btn-square yellow';
                     //欠席理由がなしなら赤枠に切り替える
                     if(AbsenceReason===undefined || AbsenceReason===''){
-                        AbsenceReasonListClass='border_Red';
+                        AbsenceReasonListClass='border_Red selecttype01';
                     }
                 }
             }
@@ -411,9 +412,9 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 AbsenceReason = '';
 
                 if(this.importantNotes[indexs].AttendanceSchedule ==='欠席'){
-                    AbsenceReasonListClass='border_Red';
+                    AbsenceReasonListClass='border_Red selecttype01';
                 }else{
-                    AbsenceReasonListClass='';
+                    AbsenceReasonListClass='selecttype01';
                 }
             }else{
                 fields[ABSENCEREASON_FIELD.fieldApiName] = event.target.value;

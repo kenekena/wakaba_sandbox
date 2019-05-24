@@ -5,7 +5,7 @@ declare module "@salesforce/apex/ImportantNotesController.findKindergartenDiary_
   export default function findKindergartenDiary_OrList(param: {StartDate: any, EndDate: any, EnjiID: any}): Promise<any>;
 }
 declare module "@salesforce/apex/ImportantNotesController.upsertKindergartenDiary" {
-  export default function upsertKindergartenDiary(param: {upsertList: any}): Promise<any>;
+  export default function upsertKindergartenDiary(param: {insertList: any, updateList: any}): Promise<any>;
 }
 declare module "@salesforce/apex/ImportantNotesController.findImportantNotes2" {
   export default function findImportantNotes2(param: {searchValue: any, searchDate: any, searchGroup: any}): Promise<any>;

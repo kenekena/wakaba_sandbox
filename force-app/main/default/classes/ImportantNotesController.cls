@@ -43,9 +43,13 @@ public with sharing class ImportantNotesController {
         overtimeReservation:園児日誌を一括upsert
     ------------------------------------------------ */
     @AuraEnabled
-    public static String upsertKindergartenDiary(List<KindergartenDiary__c> upsertList) {
+    public static String upsertKindergartenDiary(List<KindergartenDiary__c> insertList,List<KindergartenDiary__c> updateList) {
         system.debug('これこれupsertList');
-        system.debug(upsertList);
+        system.debug(insertList);
+         system.debug(updateList);
+        
+        insert  insertList;
+        update updateList;
         return 'あああ';
     }
 
@@ -76,10 +80,10 @@ public with sharing class ImportantNotesController {
         searchYears = searchYears.left(4);
         
         if(searchGroup == 'bus'){
-            return [SELECT Id, Name ,PickUpTimeText__c,DropOffText__c,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Contact__r.PassageRoute__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY PickUpTime__c ASC NULLS LAST];
+            return [SELECT Id, Name ,PickUpTimeText__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c ,Contact__r.PassageRoute__c FROM ImportantNotes__c WHERE Contact__r.PassageRoute__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY PickUpTime__c ASC NULLS LAST];
         }
         if(searchGroup == 'class'){
-            return [SELECT Id, Name ,PickUpTimeText__c,DropOffText__c,Contact__r.Id, Contact__r.kana__c , Class__c FROM ImportantNotes__c WHERE Class__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY DisplayOrder__c ASC NULLS LAST];
+            return [SELECT Id, Name ,PickUpTimeText__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c ,Contact__r.PassageRoute__c FROM ImportantNotes__c WHERE Class__c =: searchValue AND FiscalYear__c =:searchYears ORDER BY DisplayOrder__c ASC NULLS LAST];
         }else{
             return new List<ImportantNotes__c>();
         }

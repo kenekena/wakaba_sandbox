@@ -1,0 +1,918 @@
+<apex:page id="ScheduleJavascript4" showHeader="false" applyBodyTag="false" applyHtmlTag="false">
+<script>
+/* 初期定義 */
+var wh = new SObjectModel.ProcessList();
+var Ps = new SObjectModel.PersonnelList();
+/* s.kimura 従業員リモートオブジェクト読み込み 追加 start */
+var Wl = new SObjectModel.WorkerList();
+/* s.kimura 従業員リモートオブジェクト読み込み 追加 end */
+
+/* s.kimura 初期定義 追加 start */
+// 公開グループに所属しているかの判別フラグ
+var hasEditPermission = false;
+// 人員一覧 初回表示済み判別フラグ
+var isDispMemberList = false;
+// 編集モード → true：編集モード、false：参照モード
+var isEditMode = false;
+
+// 同じ工程スケジュールにドロップしたか判別するための値
+var preWorkId = '';
+var preLeader = false;
+// 初回画面表示時のトップ位置を設定する
+var initPositionTop;
+/* s.kimura 初期定義 追加 end */
+
+/*************************************
+   日付
+ **************************************/
+  //表示する日付
+  var startdate = new Date();//今日の日付
+  var enddate　= new Date();
+  var countdate = 6;//何日後まで表示させる
+  var weekDay;
+  var weekDayList = [ "日", "月", "火", "水", "木", "金", "土" ] ;
+  var selectDate = new Date();
+
+  enddate.setDate(enddate.getDate() + countdate);
+
+  //今日の日付（YYYY年m月d日）　クラスで使用
+  var today = new Date();
+  var month = today.getMonth()+1;
+  weekDay = weekDayList[ today.getDay() ];
+
+  today = today.getFullYear() + '年' + month + '月' + today.getDate() + '日（' + weekDay +'）';
+
+/*************************************
+  読み込み時＋画面更新ボタンを押した時の画面のリフレッシュ
+**************************************/
+var ProcessLists = function(selects){
+
+  /* s.kimura 公開グループを元に編集権限を判別する処理 追加 start */
+  checkEditable();
+  /* s.kimura 公開グループを元に編集権限を判別する処理 追加 end */
+
+  /* s.kimura 追従スクロール 追加 start */
+  scrollFix();
+  /* s.kimura 追従スクロール 追加 end */
+
+  /* s.kimura 人員一覧を生成 追加 start */
+  dispWorkerList();
+  /* s.kimura 人員一覧を生成 追加 start */
+
+  switch(selects){
+    case 'refresh':
+      startdate;
+      break;
+    case 'today':
+      selectDate = new Date();
+      startdate = new Date(selectDate);
+      break;
+    case 'nextdate':
+      selectDate.setDate(selectDate.getDate()+1);
+      startdate = new Date(selectDate);
+      break;
+    case 'nextweek':
+      selectDate.setDate(selectDate.getDate()+7);
+      startdate = new Date(selectDate);
+      break;
+    case 'nextmonth':
+      selectDate.setMonth(selectDate.getMonth()+1);
+      startdate = new Date(selectDate);
+      break;
+    case 'prevdate':
+      selectDate.setDate(selectDate.getDate()-1);
+      startdate = new Date(selectDate);
+      break;
+    case 'prevweek':
+      selectDate.setDate(selectDate.getDate()-7);
+      startdate = new Date(selectDate);
+      break;
+    case 'prevmonth':
+      selectDate.setMonth(selectDate.getMonth()-1);
+      startdate = new Date(selectDate);
+      break;
+    /* s.kimura 参照・編集モード切替 追加 start */
+    case 'viewMode':
+      startdate;
+      isEditMode = false;
+      break;
+    case 'editMode':
+      startdate;
+      isEditMode = true;
+      break;
+    /* s.kimura 参照・編集モード切替 追加 end */
+    default:
+      selectDate = new Date();
+      startdate = new Date(selectDate);
+  }
+
+  enddate　= new Date(startdate);
+  enddate.setDate(enddate.getDate() + countdate);
+
+  /* 日付別の配列の設定 */
+  var hairetu = [];
+  var hairetulist = new Date(startdate);
+  var hairetulist2;
+
+  for(var i = 0;i < countdate;i++){
+    //console.log('hairetulist:'+hairetulist);
+    weekDay = weekDayList[ hairetulist.getDay() ] ;
+    hairetulist2 = hairetulist.getFullYear() + '年' + (hairetulist.getMonth()+1) + '月' + (hairetulist.getDate() + '日（' + weekDay +'）');
+    hairetu[hairetulist2] = [];
+    hairetulist.setDate(hairetulist.getDate()+1);
+  }
+
+  /*************************************
+    レコードの読み込み：閲覧
+  **************************************/
+  wh.retrieve(
+    {
+      where: {
+        WorkDate: {gte: startdate},
+        WorkDate2: {lte: enddate},
+      },
+      orderby: [ {WorksDate__c: "ASC"},{Type__c: "ASC"},{Phase__c: "ASC"},{ArrivalTimePlan__c: "ASC"} ],
+      limit: 500
+    },
+    function(err, records, event){
+      if(err) {
+        alert(err.message);
+      }else {
+        records.forEach(function(record) {
+          var Id = record.get("Id");
+          var Name = record.get("Name");
+          var WorkDate = record.get("WorkDate");
+          var WorksDateWB = record.get("WorksDateWB");
+          var Remarks = record.get("Remarks");if(!Remarks){Remarks = '';}
+          /* s.kimura 改行コードを<br>に変換する処理 追加 start */
+          Remarks = Remarks.replace(/\r?\n/g, '<br>');
+          /* s.kimura 改行コードを<br>に変換する処理 追加 end */
+          var TypeClass = record.get("TypeClass");if(!TypeClass){TypeClass = '';}
+          var AccountID = record.get("AccountID");
+          var AccountName = record.get("AccountName");
+          var ProjectId = record.get("ProjectId");
+          var ProjectName = record.get("ProjectName");
+          var StartTimeDisplay = record.get("StartTimeDisplay");if(!StartTimeDisplay){StartTimeDisplay = '未定';}
+          var EndTimeDisplay = record.get("EndTimeDisplay");if(!EndTimeDisplay){EndTimeDisplay = '未定';}
+          var TimeReturn = record.get("TimeReturn");
+          var MemberNum = record.get("MemberNum");
+          var Type = record.get("Type");
+            if(Type == '施工/作業（人員未定）'){Type ='人員未定';}
+          var Phase = record.get("Phase");
+            if(Phase == '中止'){Type ='　　中止　　';TypeClass ='label-danger';}
+            if(Phase == '延期'){Type ='　　延期　　';TypeClass ='label-danger';}
+          var MeetingTimePlan = record.get("MeetingTimePlan");if(!MeetingTimePlan){MeetingTimePlan = '未定';}
+          var TaisyaTimePlan = record.get("TaisyaTimePlan");if(!TaisyaTimePlan){TaisyaTimePlan = '未定';}
+          var StartTimePlan = record.get("StartTimePlan");if(!StartTimePlan){StartTimePlan = '';}
+          var ArrivalTimePlan = record.get("ArrivalTimePlan");if(!ArrivalTimePlan){ArrivalTimePlan = '';}
+          var EndTimePlan = record.get("EndTimePlan");if(!EndTimePlan){EndTimePlan = '';}
+          var ReturnTimePlan = record.get("ReturnTimePlan");if(!ReturnTimePlan){ReturnTimePlan = '';}
+          var Personnel = record.get("Personnel");if(Personnel　== undefined){Personnel = '未';};
+          var PersonnelOrder = record.get("PersonnelOrder");if(PersonnelOrder　== undefined){PersonnelOrder = '未';};
+          var TotalPersonnel = record.get("TotalPersonnel");if(TotalPersonnel　== undefined){TotalPersonnel = '<span class="big">未定</span>';}else{TotalPersonnel = '<span class="big">'+ TotalPersonnel +'</span>名';}
+          var RentalCar01 = record.get("RentalCar01");if(RentalCar01 == '[]'){RentalCar01 = '';}else{RentalCar01 = '<span class="RentalCar">'+ RentalCar01 +'</span>';}
+          var RentalCar02 = record.get("RentalCar02");if(RentalCar02 == '[]'){RentalCar02 = '';}else{RentalCar02 = '<span class="RentalCar">'+ RentalCar02 +'</span>';}
+          var RentalCar03 = record.get("RentalCar03");if(RentalCar03 == '[]'){RentalCar03 = '';}else{RentalCar03 = '<span class="RentalCar">'+ RentalCar03 +'</span>';}
+          var RentalCarPlan = record.get("RentalCarPlan");if(!RentalCarPlan){RentalCarPlan = '';}
+          var HitoCheck = record.get("HitoCheck");if(!HitoCheck){HitoCheck = '<img src="{!URLFOR($Resource.icons, 'icons/nocheck01.png')}" width="19" />';}else{HitoCheck = '<img src="{!URLFOR($Resource.icons, 'icons/check01.png')}" width="19" />';}
+          var CarCheckHope = true;
+          var CarCheck = record.get("CarCheck");if(!CarCheck){CarCheckHope = false;CarCheck = '<img src="{!URLFOR($Resource.icons, 'icons/nocheck01.png')}" width="19" />';}else{CarCheck = '<img src="{!URLFOR($Resource.icons, 'icons/check01.png')}" width="19" />';}
+          var tehaiCheck = record.get("tehaiCheck");if(!tehaiCheck){tehaiCheck = '<img src="{!URLFOR($Resource.icons, 'icons/nocheck01.png')}" width="19" />';}else{tehaiCheck = '<img src="{!URLFOR($Resource.icons, 'icons/check01.png')}" width="19" />';}
+          var Cars = record.get("Cars");if(!Cars){Cars = '';}
+          var StoreAddress = record.get("StoreAddress");if(!StoreAddress){StoreAddress = '';}
+          var BusinessTrip = record.get("BusinessTrip");if(!BusinessTrip){BusinessTrip = '';}
+          var Yakan = '';
+          var YakanClass = record.get("YakanClass");if(!YakanClass){YakanClass = '';Yakan = '';}
+          var gaichu_asahi = record.get("gaichu_asahi");if(!gaichu_asahi){gaichu_asahi = 0;}
+          var gaichu_hokkyo = record.get("gaichu_hokkyo");if(!gaichu_hokkyo){gaichu_hokkyo = 0;}
+          var gaichu_mente = record.get("gaichu_mente");if(!gaichu_mente){gaichu_mente = 0;}
+          var gaichu_etc = record.get("gaichu_etc");if(!gaichu_etc){gaichu_etc = 0;}
+          var WBName = record.get("WBName");
+          var CheckShitencho = record.get("CheckShitencho");if(!CheckShitencho){CheckShitencho = '<img src="{!URLFOR($Resource.icons, 'icons/nocheck01.png')}" width="19" />';}else{CheckShitencho = '<img src="{!URLFOR($Resource.icons, 'icons/check01.png')}" width="19" />';}
+          var CheckKakaricho = record.get("CheckKakaricho");if(!CheckKakaricho){CheckKakaricho = '<img src="{!URLFOR($Resource.icons, 'icons/nocheck01.png')}" width="19" />';}else{CheckKakaricho = '<img src="{!URLFOR($Resource.icons, 'icons/check01.png')}" width="19" />';}
+
+          //レコードデータを配列に格納
+          if(!(Array.isArray(hairetu[WorksDateWB]))){hairetu[WorksDateWB] = []}
+          hairetu[WorksDateWB].push({
+            Name : Name,
+            AccountID : AccountID,
+            AccountName : AccountName,
+            WorkDate : WorkDate,
+            Id : Id,
+            Remarks : Remarks,
+            Phase : Phase,
+            TypeClass : TypeClass,
+            ProjectName : ProjectName,
+            ProjectId : ProjectId,
+            StartTimeDisplay : StartTimeDisplay,
+            EndTimeDisplay : EndTimeDisplay,
+            TimeReturn : TimeReturn,
+            MemberNum : MemberNum,
+            Type : Type,
+            TypeClass : TypeClass,
+            YakanClass : YakanClass,
+            TaisyaTimePlan : TaisyaTimePlan,
+            MeetingTimePlan : MeetingTimePlan,
+            StartTimePlan : StartTimePlan,
+            ArrivalTimePlan : ArrivalTimePlan,
+            EndTimePlan : EndTimePlan,
+            ReturnTimePlan : ReturnTimePlan,
+            Personnel : Personnel,
+            PersonnelOrder : PersonnelOrder,
+            TotalPersonnel : TotalPersonnel,
+            HitoCheck : HitoCheck,
+            CarCheck : CarCheck,
+            CarCheckHope : CarCheckHope,
+            tehaiCheck : tehaiCheck,
+            RentalCarPlan : RentalCarPlan,
+            RentalCar01 : RentalCar01,
+            RentalCar02 : RentalCar02,
+            RentalCar03 : RentalCar03,
+            Cars : Cars,
+            StoreAddress : StoreAddress,
+            BusinessTrip : BusinessTrip,
+            Yakan : Yakan,
+            gaichu_asahi  : gaichu_asahi,
+            gaichu_hokkyo : gaichu_hokkyo,
+            gaichu_mente : gaichu_mente,
+            gaichu_etc : gaichu_etc,
+            WBName : WBName,
+            CheckShitencho : CheckShitencho,
+            CheckKakaricho : CheckKakaricho,
+          });
+        });
+      }
+
+      /** #listDivへの書き込み　**/
+      var listDiv = document.getElementById("listDiv");//Id listDivのdivに
+      var listsText ='';
+
+      //haitetu[i]のloop
+      for (var i in hairetu){
+        //日付のループ
+        if(i == 'remove'){break;}//protoはスルー
+        if(i == today){todayclass = 'today';}else{todayclass ='';}
+        //html文の生成　<div class="row">から<tbody class="lists">まで
+        listsText +=
+          '<table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--col-bordered slds-no-row-hover" style="margin-bottom:32px;">'+
+          '<thead id="taskTableHead">'+
+          '<tr class="slds-text-title--caps">'+
+          '<th scope="col" style="width:100%;" colspan="12" class="big4 datebg '+ todayclass +'">'+
+          '<div class="slds-truncate '+ todayclass +'" title="Opportunity Name">'+ i + '</div>'+
+          '</th>'+
+          '</tr>';
+
+        //表示日に工程がない場合は表示を変える
+        if('0' in hairetu[i] == false){
+          listsText +=
+              '<tr><th style="width:100%;" colspan="12">本日の作業はありません。</th></tr>'+
+            '</thead>'+
+            '<tbody>';
+        }else{
+          listsText +=
+              '<tr><th style="width: 97px;min-width: 97px;">種別</th><th style="width: 70px;min-width: 70px;">出社<br>退社</th><th style="width: 70px;min-width: 70px;">開始<br>終了予定</th><th style="width:450px;min-width: 300px;">取引先<br>内容</th>' +
+              '<th style="width: 80px;min-width: 80px;" class="cen">人数</th><th style="width:97px;min-width: 97px;">リーダー</th><th style="width:350px;min-width:180px;">作業員</th><th style=";min-width: 200px;">車両</th><th style="width: 100px;min-width: 100px;">外注</th><th style="width: 80px;min-width: 80px;">チェック</th><th style="width: 90px;min-width: 90px;">チェック</th><th style="width: 205px;min-width: 205px;"> </th>'+
+            '</tr></thead>'+
+            '<tbody>';
+        }//表示日に工程がない場合は表示を変える end
+
+        var hairetu2 = hairetu[i];
+        var kekkaCar = [];
+        var kekkaCar2 = '';
+        var syasyukibou = '';
+
+        if('0' in hairetu[i] == true){
+          //haitetu[i][s]のloop
+          for(var s in hairetu2){
+            if(s == 'remove'){break;}
+
+            //車輌の複数選択を;区切りにしてspanで囲み直す
+            kekkaCar = hairetu2[s]["Cars"].split(";");
+            console.log(kekkaCar);
+            kekkaCar2 = '';
+            for(var b = 0 ; b < kekkaCar.length ; b++ ){
+              if(kekkaCar[b] == '2tu' || kekkaCar[b] == '4tu' || kekkaCar[b] == 'ワゴン車' || kekkaCar[b] == 'FK' || kekkaCar[b] == '2tu×2台' || kekkaCar[b] == '4tu×2台' || kekkaCar[b] == 'ワゴン車×2台'|| kekkaCar[b] == 'FK×2台' || kekkaCar[b] == '2tu×3台' || kekkaCar[b] == '4tu×3台' || kekkaCar[b] == 'ワゴン車×3台' || kekkaCar[b] == 'FK×3台'||kekkaCar[b] == '2tu×4台' || kekkaCar[b] == '4tu×4台' || kekkaCar[b] == 'ワゴン車×4台' || kekkaCar[b] == 'FK×4台'){syasyukibou = true;}else{syasyukibou = false;}
+              if(kekkaCar[b] == ''){break;}
+              if(hairetu2[s]["CarCheckHope"]){
+                if(syasyukibou){
+
+                }else if(kekkaCar[b] == '[4t]1701' || kekkaCar[b] == '[4t]1899' || kekkaCar[b] == '[4t]2266' || kekkaCar[b] == '1701' || kekkaCar[b] == '1899' || kekkaCar[b] == '2266' || kekkaCar[b] == '2121'){
+                  kekkaCar2 += '<span class="carstrack">' + kekkaCar[b] +'</span>';
+                }else{
+                  kekkaCar2 += '<span class="cars">' + kekkaCar[b] +'</span>';
+                }
+              }else{
+                if(syasyukibou){
+                  kekkaCar2 += '<span class="carskibou">' + kekkaCar[b] +'希望</span>';
+                }else if(kekkaCar[b] == '1701' || kekkaCar[b] == '1899'|| kekkaCar[b] == '2266'|| kekkaCar[b] == '2121'){
+                  kekkaCar2 += '<span class="carstrack">' + kekkaCar[b] +'</span>';
+                }else{
+                  kekkaCar2 += '<span class="cars">' + kekkaCar[b] +'</span>';
+                }
+              }
+            }
+            kekkaCar2 += hairetu2[s]["RentalCar01"];
+            kekkaCar2 += hairetu2[s]["RentalCar02"];
+            kekkaCar2 += hairetu2[s]["RentalCar03"];
+
+            //色々セット
+            if(hairetu2[s]["Remarks"] ==''){
+              hairetu2[s]["Remarks"] ='<a style="margin-right:10px;" target="_blank" href="/apex/ProcessRemarks?id='+ hairetu2[s]["Id"] +'" onclick="openwin(this.href); return false;"><img class="graystyle" src="{!URLFOR($Resource.icons, 'icons/chat.png')}" width="50" /></a>';
+            }else{
+              hairetu2[s]["Remarks"] ='<a style="margin-right:10px;" target="_blank" href="/apex/ProcessRemarks?id='+ hairetu2[s]["Id"] +'" onclick="openwin(this.href); return false;"><img src="{!URLFOR($Resource.icons, 'icons/chat.png')}" width="50" /></a>';
+            }
+
+            if(hairetu2[s]["StoreAddress"] ==''){
+              hairetu2[s]["StoreAddress"] = '<img class="graystyle" style="margin-right:10px;" src="{!URLFOR($Resource.icons, 'icons/pin2.png')}" width="50" />';
+            }else{
+              hairetu2[s]["StoreAddress"] = '<a style="margin-right:10px;" href="http://maps.google.co.jp/maps?q='+ hairetu2[s]["StoreAddress"] +'" target="_blank"><img src="{!URLFOR($Resource.icons, 'icons/pin2.png')}" width="50" /></a>';
+            }
+
+            if(hairetu2[s]["BusinessTrip"] == true){
+              hairetu2[s]["BusinessTrip"] = '</span><span class="label label-syuttyo" >出張</span>';
+            }
+
+            if(hairetu2[s]["YakanClass"] == 'yakan'){
+              hairetu2[s]["Yakan"] = '<span class="label label-yakan" >夜間</span>';
+            }
+
+
+
+            listsText +=
+              '<tr class="'+ hairetu2[s]["YakanClass"] +'">' +
+                '<td>' + hairetu2[s]["BusinessTrip"] + hairetu2[s]["Yakan"] + '<span class="label ' + hairetu2[s]["TypeClass"] + '">' + hairetu2[s]["Type"] + '</td>' +
+                '<td class="big2">' + hairetu2[s]["MeetingTimePlan"] + '</br>' + hairetu2[s]["TaisyaTimePlan"] + '</td>' +
+                '<td class="big2">' + hairetu2[s]["ArrivalTimePlan"] + '</br>' + hairetu2[s]["EndTimePlan"] + '</td>' +
+                '<td><a class="db big3 target="_blank" href="/'+ hairetu2[s]["AccountID"] +'">' + hairetu2[s]["AccountName"] + '</a>' +
+                '<a target="_blank" href="/'+ hairetu2[s]["Id"] +'">' + hairetu2[s]["WBName"] + '</a></td>' +
+                '<td style="text-align:center;">' + hairetu2[s]["TotalPersonnel"] + '<br />（' + hairetu2[s]["Personnel"] + '+' +  hairetu2[s]["PersonnelOrder"]  + '）' +'</td>' +
+                '<td class="leader-area" id="L'+ hairetu2[s]["Id"]  + '"></td>' +
+                '<td class="worker-area" id="M'+ hairetu2[s]["Id"]  + '"></td>' +
+                '<td>' + kekkaCar2 + '</td>' +
+                '<td style="font-size:125%;"><span class="gaichu">朝' + hairetu2[s]["gaichu_asahi"] + '</span>北' + hairetu2[s]["gaichu_hokkyo"] + '<br><span class="gaichu">メ' + hairetu2[s]["gaichu_mente"] + '</span>他' + hairetu2[s]["gaichu_etc"] + '</td>' +
+                '<td class="cen">人員：' + hairetu2[s]["HitoCheck"] + '<br />車輌：' + hairetu2[s]["CarCheck"] + '<br />手配：' + hairetu2[s]["tehaiCheck"] + '</td>' +
+                '<td class="cen">支店長：' + hairetu2[s]["CheckShitencho"] + '<br />係　長：' + hairetu2[s]["CheckKakaricho"] + '</td>' +
+                '<td><p class="myicons">' + hairetu2[s]["Remarks"] + hairetu2[s]["StoreAddress"] +'<a href="/'+ hairetu2[s]["ProjectId"] +'" target="_blank"><img src="{!URLFOR($Resource.icons, 'icons/magnifyingglass.png')}" width="50" /></a></p></td>' +
+              '</tr>';
+            }//haitetu[i][s]のloop end
+          }
+          listsText +=
+            '</tbody>'+
+            '</table>';
+
+      }//haitetu[i]のloop end
+      listDiv.innerHTML =listsText;
+    }
+  );/* wh.retrieve */
+
+  /*************************************
+    レコードの読み込み人員：閲覧
+  **************************************/
+  // TODO s.kimura RemoteObject取得制限（Max100件）回避のため、1日ずつ取得する。 start
+  var dispDate = new Date(startdate);
+  var dispSelectDate = new Date(dispDate);
+
+  // 1週間分
+  for (var i = 0; i <= countdate; i++) {
+  // TODO s.kimura RemoteObject取得制限（Max100件）回避のため、1日ずつ取得する。 end
+  
+  Ps.retrieve(
+    {
+      where: {
+        WorkDate: {eq: dispDate},
+      },
+      orderby: [{SortNumber: "ASC"}, {WorkDate: "ASC"}],
+      limit: 100
+    },
+    function(err, records, event){
+      if(err) {
+        alert(err.message);
+      } else {
+        var hairetu3 = [];
+        var hairetu4 = [];
+        var listsText2 ='';
+        var DivId2 = '';
+        var listDiv2 = '';
+
+        records.forEach(function(record) {
+          var Id = record.get("Id");
+          var Nickname = record.get('Nickname');
+          /* s.kimura ニックネームが登録されていない場合、「ニックネームなし」を設定するよう修正 start */
+          if (typeof(Nickname) == "undefined") {
+            Nickname = 'ニックネームなし';
+          }
+          /* s.kimura ニックネームが登録されていない場合、「ニックネームなし」を設定するよう修正 end */
+          var MembersList = record.get("MembersList");
+          var LeaderClass = 'member';
+          var Leader = record.get("Leader");
+          if(Leader){
+            LeaderClass = 'leader';
+          }
+          /* s.kimura 閲覧モード、編集モードでカーソルポインタのスタイルを分けるよう修正 start */
+          if (isEditMode) {
+            LeaderClass += ' pointer';
+          }
+          /* s.kimura 閲覧モード、編集モードでカーソルポインタのスタイルを分けるよう修正 end */
+          var ProcessControl = record.get("ProcessControl");
+          if(Leader == true){
+            DivId2 = 'L' + ProcessControl;
+          }else{
+            DivId2 = 'M' + ProcessControl;
+          }
+          if(!(Array.isArray(hairetu3[DivId2]))){hairetu3[DivId2] = []}
+          hairetu3[DivId2].push({
+            Id : Id,
+            Nickname : Nickname,
+            LeaderClass : LeaderClass,
+            MembersList : MembersList
+          });
+        });
+        for (var i in hairetu3){
+          if(i == 'remove'){break;}
+          listDiv2 = document.getElementById(i);
+          hairetu4 = hairetu3[i];
+          for(var s in hairetu4){
+            if(s == 'remove'){break;}
+              listsText2 += '<span class="' + hairetu4[s]["LeaderClass"] + '">' + hairetu4[s]["Nickname"] +
+                              /* s.kimura hiddenパラメータ追加 start */
+                              '<input type="hidden" class="personnelId" value="' + hairetu4[s]["Id"] + '"></input>' +
+                              '<input type="hidden" class="MembersList" value="' + hairetu4[s]["MembersList"] + '"></input>' +
+                              /* s.kimura hiddenパラメータ追加 end */
+                            '</span>';
+          }
+          listDiv2.innerHTML = listsText2;
+          listsText2 ='';
+        }
+      }
+
+      /* s.kimura 参照・編集モード表示切替 追加 start */
+      changeDispMode();
+      /* s.kimura 参照・編集モード表示切替 追加 end */
+    }
+  );/* Ps.retrieve */
+
+  // TODO s.kimura RemoteObject取得制限（Max100件）回避のため、1日ずつ取得する。 start
+  // 次の日を設定する。
+  dispSelectDate.setDate(dispSelectDate.getDate() + 1);
+  dispDate = new Date(dispSelectDate);
+  // TODO s.kimura RemoteObject取得制限（Max100件）回避のため、1日ずつ取得する。 end
+}
+};/* ProcessLists() */
+
+/* s.kimura 追加したfunction start */
+/**
+ * 公開グループを元に編集権限をチェックします。
+ */
+function checkEditable() {
+  var wbEditableId = "{!$Setup.wbEditSetting__c.wbEditableId__c}";
+  var loginUserId = "{!$User.Id}";
+  var editableMember = new SObjectModel.GroupMember();
+  editableMember.retrieve(
+    {
+      where: {
+        GroupId: {eq: wbEditableId},
+        UserOrGroupId: {eq: loginUserId}
+      }
+    },
+    function(err, editableMemberList, event) {
+      if (err) {
+        alert(err.message);
+      } else {
+        if (editableMemberList.length > 0) {
+          hasEditPermission = true;
+        }
+      }
+    }
+  );
+}
+
+/**
+ * 追従スクロールの処理をします。
+ */
+function scrollFix() {
+  /** 追従スクロール **/
+  // 画面初期表示時の時の初期位置情報を設定する
+  // デフォルト値を設置するので、初回画面表示時・リフレッシュ時しか処理は行わない
+  if (typeof(initPositionTop) == "undefined") {
+    var initPosi = $("div.memberListArea").offset();
+    initPositionTop = initPosi.top
+  }
+
+  var menuTopMargin = 70; //fixed時のトップマージン値。
+  var targetScrollValue = initPositionTop - menuTopMargin; //position切替の境となるスクロール値
+
+  $(window).scroll(function() {
+      var wScrollvalue = $(window).scrollTop();
+      if (wScrollvalue > targetScrollValue) {
+        $("div.memberListArea").css({position: "fixed", top: menuTopMargin});
+      } else {
+        $("div.memberListArea").css({position: "absolute", top: "0"});
+      }
+  });
+
+  /** 固定スクロール **/
+  // 固定する場所が存在することの確認
+  if ($('div.fixing-base div.fixing-box').length > 0) {
+    var baseSelector = 'div.fixing-base';
+    var fixingSelector = baseSelector + ' div.fixing-box';
+
+    $(window).on('load scroll resize', function() {
+      var baseTop = $(baseSelector).offset().top;
+
+      //固定開始位置より後にスクロールされた場合
+      if($(window).scrollTop() > baseTop) {
+        $(fixingSelector).addClass('fixed');
+        $(baseSelector).height($(fixingSelector).outerHeight());
+        $(fixingSelector).width($(baseSelector).width());
+
+      //固定開始位置以前にスクロールされた場合
+      } else {
+        $(fixingSelector).removeClass('fixed');
+        $(baseSelector).height('');
+        $(fixingSelector).width('');
+      }
+    });
+  }
+}
+
+/**
+ * 人員一覧を生成します。
+ */
+function dispWorkerList() {
+  // 日付ボタンを押下する度人員が追加されるので、画面初期表示時のみ処理を実行する。
+  if (!isDispMemberList) {
+    Wl.retrieve({
+      where: {
+        GijutsuScheduleShow__c: {eq: true}
+      },
+      orderby: [{SortNumber__c: 'ASC'}],
+      limit: 500
+      }, function(err, records, event) {
+        if(err) {
+          alert(err.message);
+        } else {
+          var ul = $('<ul/>');
+          var li = null;
+          var liList = [];
+          var roopCount = 0;
+          $.each(records, function(i, record) {
+            li = $('<li/>');
+            li.addClass('member');
+            li.addClass('pointer');
+            li.addClass('worker');
+
+            var workerName = record.get('Nickname');
+            if (typeof(workerName) == "undefined") {
+              workerName = 'ニックネームなし';
+            }
+            li.append(workerName);
+            li.append('<input type="hidden" class="memberId" value="' + record.get('Id') + '"></input>');
+            li.append('<input type="hidden" class="personnelId" value=""></input>');
+            li.append('<input type="hidden" class="workId" value=""></input>');
+
+            liList.push(li);
+
+            roopCount = i + 1;
+          });
+
+          // ** [重要] 従業員数が奇数の時、中央揃えしたくないので、ダミーとしてliを生成。 start
+          if (roopCount % 2 != 0) {
+            li = $('<li/>');
+            li.addClass('member');
+            li.css('visibility', 'hidden');
+          }
+          liList.push(li);
+          // ** [重要] 従業員数が奇数の時、中央揃えしたくないので、ダミーとしてliを生成。 end
+
+          ul.attr('id', 'memberUl');
+          ul.append(liList);
+          $('#personnalDeleteArea').append('<h2 class="slds-truncate">人員一覧</h2>');
+          $('#personnalDeleteArea').append(ul);
+
+          isDispMemberList = true;
+        }
+      }
+    );
+  }
+}
+
+/**
+ * 参照・編集モード表示切り替えをします。
+ */
+function changeDispMode() {
+  if (hasEditPermission) {
+    if (isEditMode) {
+      // ボタン
+      $('#btnViewMode').show();
+      $('#btnEditMode').hide();
+      // 人員一覧
+      $('#memberListId').removeClass('hide');
+      // 全体スケジュール
+      $('#listDiv').addClass('scheduleEdit');
+      $('#listDiv').removeClass('scheduleView');
+
+      // 作業員エリア更新
+      doDragAndDropWorkerArea();
+      // リーダーエリア更新
+      doDragAndDropLeaderArea();
+      // 人員一覧から追加
+      doDragWorker();
+      // 人員を削除
+      doDropDelete();
+    } else {
+      // ボタン
+      $('#btnViewMode').hide();
+      $('#btnEditMode').show();
+      // 人員一覧
+      $('#memberListId').addClass('hide');
+      // 全体スケジュール
+      $('#listDiv').addClass('scheduleView');
+      $('#listDiv').removeClass('scheduleEdit');
+    }
+  } else {
+    // ボタン
+    $('#btnViewMode').hide();
+    $('#btnEditMode').hide();
+    // 人員一覧
+    $('#memberListId').addClass('hide');
+    // 全体スケジュール
+    $('#listDiv').addClass('scheduleView');
+    $('#listDiv').removeClass('scheduleEdit');
+  }
+}
+
+/**
+ * 工程スケジュール（リーダー） D&D処理をします。
+ */
+function doDragAndDropLeaderArea() {
+  $('td.leader-area').sortable({
+    connectWith: 'td.worker-area, td.leader-area',
+    accept: 'li.worker',
+    activate: function(event, ui) {
+      highLightDropArea();
+    },
+    deactivate: function(event, ui) {
+      cancelHighLightDropArea();
+    },
+    start: function(event, ui) {
+      preWorkId = ui.item.parent().attr('id');
+      if (typeof(preWorkId) != "undefined") {
+        preWorkId.slice(1); // 1文字目の「L or M」を削除
+        if (preWorkId.charAt(0) == 'L') {
+          preLeader = true;
+        }
+      }
+    },
+    stop: function(event, ui) {
+      // パラメータ設定
+      var workId = ui.item.parent().attr('id');
+      var trimWorkId;
+      var isLeader = false;
+      if (typeof(workId) != "undefined") {
+        trimWorkId = workId.slice(1); // 1文字目の「L or M」を削除
+        if (workId.charAt(0) == 'L') {
+          isLeader = true;
+        }
+      }
+      var personnelId = ui.item.children('input.personnelId').val();
+      var memberId = ui.item.children('input.memberId').val();
+
+      // 追加
+      if (personnelId == '') {
+          createProcess(ui, memberId, trimWorkId, isLeader);
+      } else {
+        // 更新
+        if (workId == preWorkId && isLeader == preLeader) {
+          preWorkId = '';
+          preLeader = false;
+        } else {
+          if (typeof(workId) != "undefined") {
+            // 人員をリーダーに更新
+            if (isLeader) {
+              updateProcess(ui, personnelId, trimWorkId, isLeader);
+            // 人員を更新
+            } else {
+              updateProcess(ui, personnelId, trimWorkId, isLeader);
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+/**
+ * 工程スケジュール（作業員） D&D処理をします。
+ */
+function doDragAndDropWorkerArea() {
+  $('td.worker-area').sortable({
+    connectWith: 'td.worker-area, td.leader-area',
+    accept: 'li.worker',
+    activate: function(event, ui) {
+      highLightDropArea();
+    },
+    deactivate: function(event, ui) {
+      cancelHighLightDropArea();
+    },
+    start: function(event, ui) {
+      preWorkId = ui.item.parent().attr('id');
+      if (typeof(preWorkId) != "undefined") {
+        preWorkId.slice(1); // 1文字目の「L or M」を削除
+        if (preWorkId.charAt(0) == 'L') {
+          preLeader = true;
+        }
+      }
+    },
+    stop: function(event, ui) {
+      // パラメータ設定
+      var workId = ui.item.parent().attr('id');
+      var trimWorkId;
+      var isLeader = false;
+      if (typeof(workId) != "undefined") {
+        trimWorkId = workId.slice(1); // 1文字目の「L or M」を削除
+        if (workId.charAt(0) == 'L') {
+          isLeader = true;
+        }
+      }
+      var personnelId = ui.item.children('input.personnelId').val();
+      var memberId = ui.item.children('input.memberId').val();
+
+      // 追加
+      if (personnelId == '') {
+          createProcess(ui, memberId, trimWorkId, isLeader);
+      } else {
+        // 更新
+        if (workId == preWorkId && isLeader == preLeader) {
+          preWorkId = '';
+          preLeader = false;
+        } else {
+          if (typeof(workId) != "undefined") {
+            // 人員をリーダーに更新
+            if (isLeader) {
+              updateProcess(ui, personnelId, trimWorkId, isLeader);
+            // 人員を更新
+            } else {
+              updateProcess(ui, personnelId, trimWorkId, isLeader);
+            }
+          }
+        }
+      }
+    }
+  });
+}
+/**
+ * 人員一覧からドラッグ処理をします。
+ */
+function doDragWorker() {
+  $('li.worker').draggable({
+    connectToSortable: 'td.worker-area, td.leader-area',
+    helper: 'clone',
+    drag: function(event, ui) {
+      $('li.worker').css('z-index', '5');
+    }
+  });
+}
+
+/**
+ * 人員一覧にドロップ処理をします。
+ */
+function doDropDelete() {
+  $('#personnalDeleteArea').droppable({
+    hoverClass: "ui-state-hover",
+    drop: function(event, ui) {
+
+      var personnelId = $(ui.draggable).children('input.personnelId').val();
+      if (personnelId != '') {
+        ui.draggable.remove();
+        deleteProcess(personnelId)
+      }
+    }
+  });
+}
+
+/**
+ * ドラッグ時、ドロップ可能エリアをハイライトします。
+ */
+function highLightDropArea(){
+  $('td.leader-area').css('background-color', '#ffe4c4');
+  $('td.worker-area').css('background-color', '#ffe4c4');
+}
+
+/**
+ * ドロップ可能エリアをハイライトを元に戻します。
+ */
+function cancelHighLightDropArea() {
+  $('td.leader-area').css('background-color', '');
+  $('td.worker-area').css('background-color', '');
+}
+
+/**
+ * 人員に従業員を追加します。
+ * @param ui UIオブジェクト。
+ * @param memberId 従業員ID。
+ * @param workId 工程ID。
+ */
+function createProcess(ui, memberId, workId, isLeader) {
+
+  if (isLeader) {
+    ui.item.css("background-color", "#c73030");
+  } else {
+    ui.item.css('background-color', '#3498db');
+  }
+
+  // オーバーレイ開始
+  $("#overray").fadeIn(10);
+
+  var record = new SObjectModel.Personnel__c();
+  var recordDetail = {
+    Worker__c: memberId,
+    Process__c: workId,
+    Leader__c: isLeader
+  };
+
+  record.create(recordDetail, function(err) {
+    if(err) {
+      alert(err.message);
+    } else {
+      ui.item.children('input.personnelId').val(record.get('Id'));
+      ui.item.children('input.workId').val(memberId);
+
+      // オーバレイ終了
+      $("#overray").fadeOut(10);
+    }
+  });
+}
+
+/**
+ * 人員を更新します。
+ * @param ui UIオブジェクト。
+ * @param personnelId 人員ID。
+ * @param workId 工程ID。
+ * @param isLeader リーダフラグ（true：リーダー、false：作業員）
+ */
+function updateProcess(ui, personnelId, workId, isLeader) {
+  if (isLeader) {
+    ui.item.css("background-color", "#c73030");
+  } else {
+    ui.item.css('background-color', '#3498db');
+  }
+
+  // オーバーレイ開始
+  $("#overray").fadeIn(10);
+
+  var record = new SObjectModel.Personnel__c({
+    Id: personnelId,
+    Process__c: workId,
+    Leader__c: isLeader
+  });
+  record.update(function (err) {
+    if (err) {
+      alert(err.message);
+    } else {
+      // オーバレイ終了
+      $("#overray").fadeOut(10);
+    }
+  });
+}
+
+/**
+ * 人員を削除します。
+ * @param personnelId アサインID。
+ */
+function deleteProcess(personnelId) {
+
+  // オーバーレイ開始
+  $("#overray").fadeIn(10);
+
+  var record = new SObjectModel.Personnel__c({
+    Id: personnelId
+  });
+  record.del(function (err) {
+    if (err) {
+      alert(err.message);
+    } else {
+      // オーバレイ終了
+      $("#overray").fadeOut(10);
+    }
+  });
+
+}
+/* s.kimura 追加したfunction end */
+
+
+
+/**
+ * 備考　クリック　ポッポアップ的な
+ */
+function openwin(url) {
+  var w_size=500;
+  var h_size=400;
+  var l_position=Number((window.screen.width-w_size)/2);
+  var t_position=Number((window.screen.height-h_size)/2);
+    window.open(url, '_blank', 'width='+w_size+', height='+h_size+', left='+l_position+', top='+t_position);
+}
+
+
+
+</script>
+</apex:page>
