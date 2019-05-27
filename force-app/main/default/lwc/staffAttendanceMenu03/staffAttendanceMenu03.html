@@ -60,7 +60,8 @@
                 <lightning-layout-item size="3">なまえ</lightning-layout-item>
                 <lightning-layout-item size="1">出席</lightning-layout-item>
                 <lightning-layout-item size="1">欠席</lightning-layout-item>
-                <lightning-layout-item size="4">欠席理由</lightning-layout-item>
+                <lightning-layout-item size="3">欠席理由</lightning-layout-item>
+                <lightning-layout-item size="3">バス理由</lightning-layout-item>
             </lightning-layout>
             <!-- /header -->
             <template for:each={importantNotes} for:item="item">
@@ -74,12 +75,15 @@
                 <lightning-layout-item size="1">
                     <button onclick={changeType} type=button class={item.AbsenceClass} data-group="class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
                 </lightning-layout-item>
-                <lightning-layout-item size="4">
+                <lightning-layout-item size="3">
                     <select onchange={changeType} class={item.AbsenceReasonListClass} data-group="reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AbsenceReason">
                         <template for:each={item.AbsenceReasonList} for:item="lists">
                             <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
                         </template>
                     </select>
+                </lightning-layout-item>
+                <lightning-layout-item size="3">
+                    <p class="named slds-p-left_x-small">{item.NotRideReason}</p>
                 </lightning-layout-item>
             </lightning-layout>
             </template> 
@@ -125,6 +129,13 @@
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
                         <button onclick={changeType} type=button class={item.NoGoingBackClass}  data-group="bus" data-value="帰り利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >帰り✕</button>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="3">
+                        <select onchange={changeType} class={item.AbsenceReasonListClass} data-group="RideReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="RideReason">
+                            <template for:each={item.NotRideReasonList} for:item="lists">
+                                <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                            </template>
+                        </select>
                     </lightning-layout-item>
                 </lightning-layout>
             </template> 

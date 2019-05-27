@@ -29,6 +29,7 @@ import KOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBackTi
 import GONOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusGoingNotUse__c';      //園児日誌obj:行き利用しない
 import BACKNOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusBackNotUse__c';     //園児日誌obj:帰り使用しない
 import ABSENCEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';  //園児日誌obj:欠席理由
+import NOTRIDEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.NotRideReason__c';  //園児日誌obj:バス乗らない理由
 import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';              //職員名簿obj:
 
 export default class StaffAttendanceMenu03 extends LightningElement {
@@ -95,6 +96,15 @@ export default class StaffAttendanceMenu03 extends LightningElement {
     })
     AbsenceReasonList;
 
+    /* ------------------------
+        バス乗らない理由の値を取得：初回のみ
+    ------------------------ */
+    @wire(getPicklistValues, {
+        recordTypeId: '012000000000000AAA',
+        fieldApiName: NOTRIDEREASON_FIELD
+    })
+    NotRideReasonList;
+
 
     //現在時刻取得（yyyy/mm/ddThh:mm:ss.000Z）
     getCurrentTime() {
@@ -141,6 +151,9 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         var AbsenceReasonListNow = [];    //欠席理由の値とselected情報を一時格納
         var AbsenceReasonListClass;  //欠席理由のスタイル
         var AbsenceReasonNow;        //selectされている値
+        var NotRideReasonListNow;    //バス理由のスタイル
+        // eslint-disable-next-line no-unused-vars
+        var NotRideReasonNow;        //selectされている値
 
         //var setsCheck;              //forループで要録と日報がマッチしたかどうかをチェック
         var group =event.target.dataset.group;//クラス選択かバス選択か
@@ -188,12 +201,23 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                     AbsenceReasonListNow=[]; /* 欠席理由を初期化 */
                     AbsenceReasonListClass ='selecttype01';
                     AbsenceReasonNow = '';
+                    NotRideReasonListNow=[]; /* バス理由を初期化 */
+                    NotRideReasonNow = '';
 
                     /* 欠席理由の選択リストの値を再取得 */
                     AbsenceReasonListNow[0] = {value: this.valuenone ,selected: ''};
                     for(i3 = 0; i3< this.AbsenceReasonList.data.values.length; i3++){
                         AbsenceReasonListNow[i3+1] = {
                             value : this.AbsenceReasonList.data.values[i3].value,
+                            selected: ''
+                        }
+                    }
+
+                    /* バス理由の選択リストの値を再取得 */
+                    NotRideReasonListNow[0] = {value: this.valuenone ,selected: ''};
+                    for(i3 = 0; i3< this.NotRideReasonList.data.values.length; i3++){
+                        NotRideReasonListNow[i3+1] = {
+                            value : this.NotRideReasonList.data.values[i3].value,
                             selected: ''
                         }
                     }
@@ -207,6 +231,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                             ImportantNoteList[i].AbsentSchedule = KindergartenDiaryList[i2].AbsentSchedule__c;
                             ImportantNoteList[i].NoAttendingSchool = KindergartenDiaryList[i2].BusGoingNotUse__c;
                             ImportantNoteList[i].NoGoingBack = KindergartenDiaryList[i2].BusBackNotUse__c;
+                            ImportantNoteList[i].NotRideReason = KindergartenDiaryList[i2].NotRideReason__c;
 
                             /*  欠席理由の値の数だけループ */  
                             for(i3 = 0; i3< AbsenceReasonListNow.length; i3++){
@@ -215,6 +240,17 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                                     AbsenceReasonListNow[i3].selected = 'selected';
                                     AbsenceReasonNow = AbsenceReasonListNow[i3].value;
                                     ImportantNoteList[i].selectedValue = AbsenceReasonListNow[i3].value;
+                                    //AbsenceReasonListClass='blue';
+                                }
+                            }
+
+                            /*  バス理由の値の数だけループ */  
+                            for(i3 = 0; i3< NotRideReasonListNow.length; i3++){
+                                /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                                if(NotRideReasonListNow[i3].value === KindergartenDiaryList[i2].NotRideReason__c){
+                                    NotRideReasonListNow[i3].selected = 'selected';
+                                    NotRideReasonNow = NotRideReasonListNow[i3].value;
+                                    ImportantNoteList[i].selectedValue2 = NotRideReasonListNow[i3].value;
                                     //AbsenceReasonListClass='blue';
                                 }
                             }
@@ -272,7 +308,10 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                     }else{
                         ImportantNoteList[i].AbsenceReasonListClass = AbsenceReasonListClass;
                     }
+
                     ImportantNoteList[i].AbsenceReasonList = AbsenceReasonListNow;
+                    ImportantNoteList[i].NotRideReasonList = NotRideReasonListNow;
+
 
                     
                     
@@ -310,6 +349,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         var AttendanceClass;var AbsenceClass;
         var AbsenceReason; var AbsenceReasonListClass;
         var AttendanceSchedule;
+        var NotRideReason;
         
         /* 連打禁止 */
         if(this.processing){return}
@@ -340,6 +380,8 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         AbsenceClass = this.importantNotes[indexs].AbsenceClass;
         AbsenceReason = this.importantNotes[indexs].selectedValue;
         AttendanceSchedule = this.importantNotes[indexs].AttendanceSchedule;
+        NotRideReason = this.importantNotes[indexs].selectedValue2;
+        AbsenceReasonListClass = 'selecttype01';
 
 
         /* 日報レコード作成や更新に必要な項目を代入  */
@@ -470,16 +512,27 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         /* バス：行き利用なし */
         if(event.target.dataset.group === 'bus' && event.target.dataset.value === '帰り利用しない'){
             /* ON・OFFスイッチ */
-            if(this.importantNotes[indexs].NoGoingBack){
-            fields[BACKNOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
-            NoGoingBack=false;
-            NoGoingBackClass='btn-square gray';
-        }else{
-            fields[BACKNOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
-            NoGoingBack=true;
-            NoGoingBackClass='btn-square blue';
+            if(this.importantNotes[indexs].NoGoingBack){    
+                fields[BACKNOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
+                NoGoingBack=false;
+                NoGoingBackClass='btn-square gray';
+            }else{
+                fields[BACKNOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
+                NoGoingBack=true;
+                NoGoingBackClass='btn-square blue';
+            }
         }
-    }
+        /* バス：バス理由の場合 */
+        if(event.target.dataset.group === 'RideReason'){
+            if(event.target.value===this.valuenone || event.target.value==='' || event.target.value===undefined){
+                fields[NOTRIDEREASON_FIELD.fieldApiName] = '';
+                NotRideReason = '';
+            }else{
+                fields[NOTRIDEREASON_FIELD.fieldApiName] = event.target.value;
+                NotRideReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }  
         //if(this.importantNotes[indexs].AttendingSchool === '登園'){AttendingSchool= '登園'}
         //if(this.importantNotes[indexs].GoingBack === '降園'){GoingBack= '降園'}
 
@@ -507,6 +560,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 this.importantNotes[indexs].AbsenceClass = AbsenceClass;
                 this.importantNotes[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
                 this.importantNotes[indexs].selectedValue = AbsenceReason;
+                this.importantNotes[indexs].selectedValue2 = NotRideReason;
                 this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('作成OK');
@@ -540,6 +594,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 this.importantNotes[indexs].AbsenceClass = AbsenceClass;
                 this.importantNotes[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
                 this.importantNotes[indexs].selectedValue = AbsenceReason;
+                this.importantNotes[indexs].selectedValue2 = NotRideReason;
                 this.processing =false;
                 // eslint-disable-next-line no-console
                 console.log('更新OK');

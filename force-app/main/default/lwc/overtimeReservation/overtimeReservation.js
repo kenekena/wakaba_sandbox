@@ -767,7 +767,7 @@ export default class OvertimeReservation extends LightningElement {
             for(i=0; i < this.overtimeReservationList.length; i++) {
                 
                 /* 日曜日以外 */
-                if(!(this.overtimeReservationList[i].weeknum === 0)){
+                if(!(this.overtimeReservationList[i].weeknum === 0 || this.overtimeReservationList[i].weeknum === 6 )){
                     /* 今日以降 */
                     if(this.todayDate <= this.overtimeReservationList[i].date3){
 
