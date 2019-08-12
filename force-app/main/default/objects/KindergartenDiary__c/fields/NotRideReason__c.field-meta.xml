@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>AbsenceReason__c</fullName>
+    <fullName>NotRideReason__c</fullName>
     <externalId>false</externalId>
-    <label>欠席理由</label>
+    <label>乗車しない理由</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
@@ -12,34 +12,39 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>病気</fullName>
+                <fullName>休み</fullName>
                 <default>false</default>
-                <label>病気</label>
+                <label>休み</label>
             </value>
             <value>
-                <fullName>自己都合</fullName>
+                <fullName>預かり保育</fullName>
                 <default>false</default>
-                <label>自己都合</label>
+                <label>預かり保育</label>
             </value>
             <value>
-                <fullName>保護者が休み</fullName>
+                <fullName>朝預かり</fullName>
                 <default>false</default>
-                <label>保護者が休み</label>
+                <label>朝預かり</label>
             </value>
             <value>
-                <fullName>出席停止</fullName>
+                <fullName>送り迎え</fullName>
                 <default>false</default>
-                <label>出席停止</label>
+                <label>送り迎え</label>
             </value>
             <value>
-                <fullName>忌引き</fullName>
+                <fullName>送り</fullName>
                 <default>false</default>
-                <label>忌引き</label>
+                <label>送り</label>
             </value>
             <value>
-                <fullName>頭し</fullName>
+                <fullName>迎え</fullName>
                 <default>false</default>
-                <label>頭し</label>
+                <label>迎え</label>
+            </value>
+            <value>
+                <fullName>コスモ</fullName>
+                <default>false</default>
+                <label>コスモ</label>
             </value>
         </valueSetDefinition>
     </valueSet>

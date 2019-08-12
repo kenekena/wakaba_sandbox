@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>AllContacts</fullName>
-    <columns>FULL_NAME</columns>
     <columns>Number__c</columns>
+    <columns>FULL_NAME</columns>
     <columns>kana__c</columns>
     <columns>PassageRoute__c</columns>
     <columns>Sex__c</columns>
     <columns>CONTACT.BIRTHDATE</columns>
     <columns>Age__c</columns>
     <columns>EntryDate__c</columns>
-    <columns>Class__c</columns>
+    <columns>Belongs__c</columns>
     <columns>ACCOUNT.NAME</columns>
     <columns>RelationshipWithChildren1__c</columns>
     <columns>Guardian2__c</columns>

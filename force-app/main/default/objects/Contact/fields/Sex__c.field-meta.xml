@@ -20,6 +20,16 @@
                 <default>false</default>
                 <label>女子</label>
             </value>
+            <value>
+                <fullName>男</fullName>
+                <default>false</default>
+                <label>男</label>
+            </value>
+            <value>
+                <fullName>女</fullName>
+                <default>false</default>
+                <label>女</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

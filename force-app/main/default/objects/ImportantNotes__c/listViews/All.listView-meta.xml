@@ -2,19 +2,19 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All</fullName>
     <columns>NAME</columns>
-    <columns>DisplayOrder__c</columns>
-    <columns>Contact__c</columns>
-    <columns>PickUpTime__c</columns>
-    <columns>DropOff__c</columns>
     <columns>FiscalYear__c</columns>
     <columns>Class__c</columns>
+    <columns>Contact__c</columns>
     <columns>Teacher__c</columns>
+    <columns>PassageRoute__c</columns>
+    <columns>BusStop__c</columns>
     <columns>EducationDays__c</columns>
     <columns>AttendanceDays__c</columns>
-    <columns>GradePointEmphasis__c</columns>
-    <columns>PersonalEmphasis__c</columns>
-    <columns>ReferenceItems__c</columns>
-    <columns>Remarks__c</columns>
+    <columns>Sex__c</columns>
+    <columns>Birthdate__c</columns>
+    <columns>Age__c</columns>
+    <columns>Guardian1__c</columns>
+    <columns>Guardian2__c</columns>
     <filterScope>Everything</filterScope>
     <label>すべて選択</label>
 </ListView>

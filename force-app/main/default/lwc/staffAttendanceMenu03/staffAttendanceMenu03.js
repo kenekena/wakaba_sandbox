@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { LightningElement,wire,track } from 'lwc';
 
 /* 選択リストを取得 */

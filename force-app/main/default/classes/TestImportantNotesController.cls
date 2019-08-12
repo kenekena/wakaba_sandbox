@@ -11,6 +11,7 @@ public with sharing class TestImportantNotesController {
             School__c='北広島わかば'
         );
         insert staff1;
+        Staff__c STFID = staff1;
         
         // 保護者のテストデータを作成する
         Account act1 = new Account(
@@ -36,6 +37,38 @@ public with sharing class TestImportantNotesController {
         insert cnt1;
         Contact CNTID = cnt1;
 
+        // 園児日誌のテストデータを作成する
+        Date TDY = date.today();
+        KindergartenDiary__c kgd1 = new KindergartenDiary__c(
+					Contact__c = CNTID.Id,
+            		Date__c = TDY,
+            		AttendanceSchedule__c = '欠席予定',
+					StaffId__c = STFID.Id
+        );
+        insert kgd1;
+        KindergartenDiary__c KGDID = kgd1;
+
+        // insertList設定
+        List<KindergartenDiary__c> insertList = new List<KindergartenDiary__c>();
+        insertList.add(new KindergartenDiary__c(
+								Date__c = TDY,
+								Contact__c = CNTID.Id,
+								Outside__c = '16:00',
+								OutsideFast__c  = '7:00',
+								StaffId__c = STFID.Id)
+        );
+
+        // updateList設定
+        List<KindergartenDiary__c> updateList = new List<KindergartenDiary__c>();
+        updateList.add(new KindergartenDiary__c(
+								Id = KGDID.Id,
+								Date__c = TDY,
+								Contact__c = CNTID.Id,
+								Outside__c = '16:00',
+								OutsideFast__c  = '7:00',
+								StaffId__c = STFID.Id)
+        );
+
         // テスト開始        
         Test.startTest();
 
@@ -49,8 +82,10 @@ public with sharing class TestImportantNotesController {
         List<ImportantNotes__c> ImportantNotes4 = ImportantNotesController.findImportantNotes2('通園コース1','2019-05-19 00:00:00','buss');
 
         List<KindergartenDiary__c> KindergartenDiary2 = ImportantNotesController.findKindergartenDiary('2019-05-01 00:00:00');
-        Test.stopTest();
 
+        String result = ImportantNotesController.upsertKindergartenDiary( insertList, updateList );
+
+        Test.stopTest();
     }    
 
 }

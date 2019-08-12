@@ -36,7 +36,7 @@ public with sharing class ImportantNotesController {
         system.debug('StartDateS' + StartDateS);
         system.debug('EndDateS' + EndDateS);
         system.debug('EnjiID' + EnjiID);
-        return [SELECT Id,AbsenceReason__c,NotRideReason__c,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Contact__r.Id =:EnjiID AND Date__c >= :StartDateS AND Date__c <= :EndDateS];
+        return [SELECT Id,AbsenceReason__c,NotRideReason__c ,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c FROM KindergartenDiary__c WHERE Contact__r.Id =:EnjiID AND Date__c >= :StartDateS AND Date__c <= :EndDateS];
     }
     
     /* ------------------------------------------------
@@ -46,6 +46,7 @@ public with sharing class ImportantNotesController {
     public static String upsertKindergartenDiary(List<KindergartenDiary__c> insertList,List<KindergartenDiary__c> updateList) {
         insert insertList;
         update updateList;
+        return 'success';
     }
 
 
@@ -98,7 +99,7 @@ public with sharing class ImportantNotesController {
     public static List<KindergartenDiary__c> findKindergartenDiary(String searchDate) {
         Date myDate = Date.valueOf(searchDate);
         system.debug(searchDate);
-        return [SELECT Id,AbsenceReason__c,NotRideReason__c,AttendanceSchedule__c,BusBackNotUse__c,BusGoingNotUse__c,Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , attendingSchoolTime__c , GoingBack__c , GoingBackTime__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
+        return [SELECT Id,AbsenceReason__c,NotRideReason__c ,AttendanceSchedule__c,BusBackNotUse__c,BusGoingNotUse__c,Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , attendingSchoolTime__c , GoingBack__c , GoingBackTime__c FROM KindergartenDiary__c WHERE Date__c =:myDate];
 
         /* 別パターンの記述
             List<KindergartenDiary__c> KindergartenDiaryList = new List<KindergartenDiary__c>();

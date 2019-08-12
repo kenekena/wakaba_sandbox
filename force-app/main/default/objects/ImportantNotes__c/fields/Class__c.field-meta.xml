@@ -12,6 +12,36 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>みつば</fullName>
+                <default>false</default>
+                <label>みつば</label>
+            </value>
+            <value>
+                <fullName>ふたば</fullName>
+                <default>false</default>
+                <label>ふたば</label>
+            </value>
+            <value>
+                <fullName>つぼみ</fullName>
+                <default>false</default>
+                <label>つぼみ</label>
+            </value>
+            <value>
+                <fullName>あさがお</fullName>
+                <default>false</default>
+                <label>あさがお</label>
+            </value>
+            <value>
+                <fullName>すみれ</fullName>
+                <default>false</default>
+                <label>すみれ</label>
+            </value>
+            <value>
+                <fullName>たんぽぽ</fullName>
+                <default>false</default>
+                <label>たんぽぽ</label>
+            </value>
+            <value>
                 <fullName>ばら</fullName>
                 <default>false</default>
                 <label>ばら</label>
@@ -22,14 +52,14 @@
                 <label>さくら</label>
             </value>
             <value>
-                <fullName>ゆり</fullName>
-                <default>false</default>
-                <label>ゆり</label>
-            </value>
-            <value>
                 <fullName>きく</fullName>
                 <default>false</default>
                 <label>きく</label>
+            </value>
+            <value>
+                <fullName>ゆり</fullName>
+                <default>false</default>
+                <label>ゆり</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -11,29 +11,29 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>コース１</fullName>
+                <fullName>犬１</fullName>
                 <default>false</default>
-                <label>コース１</label>
+                <label>犬１</label>
             </value>
             <value>
-                <fullName>コース2</fullName>
+                <fullName>犬２</fullName>
                 <default>false</default>
-                <label>コース2</label>
+                <label>犬２</label>
             </value>
             <value>
-                <fullName>コース3</fullName>
+                <fullName>ネコ１</fullName>
                 <default>false</default>
-                <label>コース3</label>
+                <label>ネコ１</label>
             </value>
             <value>
-                <fullName>コース4</fullName>
+                <fullName>ネコ２</fullName>
                 <default>false</default>
-                <label>コース4</label>
+                <label>ネコ２</label>
             </value>
             <value>
-                <fullName>コース5</fullName>
+                <fullName>ビーバー</fullName>
                 <default>false</default>
-                <label>コース5</label>
+                <label>ビーバー</label>
             </value>
         </valueSetDefinition>
     </valueSet>

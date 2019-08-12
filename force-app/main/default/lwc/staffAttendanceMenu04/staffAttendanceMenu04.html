@@ -1,0 +1,19 @@
+<template>
+    <!--
+    <lightning-combobox
+        name="FiscalYearList"
+        value={ThisYear}
+        placeholder="未選択"
+        options={FiscalYearList}
+        onchange={ChangeFiscalYear}
+        >
+    </lightning-combobox>
+    -->
+    <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+        <template for:each={FiscalYearList} for:item="item">
+            <option key={item.value}  value={item.value} >{item.label}</option>
+        </template>
+    </select>
+
+    <p>{ThisYear}年</p>
+</template>

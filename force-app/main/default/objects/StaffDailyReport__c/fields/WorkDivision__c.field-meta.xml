@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Diapers__c</fullName>
-    <defaultValue>2000</defaultValue>
+    <fullName>WorkDivision__c</fullName>
     <externalId>false</externalId>
-    <label>おむつ破棄代</label>
-    <precision>18</precision>
+    <formula>TEXT(Staff__r.WorkDivision__c)</formula>
+    <label>勤務区分</label>
     <required>false</required>
-    <scale>0</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>Currency</type>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

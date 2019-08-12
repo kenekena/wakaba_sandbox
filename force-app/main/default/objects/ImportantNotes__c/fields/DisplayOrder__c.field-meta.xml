@@ -10,8 +10,8 @@ TEXT( YEAR(Contact__r.EntryDate__c) ) + LPAD(TEXT(MONTH(Contact__r.EntryDate__c)
 +
 
 CASE( Contact__r.Sex__c ,
-   &quot;男子&quot;, &quot;0&quot;,
-   &quot;女子&quot;, &quot;1&quot;,
+   &quot;男&quot;, &quot;0&quot;,
+   &quot;女&quot;, &quot;1&quot;,
    &quot;9&quot;
 )
 

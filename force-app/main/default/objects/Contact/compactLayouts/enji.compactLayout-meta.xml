@@ -3,7 +3,6 @@
     <fullName>enji</fullName>
     <fields>Name</fields>
     <fields>Image__c</fields>
-    <fields>Class__c</fields>
     <fields>AccountId</fields>
     <fields>Guardian2__c</fields>
     <label>園児用コンパクトレイアウト</label>

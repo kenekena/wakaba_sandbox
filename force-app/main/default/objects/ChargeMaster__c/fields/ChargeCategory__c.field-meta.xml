@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>AttendanceSchedule__c</fullName>
+    <fullName>ChargeCategory__c</fullName>
     <externalId>false</externalId>
-    <label>出欠席予定</label>
+    <label>料金区分</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
@@ -12,14 +12,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>出席</fullName>
+                <fullName>固定</fullName>
                 <default>false</default>
-                <label>出席</label>
+                <label>固定</label>
             </value>
             <value>
-                <fullName>欠席</fullName>
+                <fullName>変動</fullName>
                 <default>false</default>
-                <label>欠席</label>
+                <label>変動</label>
             </value>
         </valueSetDefinition>
     </valueSet>

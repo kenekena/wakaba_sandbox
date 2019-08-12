@@ -4,9 +4,9 @@
     <columns>ACCOUNT.NAME</columns>
     <columns>Name2__c</columns>
     <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_STREET</columns>
     <columns>ACCOUNT.PHONE1</columns>
-    <columns>Mail__c</columns>
-    <columns>CardNumber__c</columns>
     <filterScope>Everything</filterScope>
     <label>すべての保護者</label>
 </ListView>

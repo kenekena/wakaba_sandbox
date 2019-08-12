@@ -56,6 +56,9 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
+            ],
+            "c/staffAttendanceMenu04": [
+                "staffAttendanceMenu04/staffAttendanceMenu04.js"
             ]
         }
     },

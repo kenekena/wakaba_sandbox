@@ -11,19 +11,24 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>正職保育教諭</fullName>
+                <default>false</default>
+                <label>正職保育教諭</label>
+            </value>
+            <value>
                 <fullName>正職員</fullName>
                 <default>false</default>
                 <label>正職員</label>
             </value>
             <value>
-                <fullName>パターン１</fullName>
+                <fullName>時給保育教諭</fullName>
                 <default>false</default>
-                <label>パターン１</label>
+                <label>時給保育教諭</label>
             </value>
             <value>
-                <fullName>パターン２</fullName>
+                <fullName>時給職員</fullName>
                 <default>false</default>
-                <label>パターン２</label>
+                <label>時給職員</label>
             </value>
         </valueSetDefinition>
     </valueSet>
