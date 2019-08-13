@@ -14,5 +14,49 @@
             <option key={item.value}  value={item.value} >{item.label}</option>
         </template>
     </select>
+    <p>くみ</p>
+    <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+        <template for:each={classList} for:item="item">
+            <option key={item.value}  value={item.value} >{item.label}</option>
+        </template>
+    </select>
+    <p>バス</p>
+    <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+        <template for:each={BusList} for:item="item">
+            <option key={item.value}  value={item.value} >{item.label}</option>
+        </template>
+    </select>
+
+    <div class="slds-m-bottom_medium">
+    <lightning-card title="日付検索" icon-name="standard:search">
+        <div class="slds-m-around_medium">
+            <div class="slds-m-bottom_medium">
+                <lightning-layout multiple-rows>
+                    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+                        <lightning-input 
+                            label="日付指定"
+                            onchange={ChangeSelectDate}
+                            data-type="DateSelect"
+                            type="date" name="input2"
+                            value={SearchDayProcess} 
+                            
+                        ></lightning-input>
+                    </lightning-layout-item>
+                </lightning-layout>
+                <!-- min="2019-08-02" max="2019-08-25" -->
+            </div>
+            <div class="slds-m-left_small">
+            <lightning-button-group>
+                <lightning-button label="前日" onclick={ChangeSelectDate} data-type="DateButton" value="-1" icon-name="utility:left" alternative-text="前日" tooltip="前日" ></lightning-button>
+                <lightning-button label="今日" onclick={ChangeSelectDate} data-type="DateButton" value="0" ></lightning-button>
+                <lightning-button label="翌日" onclick={ChangeSelectDate} data-type="DateButton" value="1" icon-name="utility:right" icon-position="right" alternative-text="翌日" tooltip="翌日" ></lightning-button>
+            </lightning-button-group>   
+            </div>
+        </div>
+        
+    </lightning-card>
+    </div>
+    {SearchDayProcess}
+
 
 </template>

@@ -11,10 +11,25 @@ import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 /* APEX Class呼び出し */
 import findImportantNotes from '@salesforce/apex/ImportantNotesV2Controller.findImportantNotes';
 
+const Week = ["日","月","火","水","木","金","土"];
+const Today = new Date();
+
+
 export default class StaffAttendanceMenu04 extends LightningElement {
     @track ThisYear = "2019";
     ThisKindergarten = "北広島わかば";
     @track FiscalYearList  = [];
+    @track classList = [];
+    @track BusList = [];
+
+    TodayText = this.ChangeText(Today);
+    TodayProcess = this.ChangeProcess(Today);
+    TodayWeek = "(" + Week[Today.getDay()] + ")";
+    @track SearchDay = new Date();
+    @track SearchDayText = this.ChangeText(this.SearchDay);
+    @track SearchDayProcess = this.ChangeProcess(this.SearchDay);
+    @track SearchDayWeek = "(" + Week[this.SearchDay.getDay()] + ")";
+
 
 
     @wire(getPicklistValues, {
@@ -81,10 +96,59 @@ export default class StaffAttendanceMenu04 extends LightningElement {
       くみリストとバスリストを生成 
     ********************************/
     ListCreate(result){
+        /* 配列リセット */
+        this.classList = [];
+        this.BusList = [];
+        let classListCheck = [];//リストチェック用
+        let BusListListCheck = [];//リストチェック用
+        let count1 = 0;let count2 = 0;
+
+        /* 要録リストをループ */
         for(let v of result) {
-            console.log("これ");
-            console.log(v.Class__c);
-          }
+            /* くみリストを生成 */
+            if (classListCheck.indexOf(v.Class__c) === -1){
+                if(!(v.Class__c === undefined)){
+                    classListCheck.push(v.Class__c);
+                    this.classList[count1] ={
+                        value : v.Class__c,
+                        label : v.Class__c
+                    }
+                    count1 ++;
+                }
+            }
+            /* バスリストを生成 */
+            if (BusListListCheck.indexOf(v.PassageRoute__c) === -1){
+                if(!(v.PassageRoute__c === undefined)){
+                    BusListListCheck.push(v.PassageRoute__c);
+                    this.BusList[count2] ={
+                        value : v.PassageRoute__c,
+                        label : v.PassageRoute__c
+                    }
+                    count2 ++;
+                }
+            }
+        }
+        console.log(this.classList);
+        console.log(this.BusList);
+    }
+
+    /********************************
+      日付変更 
+    ********************************/
+    ChangeSelectDate(event){
+        let num =0;
+
+        if(event.target.dataset.type === "DateButton"){
+            num = Number(event.target.value);
+            if(num === 0 ){
+                this.SelectDate = new Date(Today.getTime());
+            }else{
+                this.SelectDate.setDate(this.SelectDate.getDate() + num);
+            }
+        }else if(event.target.dataset.type === "DateSelect"){
+            this.SelectDate = new Date( event.target.value.substr(0,4),event.target.value.substr(5,2) -1,event.target.value.substr(8,2));
+        }
+        this.SearchDayProcess = this.ChangeProcess(this.SelectDate);
     }
 
 
@@ -116,6 +180,36 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         return SetList;
         }
      /* END:選択リストを作成SetListValue */
+
+     /* ------------------------
+        先頭ゼロ付加
+    ------------------------ */
+    padZero(num) {
+        var result;
+        if (num < 10) {
+            result = "0" + num;
+        } else {
+            result = "" + num;
+        }
+        return result;
+    }
+    /* END:先頭ゼロ付加 */
+
+    /* ------------------------
+        日付を文字列に変換
+    ------------------------ */
+    ChangeText(TargeDate) {
+        return TargeDate.getFullYear() + "年" + (TargeDate.getMonth() + 1) + "月"+ TargeDate.getDate() + "日(" + Week[TargeDate.getDay()] + ")";
+    }
+    /* END:日付を文字列に変換 */
+
+    /* ------------------------
+        日付を処理用に変換
+    ------------------------ */
+    ChangeProcess(TargeDate) {
+        return TargeDate.getFullYear() + "-" + this.padZero((TargeDate.getMonth() + 1)) + "-"+ this.padZero(TargeDate.getDate());
+    }
+    /* END:日付を処理用に変換 */
 
 
 
