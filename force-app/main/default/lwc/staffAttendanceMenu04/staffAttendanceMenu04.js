@@ -39,6 +39,14 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     /* END:wire ListDefault_FiscalYear  */
 
     /********************************
+      初回処理
+    ********************************/
+    connectedCallback() {
+        this.GetImportantNotes();
+    }
+
+
+    /********************************
       選択リストを変更したら 
       this.ThisYearを書き換え
     ********************************/
@@ -57,6 +65,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         })
         .then(result => {
             console.log(result);
+            this.ListCreate(result);
         })
         .catch(error => {
             this.dispatchEvent(
@@ -68,16 +77,22 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             );
         })
     }
+    /********************************
+      くみリストとバスリストを生成 
+    ********************************/
+    ListCreate(result){
+        
+    }
 
 
-    /*
+    /********************************
         選択リストを作成SetListValue
             DafaultList     :@wire getPicklistValuesで取得した入れる
             HeadValue       :bloon 先頭にデフォルトの値を追加
             DefaultValue    :HeadValueがtrueのときの先頭のvalue
             DefaultLabel    :HeadValueがtrueのときの先頭のlabel
         return >>> 配列
-    */
+    ********************************/
     SetListValue(DefaultList,HeadValue,DefaultValue,DefultLabel){
         let i;let Head = 0;let SetList = [];
         if(HeadValue){
