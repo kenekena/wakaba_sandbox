@@ -81,7 +81,10 @@ export default class StaffAttendanceMenu04 extends LightningElement {
       くみリストとバスリストを生成 
     ********************************/
     ListCreate(result){
-        
+        for(let v of result) {
+            console.log("これ");
+            console.log(v.Class__c);
+          }
     }
 
 
