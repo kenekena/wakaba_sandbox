@@ -222,12 +222,9 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                             selected: ''
                         }
                     }
-                    console.log('ちょりっす');
 
                     for(i2 = 0; i2< KindergartenDiaryList.length; i2++){
-                        console.log('ちょりっす４');
                         if(ImportantNoteList[i].Contact__r.Id === KindergartenDiaryList[i2].Contact__r.Id){
-                            console.log('ちょりっす３');
                             ImportantNoteList[i].kindergartenDiaryId = KindergartenDiaryList[i2].Id;
                             ImportantNoteList[i].AttendanceSchedule = KindergartenDiaryList[i2].AttendanceSchedule__c;
                             ImportantNoteList[i].AttendingSchool = KindergartenDiaryList[i2].AttendingSchool__c;
@@ -237,7 +234,6 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                             ImportantNoteList[i].NoGoingBack = KindergartenDiaryList[i2].BusBackNotUse__c;
                             ImportantNoteList[i].NotRideReason = KindergartenDiaryList[i2].NotRideReason__c;
                             
-                            console.log('欠席理由');
                             /*  欠席理由の値の数だけループ */  
                             for(i3 = 0; i3< AbsenceReasonListNow.length; i3++){
                                 /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
@@ -248,13 +244,10 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                                     //AbsenceReasonListClass='blue';
                                 }
                             }
-                            console.log('バス理由');
                             /*  バス理由の値の数だけループ */  
                             for(i3 = 0; i3< NotRideReasonListNow.length; i3++){
                                 /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
-                                console.log('バス理由１');
                                 if(NotRideReasonListNow[i3].value === KindergartenDiaryList[i2].NotRideReason__c){
-                                    console.log('バス理由２');
                                     NotRideReasonListNow[i3].selected = 'selected';
                                     NotRideReasonNow = NotRideReasonListNow[i3].value;
                                     ImportantNoteList[i].selectedValue2 = NotRideReasonListNow[i3].value;
@@ -264,7 +257,6 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                         }
                     }
 
-                    console.log('ちょりっす２');
                     /* ひとり事の情報を取りまとめる */
 
                     /* 出席簿の処理 */
@@ -329,6 +321,8 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 }
 
                 this.importantNotes = ImportantNoteList;    //表示用の配列にImportantNoteListを入れる
+                console.log("this.importantNotes");
+                console.log(this.importantNotes);
                 this.firstDisplay = false;
                 //画面表示・非表示の切り替え
                 if(group === 'bus'){
@@ -572,7 +566,6 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 this.importantNotes[indexs].selectedValue = AbsenceReason;
                 this.importantNotes[indexs].selectedValue2 = NotRideReason;
                 this.processing =false;
-                // eslint-disable-next-line no-console
                 console.log('作成OK');
 
             })
@@ -606,7 +599,6 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 this.importantNotes[indexs].selectedValue = AbsenceReason;
                 this.importantNotes[indexs].selectedValue2 = NotRideReason;
                 this.processing =false;
-                // eslint-disable-next-line no-console
                 console.log('更新OK');
             })
             .catch(() => {
