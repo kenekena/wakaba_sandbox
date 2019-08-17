@@ -358,7 +358,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                     this.EnjiList.push(v.Contact__c);
                 }
             }
-            console.log(this.EnjiList);
         }
 
         /* 園児日誌検索Apex呼び出し */
@@ -367,10 +366,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             ContactIdList :this.EnjiList
         })
         .then(result => {
-            console.table("findKindergartenDiary");
-            console.table(result);
+            //ShowKindergartenDiary()で集計処理
             this.ShowKindergartenDiary(result);
-
         })
         .catch(error => {
             this.dispatchEvent(
@@ -387,7 +384,38 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         園児日誌を整理して表示する
     ********************************/
     ShowKindergartenDiary(result){
+        let KindergartenDiaryB =[];let i =0;let i2 =0;
+
+        /* テスト 要録のNumberを上手にとってきたい。
+        let test2 =[];
+        for(i = 0; i< this.ImportantNotesList.length; i++){
+            test2[this.ImportantNotesList[i].Contact__c] = {
+                Number : this.ImportantNotesList[i].Number__c,
+                Name : this.ImportantNotesList[i].Contact__r.kana__c
+            }
+        }
+        console.table("要録");
+        console.table(test2);
+        */
+
+
+        /* 日報リストをId名で連想配列にする */
+        for(i = 0; i< result.length; i++){
+            KindergartenDiaryB[result[i].Contact__c] = result[i]
+        }
+        console.table("KindergartenDiaryB");
+        console.table(KindergartenDiaryB);
+
+        /* 園児に対して日報あるかないかチェック */
+        for(let v of this.EnjiList) {
+            if (KindergartenDiaryB[v]) {
+                console.log(v + "の日報はある");
+            }else{
+                console.log(v + "の日報はない");
+            }
+        }
         
+
     }
 
 
