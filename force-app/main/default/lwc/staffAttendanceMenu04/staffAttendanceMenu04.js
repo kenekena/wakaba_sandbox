@@ -52,9 +52,11 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     @track TodayYear;
     @track FiscalYearList  = [];
     @track ImportantNotesList =[];
+    @track ImportantNotesList2 =[];
     @track ClassList = [];
     @track BusList = [];
     @track EnjiList = [];
+    @track ShowEnjiList =[];//表示用のリスト
 
     /* 表示・非表示 */
     @track NextButton = false;
@@ -200,6 +202,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ********************************/
     connectedCallback() {
         /* 今の年度を保存 */
+        console.log("なぜだ");
         let ThisMouth = Today.getMonth();
         if(ThisMouth < 3){
             this.TodayYear = String(Today.getFullYear() -1);
@@ -234,6 +237,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
       要録を取得 
     ********************************/
     GetImportantNotes(){
+        let i =0;
         /* 日付制御の処理 年度内の日付しか選択できたいようにする */
         let ThisMouth = this.SearchDay.getMonth();
         if(ThisMouth < 3){
@@ -255,8 +259,11 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         })
         .then(result => {
             this.ImportantNotesList =[];
-            
             this.ImportantNotesList = result;
+            /* 要録リストをId名で連想配列にする */
+            for(i = 0; i< result.length; i++){
+                this.ImportantNotesList2[result[i].Contact__c] = result[i];
+            } 
             console.info("this.ListCreate：要録一覧");
             console.table(result);
             console.info(this.ImportantNotesList);
@@ -343,7 +350,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     GetKindergartenDiary(event){
         let Group = event.target.dataset.group;//クラス選択：Class or バス選択：Bus
         let GroupValue = event.target.dataset.value;//クラス名 or バス名
-        let v;
+        let v;let i=0;
         this.EnjiList = [];
         if(Group === "Class"){
             for(v of this.ImportantNotesList) {
@@ -359,6 +366,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 }
             }
         }
+        console.log("ShowEnjiList");
+        console.log(this.ShowEnjiList);
 
         /* 園児日誌検索Apex呼び出し */
         findKindergartenDiary({
@@ -384,36 +393,115 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         園児日誌を整理して表示する
     ********************************/
     ShowKindergartenDiary(result){
+        let SetEnjiList = [];
         let KindergartenDiaryB =[];let i =0;let i2 =0;
-
-        /* テスト 要録のNumberを上手にとってきたい。
-        let test2 =[];
-        for(i = 0; i< this.ImportantNotesList.length; i++){
-            test2[this.ImportantNotesList[i].Contact__c] = {
-                Number : this.ImportantNotesList[i].Number__c,
-                Name : this.ImportantNotesList[i].Contact__r.kana__c
-            }
-        }
-        console.table("要録");
-        console.table(test2);
-        */
-
+        let AbsenceReasonListNow =[];/* 欠席理由を一時的に格納 */
+        let AbsenceReasonNow = "";/* Seceltされている欠席理由、空白の場合のClass名を変更する為使う */
+        let NotRideReasonListNow = [];/* バス理由を一時的に格納 */
+        let NotRideReasonNow = "";
+        let AttendanceStopListNow = [];
+        let AttendanceStopNow = "";
 
         /* 日報リストをId名で連想配列にする */
         for(i = 0; i< result.length; i++){
-            KindergartenDiaryB[result[i].Contact__c] = result[i]
+            KindergartenDiaryB[result[i].Contact__c] = result[i];
+            KindergartenDiaryB[result[i].Contact__c].Number__c = this.ImportantNotesList2[result[i].Contact__c].Number__c;
         }
-        console.table("KindergartenDiaryB");
+        console.log("KindergartenDiaryB");
         console.table(KindergartenDiaryB);
 
-        /* 園児に対して日報あるかないかチェック */
+        /* 園児に対して日報あるかないか */
+        i =0;
         for(let v of this.EnjiList) {
+            /* 初期化 */
+            AbsenceReasonListNow =[];
+            AbsenceReasonListNow = JSON.parse(JSON.stringify(this.AbsenceReasonList));
+            AbsenceReasonNow = "";
+            NotRideReasonListNow =[];
+            NotRideReasonListNow = JSON.parse(JSON.stringify(this.NotRideReasonList));
+            NotRideReasonNow = "";
+            AttendanceStopListNow = [];
+            AttendanceStopListNow = JSON.parse(JSON.stringify(this.AttendanceStopList));
+            AttendanceStopNow = "";
+            /* END:初期化 */
+
+            /* 配列であることを宣言 */
+            SetEnjiList[i] = [];
+
+            /* 要録情報を表示するリストにセット */
+            SetEnjiList[i].Contact__r = [];
+            SetEnjiList[i].NotRideReasonList = [];
+            SetEnjiList[i].AbsenceReasonList = [];
+            SetEnjiList[i].AttendanceStopReasonList = [];
+            SetEnjiList[i].Contact__r.kana__c = this.ImportantNotesList2[v].Contact__r.kana__c;
+            SetEnjiList[i].Contact__r.PassageRoute__c = this.ImportantNotesList2[v].Contact__r.PassageRoute__c;
+            SetEnjiList[i].Contact__c = this.ImportantNotesList2[v].Contact__c;
+            SetEnjiList[i].i = i;
+
+            
+            /* 日報がある場合 */
             if (KindergartenDiaryB[v]) {
                 console.log(v + "の日報はある");
-            }else{
-                console.log(v + "の日報はない");
+                /* 該当日報の項目をセット */
+                SetEnjiList[i].AbsenceReason = KindergartenDiaryB[v].AbsenceReason__c;
+                SetEnjiList[i].NotRideReason = KindergartenDiaryB[v].NotRideReason__c;
+                SetEnjiList[i].AttendanceStopReason = KindergartenDiaryB[v].AttendanceStopReason__c;
+                SetEnjiList[i].kindergartenDiaryId = KindergartenDiaryB[v].Id;
+                SetEnjiList[i].AttendanceSchedule = KindergartenDiaryB[v].AttendanceSchedule__c;
+                SetEnjiList[i].AttendingSchool = KindergartenDiaryB[v].AttendingSchool__c;
+                SetEnjiList[i].GoingBack = KindergartenDiaryB[v].GoingBack__c;
+                SetEnjiList[i].AbsentSchedule = KindergartenDiaryB[v].AbsentSchedule__c;
+                SetEnjiList[i].NoAttendingSchool = KindergartenDiaryB[v].BusGoingNotUse__c;
+                SetEnjiList[i].NoGoingBack = KindergartenDiaryB[v].BusBackNotUse__c;
+                console.log("KindergartenDiaryB[v].AbsenceReason");
+                console.log(KindergartenDiaryB[v].AbsenceReason);
+                
+                /* END:該当日報の項目をセット */
+                
+
+                /*  欠席理由の値の数だけループ */  
+                for(i2 = 0; i2< AbsenceReasonListNow.length; i2++){
+                    /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                    if(AbsenceReasonListNow[i2].value === SetEnjiList[i].AbsenceReason){
+                        AbsenceReasonListNow[i2].selected = 'selected';
+                        AbsenceReasonNow = AbsenceReasonListNow[i2].value;
+                        SetEnjiList[i].selectedValue = AbsenceReasonListNow[i2].value;
+                        SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
+                        break;
+                    }
+                }
+
+                /*  バス理由の値の数だけループ */  
+                for(i2 = 0; i2< NotRideReasonListNow.length; i2++){
+                    /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                    if(NotRideReasonListNow[i2].value === SetEnjiList[i].NotRideReason){
+                        NotRideReasonListNow[i2].selected = 'selected';
+                        NotRideReasonNow = NotRideReasonListNow[i2].value;
+                        SetEnjiList[i].selectedValue2 = NotRideReasonListNow[i2].value;
+                        SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
+                        break;
+                    }
+                }
+
+                /*  出席停止理由の値の数だけループ */  
+                for(i2 = 0; i2< AttendanceStopListNow.length; i2++){
+                    /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
+                    if(AttendanceStopListNow[i2].value === SetEnjiList[i].AttendanceStopReason){
+                        AttendanceStopListNow[i2].selected = 'selected';
+                        AttendanceStopNow = AttendanceStopListNow[i2].value;
+                        SetEnjiList[i].selectedValue3 = AttendanceStopListNow[i2].value;
+                        SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
+                        break;
+                    }
+                }
+            
             }
+            i++;
         }
+        console.log("SetEnjiList");
+        console.table(SetEnjiList);
+
+        
         
 
     }
