@@ -56,14 +56,18 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     @track ClassList = [];
     @track BusList = [];
     @track EnjiList = [];
+    @track Group;    
     @track ShowEnjiList =[];//表示用のリスト
 
     /* 表示・非表示 */
+    @track processing = false;
     @track NextButton = false;
     @track PrevButton = false;
     @track TodayButton = false;
     @track ClassShow = false;
     @track BusShow = false;
+    @track firstDisplay = true;
+    @track Loading = false;
     /* END:表示・非表示 */
 
     /* 職員選択用 */
@@ -341,36 +345,43 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         this.SearchDayText = this.ChangeText(this.SearchDay);
         if(this.SearchDayProcess === this.MaxDate){this.NextButton=true;}else{this.NextButton=false}
         if(this.SearchDayProcess === this.MinDate){this.PrevButton=true;}else{this.PrevButton=false}
+        this.GetKindergartenDiary();
     }
 
 
     /********************************
-        クラス・バス選択で園児一覧を取得
+        クラス・バス変更 
     ********************************/
-    GetKindergartenDiary(event){
-        let Group = event.target.dataset.group;//クラス選択：Class or バス選択：Bus
+    ChangeClassBus(event){
         let GroupValue = event.target.dataset.value;//クラス名 or バス名
         let v;let i=0;
         this.EnjiList = [];
-        if(Group === "Class"){
+        this.Group = event.target.dataset.group;//クラス選択：Class or バス選択：Bus
+        this.firstDisplay = false;
+        if(this.Group === "Class"){
             for(v of this.ImportantNotesList) {
                 if(v.Class__c === GroupValue){
                     this.EnjiList.push(v.Contact__c);
                 }
             }
         }
-        if(Group === "Bus"){
+        if(this.Group === "Bus"){
             for(v of this.ImportantNotesList) {
                 if(v.PassageRoute__c === GroupValue){
                     this.EnjiList.push(v.Contact__c);
                 }
             }
         }
-        console.log("ShowEnjiList");
-        console.log(this.ShowEnjiList);
 
-        /* 園児日誌検索Apex呼び出し */
-        findKindergartenDiary({
+        this.GetKindergartenDiary();
+    }
+
+    /********************************
+        園児日誌を検索
+    ********************************/
+    GetKindergartenDiary(){
+       /* 園児日誌検索Apex呼び出し */
+       findKindergartenDiary({
             SearchDate :this.SearchDayProcess,
             ContactIdList :this.EnjiList
         })
@@ -387,16 +398,20 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 })
             );
         })
-    }
+   }
+
 
     /********************************
         園児日誌を整理して表示する
     ********************************/
     ShowKindergartenDiary(result){
+        this.Loading = true;
+
         let SetEnjiList = [];
         let KindergartenDiaryB =[];let i =0;let i2 =0;
         let AbsenceReasonListNow =[];/* 欠席理由を一時的に格納 */
         let AbsenceReasonNow = "";/* Seceltされている欠席理由、空白の場合のClass名を変更する為使う */
+        let AbsenceReasonListClass ="";  //欠席理由のスタイル
         let NotRideReasonListNow = [];/* バス理由を一時的に格納 */
         let NotRideReasonNow = "";
         let AttendanceStopListNow = [];
@@ -423,6 +438,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             AttendanceStopListNow = [];
             AttendanceStopListNow = JSON.parse(JSON.stringify(this.AttendanceStopList));
             AttendanceStopNow = "";
+            AbsenceReasonListClass ='selecttype01';
             /* END:初期化 */
 
             /* 配列であることを宣言 */
@@ -457,7 +473,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 console.log(KindergartenDiaryB[v].AbsenceReason);
                 
                 /* END:該当日報の項目をセット */
-                
 
                 /*  欠席理由の値の数だけループ */  
                 for(i2 = 0; i2< AbsenceReasonListNow.length; i2++){
@@ -470,6 +485,12 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
+                /* 未選択なら */
+                if(SetEnjiList[i].AbsenceReason === undefined || SetEnjiList[i].AbsenceReason ===""){
+                    SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
+                }
+                /*  END:欠席理由の値の数だけループ */  
+        
 
                 /*  バス理由の値の数だけループ */  
                 for(i2 = 0; i2< NotRideReasonListNow.length; i2++){
@@ -482,6 +503,12 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
+                /* 未選択なら */
+                if(SetEnjiList[i].NotRideReason === undefined || SetEnjiList[i].NotRideReason ===""){
+                    SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
+                }
+                /*  END:バス理由の値の数だけループ */  
+
 
                 /*  出席停止理由の値の数だけループ */  
                 for(i2 = 0; i2< AttendanceStopListNow.length; i2++){
@@ -494,17 +521,129 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
+                /* 未選択なら */
+                if(SetEnjiList[i].AttendanceStopReason === undefined || SetEnjiList[i].AttendanceStopReason ===""){
+                    SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
+                }
+                /*  END:出席停止理由の値の数だけループ */  
             
+            }else{
+                /* 園児日誌がない場合 */
+                SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
+                SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
+                SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
             }
-            i++;
-        }
-        console.log("SetEnjiList");
-        console.table(SetEnjiList);
 
+            /* 
+                CSS：Class設定
+            */
+            /* 出席簿の処理 */
+            SetEnjiList[i].AbsenceClass='btn-square gray';
+            SetEnjiList[i].AttendanceClass='btn-square gray';
+            if(SetEnjiList[i].AbsentSchedule){
+                SetEnjiList[i].AbsenceClass='btn-square blue';
+            }
+            if(SetEnjiList[i].AttendanceSchedule==='出席'){
+                SetEnjiList[i].AttendanceClass='btn-square yellow';     
+            }
+            if(SetEnjiList[i].AttendanceSchedule==='欠席'){
+                SetEnjiList[i].AbsenceClass='btn-square yellow';
+            }
+
+            /* バス乗車 */
+            if(SetEnjiList[i].NoAttendingSchool){
+                SetEnjiList[i].NoAttendingSchoolClass='btn-square blue';
+            }else{
+                SetEnjiList[i].NoAttendingSchool=false;
+                SetEnjiList[i].NoAttendingSchoolClass='btn-square gray';
+            }
+            if(SetEnjiList[i].NoGoingBack){
+                SetEnjiList[i].NoGoingBackClass='btn-square blue';
+            }else{
+                SetEnjiList[i].NoGoingBack=false;
+                SetEnjiList[i].NoGoingBackClass='btn-square gray';
+            }
+
+            /* バス乗車：登園ボタン処理 */
+            if(SetEnjiList[i].AttendingSchool){
+                SetEnjiList[i].AttendingSchoolClass='btn-square yellow';
+            }else{
+                SetEnjiList[i].AttendingSchool=false;
+                SetEnjiList[i].AttendingSchoolClass='btn-square gray';
+            }
+
+            /* バス乗車：下車ボタン処理 */
+            if(SetEnjiList[i].GoingBack){
+                SetEnjiList[i].GoingBackClass='btn-square yellow';
+            }else{
+                SetEnjiList[i].GoingBack=false;
+                SetEnjiList[i].GoingBackClass='btn-square gray';
+            }
+
+            /* 欠席理由 */ 
+            if(SetEnjiList[i].AttendanceSchedule ==='欠席' && AbsenceReasonNow === '' ){
+                SetEnjiList[i].AbsenceReasonListClass = AbsenceReasonListClass + 'border_Red ';
+            }else{
+                SetEnjiList[i].AbsenceReasonListClass = AbsenceReasonListClass;
+            }
+
+            /* 出席停止 */ 
+                SetEnjiList[i].AttendanceStopListClass = AbsenceReasonListClass;
+            /* END:CSS：Class設定 */
+
+            i++;//AttendanceStopListClass
+        }
         
+
+        //console.log("SetEnjiList");
+        //console.table(SetEnjiList);
+        this.ShowEnjiList = [];
+        this.ShowEnjiList = SetEnjiList;
+        //console.log("ShowEnjiList");
+        //console.table(this.ShowEnjiList);
+
+        //画面表示・非表示の切り替え
+        this.Loading = false;
+
+        if(this.Group === 'Bus'){
+            this.BusShow = true;
+            this.ClassShow = false;
+        }
+        if(this.Group === 'Class'){
+            this.BusShow = false;
+            this.ClassShow = true;
+        } 
         
 
     }
+
+    /********************************
+        園児日誌を更新する
+    ********************************/
+    changeType(event){
+        let indexs;             //何番目をクリックしたか把握
+        let i = 0; 
+
+        /* 連打禁止 */
+        if(this.processing){return}
+        /* 処理中フラグ */
+        this.processing =true;
+
+        indexs = event.target.dataset.i;
+
+        /* 
+            項目をせっとするところから
+            一時格納しないと、失敗したときに変わるよね
+            
+        */
+ 
+    }
+
+
+
+
+
+
 
 
     /********************************
