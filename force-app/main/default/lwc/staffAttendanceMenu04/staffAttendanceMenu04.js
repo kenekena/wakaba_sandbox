@@ -6,8 +6,6 @@ import { LightningElement,track,wire } from 'lwc';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import LIST_FiscalYear from '@salesforce/schema/ImportantNotes__c.FiscalYear__c';
 
-
-
 /* ポップアップメッセージ表示 */
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 
@@ -34,7 +32,6 @@ import BACKNOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusBackNot
 import ABSENCEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.AbsenceReason__c';  //園児日誌obj:欠席理由
 import NOTRIDEREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.NotRideReason__c';  //園児日誌obj:バス乗らない理由
 import STAFFID_FIELD from '@salesforce/schema/KindergartenDiary__c.StaffId__c';              //職員名簿obj:
-import ATTENDANCESTOP_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendanceStop__c';//職員名簿obj:出席停止
 import ATTENDANCESTOPREASON_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendanceStopReason__c';//職員名簿obj:出席停止理由
 
 
@@ -102,8 +99,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ListDefault_FiscalYear({error, data}) {
         if (data) {
           this.FiscalYearList = this.SetListValue(data,false);
-          console.log("this.FiscalYearList");
-          console.log(this.FiscalYearList);
+          //console.log("this.FiscalYearList");
+          //console.log(this.FiscalYearList);
 
         } else if (error) {
             this.dispatchEvent(
@@ -125,8 +122,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     AbsenceReasonListDefault({error, data}) {
         if (data) {
           this.AbsenceReasonList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
-          console.log("this.AbsenceReasonList");
-          console.log(this.AbsenceReasonList);
+          //console.log("this.AbsenceReasonList");
+          //console.log(this.AbsenceReasonList);
         } else if (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -147,8 +144,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     NotRideReasonListDefault({error, data}) {
         if (data) {
           this.NotRideReasonList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
-          console.log("this.NotRideReasonList");
-          console.log(this.NotRideReasonList);
         } else if (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -169,8 +164,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     AttendanceStopListDefault({error, data}) {
         if (data) {
           this.AttendanceStopList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
-          console.log("this.AttendanceStopList");
-          console.log(this.AttendanceStopList);
         } else if (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -206,7 +199,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ********************************/
     connectedCallback() {
         /* 今の年度を保存 */
-        console.log("なぜだ");
         let ThisMouth = Today.getMonth();
         if(ThisMouth < 3){
             this.TodayYear = String(Today.getFullYear() -1);
@@ -229,6 +221,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
       this.ThisYearを書き換え
     ********************************/
     ChangeFiscalYear(event){
+        this.BusShow = false;
+        this.ClassShow = false;
         this.ThisYear = event.target.value;
         this.SearchDay = new Date(this.ThisYear,this.SearchDay.getMonth(),this.SearchDay.getDate());
         this.SearchDayProcess = this.ChangeProcess(this.SearchDay);
@@ -268,9 +262,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             for(i = 0; i< result.length; i++){
                 this.ImportantNotesList2[result[i].Contact__c] = result[i];
             } 
-            console.info("this.ListCreate：要録一覧");
-            console.table(result);
-            console.info(this.ImportantNotesList);
+            //console.info("this.ListCreate：要録一覧");
+            //console.table(result);
+            //console.info(this.ImportantNotesList);
             this.ListCreate(result);
         })
         .catch(error => {
@@ -319,10 +313,10 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 }
             }
         }
-        console.info("this.ClassList");
-        console.log(this.ClassList);
-        console.info("this.BusList");
-        console.log(this.BusList);
+        //console.info("this.ClassList");
+        //console.log(this.ClassList);
+        //console.info("this.BusList");
+        //console.log(this.BusList);
     }
 
     /********************************
@@ -426,7 +420,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         console.table(KindergartenDiaryB);
 
         /* 園児に対して日報あるかないか */
-        i =0;
+        i = 0;
         for(let v of this.EnjiList) {
             /* 初期化 */
             AbsenceReasonListNow =[];
@@ -480,7 +474,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                     if(AbsenceReasonListNow[i2].value === SetEnjiList[i].AbsenceReason){
                         AbsenceReasonListNow[i2].selected = 'selected';
                         AbsenceReasonNow = AbsenceReasonListNow[i2].value;
-                        SetEnjiList[i].selectedValue = AbsenceReasonListNow[i2].value;
+                        //後で消す SetEnjiList[i].selectedValue = AbsenceReasonListNow[i2].value;
                         SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
                         break;
                     }
@@ -498,7 +492,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                     if(NotRideReasonListNow[i2].value === SetEnjiList[i].NotRideReason){
                         NotRideReasonListNow[i2].selected = 'selected';
                         NotRideReasonNow = NotRideReasonListNow[i2].value;
-                        SetEnjiList[i].selectedValue2 = NotRideReasonListNow[i2].value;
+                        //後で消す SetEnjiList[i].selectedValue2 = NotRideReasonListNow[i2].value;
                         SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
                         break;
                     }
@@ -516,7 +510,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                     if(AttendanceStopListNow[i2].value === SetEnjiList[i].AttendanceStopReason){
                         AttendanceStopListNow[i2].selected = 'selected';
                         AttendanceStopNow = AttendanceStopListNow[i2].value;
-                        SetEnjiList[i].selectedValue3 = AttendanceStopListNow[i2].value;
+                        //後で消す SetEnjiList[i].selectedValue3 = AttendanceStopListNow[i2].value;
                         SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
                         break;
                     }
@@ -595,12 +589,13 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }
         
 
-        //console.log("SetEnjiList");
-        //console.table(SetEnjiList);
+        console.log("SetEnjiList");
+        console.table(SetEnjiList);
+        this.ShowEnjiList.length = 0;
         this.ShowEnjiList = [];
         this.ShowEnjiList = SetEnjiList;
-        //console.log("ShowEnjiList");
-        //console.table(this.ShowEnjiList);
+        console.log("ShowEnjiList");
+        console.log(this.ShowEnjiList);
 
         //画面表示・非表示の切り替え
         this.Loading = false;
@@ -623,19 +618,287 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     changeType(event){
         let indexs;             //何番目をクリックしたか把握
         let i = 0; 
+        let recordInput = {};   //レコード作成・更新用
+        let timesstump = this.getCurrentTime();
+        let AttendingSchool;let GoingBack;
+        let AttendingSchoolClass;let GoingBackClass;
+        let NoAttendingSchool;let NoGoingBack;
+        let NoAttendingSchoolClass;let NoGoingBackClass;
+        let AttendanceClass;let AbsenceClass;
+        let AbsenceReason; let AbsenceReasonListClass;
+        let AttendanceSchedule;let NotRideReason;
+        let AttendanceStopReason;
 
         /* 連打禁止 */
         if(this.processing){return}
         /* 処理中フラグ */
         this.processing =true;
 
+        /* 何番目を選択したか */
         indexs = event.target.dataset.i;
 
-        /* 
-            項目をせっとするところから
-            一時格納しないと、失敗したときに変わるよね
-            
-        */
+        /* 現在の値を仮代入 */
+        AttendingSchool = this.ShowEnjiList[indexs].AttendingSchool;
+        GoingBack = this.ShowEnjiList[indexs].GoingBack;
+        AttendingSchoolClass = this.ShowEnjiList[indexs].AttendingSchoolClass;
+        GoingBackClass = this.ShowEnjiList[indexs].GoingBackClass;
+        NoAttendingSchool = this.ShowEnjiList[indexs].NoAttendingSchool;     
+        NoGoingBack = this.ShowEnjiList[indexs].NoGoingBack;
+        NoAttendingSchoolClass = this.ShowEnjiList[indexs].NoAttendingSchoolClass;   
+        NoGoingBackClass = this.ShowEnjiList[indexs].NoGoingBackClass;
+        AttendanceClass = this.ShowEnjiList[indexs].AttendanceClass;
+        AbsenceClass = this.ShowEnjiList[indexs].AbsenceClass;
+        AttendanceSchedule = this.ShowEnjiList[indexs].AttendanceSchedule;
+        AbsenceReason = this.ShowEnjiList[indexs].AbsenceReason;
+        NotRideReason = this.ShowEnjiList[indexs].NotRideReason;
+        AttendanceStopReason = this.ShowEnjiList[indexs].AttendanceStopReason;
+
+        AbsenceReasonListClass = 'selecttype01';
+
+        /* 日報レコード作成や更新に必要な項目を代入  */
+        /* バス（登園）かバス（降園）かクラスかでセットする項目を変える */
+        const fields = {};
+
+        /* 共通 */
+        fields[ID_FIELD.fieldApiName] = event.target.dataset.kindergartendiaryid;       //日報ID
+        fields[DATE_FIELD.fieldApiName] = this.SearchDayProcess;                              //今日の日付
+        fields[ENGJIID_FIELD.fieldApiName] = this.ShowEnjiList[indexs].Contact__c; //関連園児ID
+        fields[STAFFID_FIELD.fieldApiName] = this.StaffId;
+
+        /* クラス：出席・欠席の場合 */
+        if(event.target.dataset.group === 'Class'){
+            fields[AS_FIELD.fieldApiName] = event.target.dataset.value;                     //出席予定
+            AttendanceSchedule = event.target.dataset.value;
+            fields[ASTIME_FIELD.fieldApiName] = timesstump;                                 //出席欠席した時間
+            if(event.target.dataset.value ==='出席'){
+                //すでに出席だったら
+                if(this.ShowEnjiList[indexs].AttendanceSchedule === '出席'){
+                    fields[AS_FIELD.fieldApiName] ='';
+                    AttendanceSchedule ='';
+                    fields[ASTIME_FIELD.fieldApiName] ='';
+                    AttendanceClass='btn-square gray';
+                    AbsenceReasonListClass='selecttype01';
+                //出席
+                }else{
+                    AttendanceClass='btn-square yellow';
+                    AbsenceReasonListClass='selecttype01';
+                    if(this.ShowEnjiList[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
+                        AbsenceClass='btn-square blue';
+                    }else{
+                        AbsenceClass='btn-square gray';  
+                    }
+                }
+            }else{
+                //すでに欠席だったら
+                if(this.ShowEnjiList[indexs].AttendanceSchedule === '欠席'){
+                    fields[AS_FIELD.fieldApiName] ='';
+                    AttendanceSchedule ='';
+                    fields[ASTIME_FIELD.fieldApiName] ='';
+                    AbsenceReasonListClass='selecttype01';
+                    if(this.ShowEnjiList[indexs].AbsentSchedule){                             //欠席予定だったら、欠席をblueにしてあげる
+                        AbsenceClass='btn-square blue';
+                    }else{
+                        AbsenceClass='btn-square gray';  
+                    }
+                    
+                //欠席
+                }else{
+                    AttendanceClass='btn-square gray';  
+                    AbsenceClass='btn-square yellow';
+                    //欠席理由がなしなら赤枠に切り替える
+                    if(AbsenceReason===undefined || AbsenceReason===''){
+                        AbsenceReasonListClass='border_Red selecttype01';
+                    }
+                }
+            }
+        }
+        /* END:クラス：出席・欠席の場合 */
+
+        /* クラス：欠席理由の場合 */
+        if(event.target.dataset.group === 'Reason'){
+            if(event.target.value===DefaultValueBase || event.target.value==='' || event.target.value===undefined){
+                fields[ABSENCEREASON_FIELD.fieldApiName] = '';
+                AbsenceReason = '';
+
+                if(this.ShowEnjiList[indexs].AttendanceSchedule ==='欠席'){
+                    AbsenceReasonListClass='border_Red selecttype01';
+                }else{
+                    AbsenceReasonListClass='selecttype01';
+                }
+            }else{
+                fields[ABSENCEREASON_FIELD.fieldApiName] = event.target.value;
+                AbsenceReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }  
+        /* END:クラス：欠席理由の場合 */
+
+        /* クラス：出席停止理由の場合 */
+        if(event.target.dataset.group === 'StopReason'){
+            console.log("なにがだめだん");
+            if(event.target.value===DefaultValueBase || event.target.value==='' || event.target.value===undefined){
+                fields[ATTENDANCESTOPREASON_FIELD.fieldApiName] = '';
+                AttendanceStopReason = '';
+            }else{
+                fields[ATTENDANCESTOPREASON_FIELD.fieldApiName] = event.target.value;
+                AttendanceStopReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }  
+        /* END:クラス：出席停止理由の場合 */
+
+        /* バス：登園の場合 */
+        if(event.target.dataset.group === 'Bus' && event.target.dataset.value === '登園'){
+            /* ON・OFFスイッチ */
+            if(this.ShowEnjiList[indexs].AttendingSchool){
+                fields[TOUEN_FIELD.fieldApiName] = false;                                       //登園チェック
+                fields[TOUENTIME_FIELD.fieldApiName] = '';                                      //登園時間
+                AttendingSchool=false;
+                AttendingSchoolClass='btn-square gray';
+            }else{
+                fields[TOUEN_FIELD.fieldApiName] = true;                                         //登園チェック
+                fields[TOUENTIME_FIELD.fieldApiName] = timesstump;                               //登園時間
+                AttendingSchool=true;
+                AttendingSchoolClass='btn-square yellow';
+            }
+        }
+        /* END:バス：登園の場合 */
+
+        /* バス：降園の場合 */
+        if(event.target.dataset.group === 'Bus' && event.target.dataset.value === '降園'){
+             /* ON・OFFスイッチ */
+             if(this.ShowEnjiList[indexs].GoingBack){
+                fields[KOUEN_FIELD.fieldApiName] = false;                                        //登園チェック
+                fields[KOUENTIME_FIELD.fieldApiName] = '';                                       //登園時間
+                GoingBack=false;
+                GoingBackClass='btn-square gray';
+            }else{
+                fields[KOUEN_FIELD.fieldApiName] = true;                                         //登園チェック
+                fields[KOUENTIME_FIELD.fieldApiName] = timesstump;                               //登園時間
+                GoingBack=true;
+                GoingBackClass='btn-square yellow';
+            }
+        }
+        /* END:バス：降園の場合 */
+
+
+        /* バス：行き利用なし */
+        if(event.target.dataset.group === 'Bus' && event.target.dataset.value === '行き利用しない'){
+            /* ON・OFFスイッチ */
+            if(this.ShowEnjiList[indexs].NoAttendingSchool){
+               fields[GONOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
+               NoAttendingSchool=false;
+               NoAttendingSchoolClass='btn-square gray';
+           }else{
+               fields[GONOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
+               NoAttendingSchool=true;
+               NoAttendingSchoolClass='btn-square blue';
+           }
+        }
+        /* END:バス：行き利用なし */
+
+        /* バス：帰り利用なし */
+        if(event.target.dataset.group === 'Bus' && event.target.dataset.value === '帰り利用しない'){
+            /* ON・OFFスイッチ */
+            if(this.ShowEnjiList[indexs].NoGoingBack){    
+                fields[BACKNOTUSE_FIELD.fieldApiName] = false;                                        //登園チェック
+                NoGoingBack=false;
+                NoGoingBackClass='btn-square gray';
+            }else{
+                fields[BACKNOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
+                NoGoingBack=true;
+                NoGoingBackClass='btn-square blue';
+            }
+        }
+        /* END:バス：帰り利用なし */
+
+        /* バス：バス理由の場合 */
+        if(event.target.dataset.group === 'RideReason'){
+            if(event.target.value===DefaultValueBase || event.target.value==='' || event.target.value===undefined){
+                fields[NOTRIDEREASON_FIELD.fieldApiName] = '';
+                NotRideReason = '';
+            }else{
+                fields[NOTRIDEREASON_FIELD.fieldApiName] = event.target.value;
+                NotRideReason = event.target.value;
+                //AbsenceReasonListClass='blue';
+            }
+        }  
+        /* END:バス：バス理由の場合 */
+
+        //もし選んだ要録に日報IDがセットされてなかったら日報を作成し、セットされてたら日報を更新
+        if(fields[ID_FIELD.fieldApiName]=== undefined || fields[ID_FIELD.fieldApiName]=== ''){
+        
+            recordInput = {apiName: KindergartenDiary_OBJECT.objectApiName, fields };   //作成する情報をセット
+
+            createRecord(recordInput)  
+            .then(result => {   //レコード作成に成功したら
+                //表示用の配列情報を更新する
+                this.ShowEnjiList[indexs].kindergartenDiaryId = result.id;                   //作成したレコードIDを表示用の変数に戻してあげる：再描写
+                this.ShowEnjiList[indexs].AttendanceSchedule = AttendanceSchedule;//作成した出席情報を表示用の変数に戻してあげる：再描写
+                this.ShowEnjiList[indexs].AttendingSchool = AttendingSchool;
+                this.ShowEnjiList[indexs].AttendingSchoolClass = AttendingSchoolClass;
+                this.ShowEnjiList[indexs].GoingBack = GoingBack;
+                this.ShowEnjiList[indexs].GoingBackClass = GoingBackClass;
+                this.ShowEnjiList[indexs].NoAttendingSchool = NoAttendingSchool;
+                this.ShowEnjiList[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.ShowEnjiList[indexs].NoGoingBack = NoGoingBack;
+                this.ShowEnjiList[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.ShowEnjiList[indexs].AttendanceClass = AttendanceClass;
+                this.ShowEnjiList[indexs].AbsenceClass = AbsenceClass;
+                this.ShowEnjiList[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.ShowEnjiList[indexs].AbsenceReason = AbsenceReason;
+                this.ShowEnjiList[indexs].NotRideReason = NotRideReason;
+                this.ShowEnjiList[indexs].AttendanceStopReason = AttendanceStopReason;
+                this.processing =false;
+                console.log('作成OK');
+
+            })
+            .catch(() => {   //レコード作成に失敗したら
+                //ポップアップでエラーメッセージを出す
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'レコードクリエイト：エラー',
+                        message: '園児日報を作成できませんでした。',
+                        variant: 'error'
+                    })
+                );
+            });
+        //日報を更新
+        }else{
+            recordInput = { fields };
+            updateRecord(recordInput)
+            .then(() => {
+                this.ShowEnjiList[indexs].AttendanceSchedule = AttendanceSchedule;
+                this.ShowEnjiList[indexs].AttendingSchool = AttendingSchool;
+                this.ShowEnjiList[indexs].AttendingSchoolClass = AttendingSchoolClass;
+                this.ShowEnjiList[indexs].GoingBack = GoingBack;
+                this.ShowEnjiList[indexs].GoingBackClass = GoingBackClass;
+                this.ShowEnjiList[indexs].NoAttendingSchool = NoAttendingSchool;
+                this.ShowEnjiList[indexs].NoAttendingSchoolClass = NoAttendingSchoolClass;
+                this.ShowEnjiList[indexs].NoGoingBack = NoGoingBack;
+                this.ShowEnjiList[indexs].NoGoingBackClass = NoGoingBackClass;
+                this.ShowEnjiList[indexs].AttendanceClass = AttendanceClass;
+                this.ShowEnjiList[indexs].AbsenceClass = AbsenceClass;
+                this.ShowEnjiList[indexs].AbsenceReasonListClass = AbsenceReasonListClass;
+                this.ShowEnjiList[indexs].AbsenceReason = AbsenceReason;
+                this.ShowEnjiList[indexs].NotRideReason = NotRideReason;
+                this.ShowEnjiList[indexs].AttendanceStopReason = AttendanceStopReason;
+                this.processing =false;
+                console.log('更新OK');
+            })
+            .catch(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'レコードアップデート：エラー',
+                        message: '園児日報を更新できませんでした。',
+                        variant: 'error'
+                    })
+                );
+            });
+        }
+
+
+
  
     }
 
@@ -680,20 +943,20 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         現在時刻取得（yyyy/mm/ddThh:mm:ss.000Z）
     ------------------------ */
     getCurrentTime() {
-        var now = new Date();
-        var res;
+        let now = new Date();
+        let res;
         now.setHours(now.getHours() - 9);//Salesforceに取り込んだときにずれる
         res = "" + now.getFullYear() + "-" + this.padZero(now.getMonth() + 1) + 
             "-" + this.padZero(now.getDate()) + "T" + this.padZero(now.getHours()) + ":" + 
             this.padZero(now.getMinutes()) + ":" + this.padZero(now.getSeconds()) + ".000Z";
         return res;
     }
-
+    
     /* ------------------------
         先頭ゼロ付加
     ------------------------ */
     padZero(num) {
-        var result;
+        let result;
         if (num < 10) {
             result = "0" + num;
         } else {

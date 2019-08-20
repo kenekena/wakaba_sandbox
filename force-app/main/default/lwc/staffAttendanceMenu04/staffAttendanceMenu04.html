@@ -15,11 +15,8 @@
     </div>
 </template>
 
-    <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
-        <template for:each={FiscalYearList} for:item="item">
-            <option key={item.value}  value={item.value} >{item.label}</option>
-        </template>
-    </select>
+<!--<template if:true={mainmenu}>-->
+    <div class="slds-welcome-mat__tiles">
     <template if:true={ClassList}>
         <h2 class="title slds-m-bottom_medium">
             <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
@@ -78,10 +75,22 @@
         </template>
     </select>
     -->
+    </div>
+    <!-- </template> -->
 
     <div class="slds-m-bottom_medium">
     <lightning-card title="日付検索" icon-name="standard:search">
-        <div class="slds-m-around_medium">
+        <div class="slds-welcome-mat__tiles">
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+                    <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+                        <template for:each={FiscalYearList} for:item="item">
+                            <option key={item.value}  value={item.value} >{item.label}</option>
+                        </template>
+                    </select>
+                </lightning-layout-item>
+            </lightning-layout>
+                
             <div class="slds-m-bottom_medium">
                 <lightning-layout multiple-rows>
                     <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
@@ -134,20 +143,20 @@
                     <p class="named">{item.Contact__r.kana__c}</p>
                 </lightning-layout-item>
                 <lightning-layout-item size="1">
-                    <button onclick={changeType} type=button class={item.AttendanceClass} data-i={item.i} data-group="class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
+                    <button onclick={changeType} type=button class={item.AttendanceClass} data-i={item.i} data-group="Class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
                 </lightning-layout-item>
                 <lightning-layout-item size="1">
-                    <button onclick={changeType} type=button class={item.AbsenceClass} data-i={item.i} data-group="class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
+                    <button onclick={changeType} type=button class={item.AbsenceClass} data-i={item.i} data-group="Class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
                 </lightning-layout-item>
                 <lightning-layout-item size="2">
-                    <select onchange={changeType} class={item.AbsenceReasonListClass} data-i={item.i} data-group="reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AbsenceReason">
+                    <select onchange={changeType} class={item.AbsenceReasonListClass} data-i={item.i} data-group="Reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AbsenceReason">
                         <template for:each={item.AbsenceReasonList} for:item="lists">
                             <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
                         </template>
                     </select>
                 </lightning-layout-item>
                 <lightning-layout-item size="3">
-                    <select onchange={changeType} class={item.AttendanceStopListClass} data-group="reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AttendanceStopReason">
+                    <select onchange={changeType} class={item.AttendanceStopListClass} data-i={item.i} data-group="StopReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AttendanceStopReason">
                         <template for:each={item.AttendanceStopReasonList} for:item="lists">
                             <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
                         </template>
@@ -193,16 +202,16 @@
                         <p class="named03">{item.DropOffText__c}</p>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
-                            <button onclick={changeType} type=button class={item.AttendingSchoolClass} data-i={item.i} data-group="bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
+                        <button onclick={changeType} type=button class={item.AttendingSchoolClass} data-i={item.i} data-group="Bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
-                        <button onclick={changeType} type=button class={item.GoingBackClass} data-i={item.i} data-group="bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
+                        <button onclick={changeType} type=button class={item.GoingBackClass} data-i={item.i} data-group="Bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
-                        <button onclick={changeType} type=button class={item.NoAttendingSchoolClass} data-i={item.i} data-group="bus" data-value="行き利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >行き✕</button>
+                        <button onclick={changeType} type=button class={item.NoAttendingSchoolClass} data-i={item.i} data-group="Bus" data-value="行き利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >行き✕</button>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
-                        <button onclick={changeType} type=button class={item.NoGoingBackClass} data-i={item.i} data-group="bus" data-value="帰り利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >帰り✕</button>
+                        <button onclick={changeType} type=button class={item.NoGoingBackClass} data-i={item.i} data-group="Bus" data-value="帰り利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >帰り✕</button>
                     </lightning-layout-item>
                     <lightning-layout-item size="2">
                         <select onchange={changeType} class={item.AbsenceReasonListClass} data-i={item.i} data-group="RideReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="RideReason">
