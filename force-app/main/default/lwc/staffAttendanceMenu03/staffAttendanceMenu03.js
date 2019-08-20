@@ -376,7 +376,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
         GoingBackClass = this.importantNotes[indexs].GoingBackClass;
         NoAttendingSchool = this.importantNotes[indexs].NoAttendingSchool;     
         NoGoingBack = this.importantNotes[indexs].NoGoingBack;
-        NoAttendingSchoolClass = this.importantNotes[indexs].NoAttendingSchoolClass;   
+        NoAttendingSchoolClass = this.importantNotes[indexs].NoAttendingSchoolClass;
         NoGoingBackClass = this.importantNotes[indexs].NoGoingBackClass;
         AttendanceClass = this.importantNotes[indexs].AttendanceClass;
         AbsenceClass = this.importantNotes[indexs].AbsenceClass;
@@ -511,7 +511,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                NoAttendingSchoolClass='btn-square blue';
            }
         }
-        /* バス：行き利用なし */
+        /* バス：帰り利用なし */
         if(event.target.dataset.group === 'bus' && event.target.dataset.value === '帰り利用しない'){
             /* ON・OFFスイッチ */
             if(this.importantNotes[indexs].NoGoingBack){    
@@ -522,9 +522,7 @@ export default class StaffAttendanceMenu03 extends LightningElement {
                 fields[BACKNOTUSE_FIELD.fieldApiName] = true;                                         //登園チェック
                 NoGoingBack=true;
                 NoGoingBackClass='btn-square blue';
-        }
-
-
+            }
         }
         /* バス：バス理由の場合 */
         if(event.target.dataset.group === 'RideReason'){
