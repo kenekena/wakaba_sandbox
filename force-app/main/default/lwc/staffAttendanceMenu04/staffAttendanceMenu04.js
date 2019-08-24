@@ -82,6 +82,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     @track SearchDayText = this.ChangeText(this.SearchDay);
     @track SearchDayProcess = this.ChangeProcess(this.SearchDay);
     @track SearchDayWeek = "(" + Week[this.SearchDay.getDay()] + ")";
+    @track MinDateProcess;
+    @track MaxDateProcess;
     @track MinDate;
     @track MaxDate;
     
@@ -121,7 +123,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     })
     AbsenceReasonListDefault({error, data}) {
         if (data) {
-          this.AbsenceReasonList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
+          this.AbsenceReasonList = data;//this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
           //console.log("this.AbsenceReasonList");
           //console.log(this.AbsenceReasonList);
         } else if (error) {
@@ -143,7 +145,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     })
     NotRideReasonListDefault({error, data}) {
         if (data) {
-          this.NotRideReasonList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
+          this.NotRideReasonList = data;//this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
         } else if (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -163,7 +165,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     })
     AttendanceStopListDefault({error, data}) {
         if (data) {
-          this.AttendanceStopList = this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
+          this.AttendanceStopList = data;//this.SetListValue(data,true,DefaultValueBase,DefaultValueBase);
         } else if (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -243,11 +245,17 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }else{
             this.ThisYear = this.SearchDay.getFullYear();
         }
+        this.MaxDate = new Date((Number(this.ThisYear) +1), 3 - 1, 31);
+        this.MinDate = new Date(this.ThisYear, 4 - 1, 1);
+        console.log("this.MaxDate");
+        console.log(this.MaxDate);
+        console.log("this.MinDate");
+        console.log(this.MinDate);
         
-        this.MaxDate = ((Number(this.ThisYear) +1)) + "-03-31";
-        this.MinDate = this.ThisYear + "-04-01";
-        if(this.SearchDayProcess === this.MaxDate){this.NextButton=true;}else{this.NextButton=false}
-        if(this.SearchDayProcess === this.MinDate){this.PrevButton=true;}else{this.PrevButton=false}
+        this.MaxDateProcess = ((Number(this.ThisYear) +1)) + "-03-31";
+        this.MinDateProcess = this.ThisYear + "-04-01";
+        if(this.SearchDayProcess === this.MaxDateProcess){this.NextButton=true;}else{this.NextButton=false}
+        if(this.SearchDayProcess === this.MinDateProcess){this.PrevButton=true;}else{this.PrevButton=false}
         /* END:日付制御の処理 年度内の日付しか選択できたいようにする */
 
         /* 要録検索Apex呼び出し */
@@ -337,8 +345,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }
         this.SearchDayProcess = this.ChangeProcess(this.SearchDay);
         this.SearchDayText = this.ChangeText(this.SearchDay);
-        if(this.SearchDayProcess === this.MaxDate){this.NextButton=true;}else{this.NextButton=false}
-        if(this.SearchDayProcess === this.MinDate){this.PrevButton=true;}else{this.PrevButton=false}
+        if(this.SearchDayProcess === this.MaxDateProcess){this.NextButton=true;}else{this.NextButton=false}
+        if(this.SearchDayProcess === this.MinDateProcess){this.PrevButton=true;}else{this.PrevButton=false}
         this.GetKindergartenDiary();
     }
 
@@ -422,15 +430,16 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         /* 園児に対して日報あるかないか */
         i = 0;
         for(let v of this.EnjiList) {
+            
             /* 初期化 */
             AbsenceReasonListNow =[];
-            AbsenceReasonListNow = JSON.parse(JSON.stringify(this.AbsenceReasonList));
+            AbsenceReasonListNow = this.SetListValue(this.AbsenceReasonList,true,DefaultValueBase,DefaultValueBase);//JSON.parse(JSON.stringify(this.AbsenceReasonList));
             AbsenceReasonNow = "";
             NotRideReasonListNow =[];
-            NotRideReasonListNow = JSON.parse(JSON.stringify(this.NotRideReasonList));
+            NotRideReasonListNow = this.SetListValue(this.NotRideReasonList,true,DefaultValueBase,DefaultValueBase);
             NotRideReasonNow = "";
             AttendanceStopListNow = [];
-            AttendanceStopListNow = JSON.parse(JSON.stringify(this.AttendanceStopList));
+            AttendanceStopListNow = this.SetListValue(this.AttendanceStopList,true,DefaultValueBase,DefaultValueBase);
             AttendanceStopNow = "";
             AbsenceReasonListClass ='selecttype01';
             /* END:初期化 */
@@ -588,6 +597,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             i++;//AttendanceStopListClass
         }
         
+        
 
         console.log("SetEnjiList");
         console.table(SetEnjiList);
@@ -633,6 +643,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         if(this.processing){return}
         /* 処理中フラグ */
         this.processing =true;
+
+        event.preventDefault();
 
         /* 何番目を選択したか */
         indexs = event.target.dataset.i;
@@ -735,7 +747,6 @@ export default class StaffAttendanceMenu04 extends LightningElement {
 
         /* クラス：出席停止理由の場合 */
         if(event.target.dataset.group === 'StopReason'){
-            console.log("なにがだめだん");
             if(event.target.value===DefaultValueBase || event.target.value==='' || event.target.value===undefined){
                 fields[ATTENDANCESTOPREASON_FIELD.fieldApiName] = '';
                 AttendanceStopReason = '';
@@ -939,9 +950,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
      /* END:選択リストを作成SetListValue */
 
 
-    /* ------------------------
+    /********************************
         現在時刻取得（yyyy/mm/ddThh:mm:ss.000Z）
-    ------------------------ */
+    ********************************/
     getCurrentTime() {
         let now = new Date();
         let res;
@@ -952,9 +963,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         return res;
     }
     
-    /* ------------------------
+    /********************************
         先頭ゼロ付加
-    ------------------------ */
+    ********************************/
     padZero(num) {
         let result;
         if (num < 10) {
@@ -966,17 +977,17 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     }
     /* END:先頭ゼロ付加 */
 
-    /* ------------------------
+    /********************************
         日付を文字列に変換
-    ------------------------ */
+    ********************************/
     ChangeText(TargeDate) {
         return TargeDate.getFullYear() + "年" + (TargeDate.getMonth() + 1) + "月"+ TargeDate.getDate() + "日(" + Week[TargeDate.getDay()] + ")";
     }
     /* END:日付を文字列に変換 */
 
-    /* ------------------------
+    /********************************
         日付を処理用に変換
-    ------------------------ */
+    ********************************/
     ChangeProcess(TargeDate) {
         return TargeDate.getFullYear() + "-" + this.padZero((TargeDate.getMonth() + 1)) + "-"+ this.padZero(TargeDate.getDate());
     }

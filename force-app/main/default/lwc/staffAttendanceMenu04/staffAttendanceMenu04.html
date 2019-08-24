@@ -100,10 +100,17 @@
                             data-type="DateSelect"
                             type="date" name="input2"
                             value={SearchDayProcess} 
-                            min={MinDate}
-                            max={MaxDate}
-        
+                            min={MinDateProcess}
+                            max={MaxDateProcess}
                         ></lightning-input>
+                        <input 
+                            onchange={ChangeSelectDate}
+                            data-type="DateSelect"
+                            type="date" name="input2"
+                            value={SearchDayProcess} 
+                            min={MinDateProcess}
+                            max={MaxDateProcess}
+                        ></input>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>
@@ -158,7 +165,7 @@
                 <lightning-layout-item size="3">
                     <select onchange={changeType} class={item.AttendanceStopListClass} data-i={item.i} data-group="StopReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AttendanceStopReason">
                         <template for:each={item.AttendanceStopReasonList} for:item="lists">
-                            <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                            <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
                         </template>
                     </select>
                 </lightning-layout-item>
