@@ -1,0 +1,66 @@
+<apex:page id="Page"
+ standardStylesheets="false"
+ showHeader="false"
+ sidebar="false"
+ applyHtmlTag="false"
+ renderAs="PDF"
+ >
+
+<head>
+  <style>
+  
+  <!--
+  @page {
+    size: 8.27in 11.69in;
+    padding: 0;
+  }
+  -->
+  @page {
+                size: A4 landscape; 
+                margin: 5mm;　/* 上下左右の余白10mm */
+            }
+  body {
+    font-family: Arial Unicode MS;
+    font-size: 10pt;
+    text-align: left;
+  }
+  #back{
+      backgorund:#ddd;
+      border:1px solid #ccc;
+      width:100%;
+  }
+  
+  .pagebreak {
+                page-break-before: always;
+            }
+   </style>
+</head>
+
+<!--<apex:stylesheet value="{!URLFOR($Resource.Styles,'pdf.css')}"/>-->
+
+<div id="back">
+<h1>日本語asdfasdf</h1>
+
+<p>Thank you, <b>あああ</b>, for 
+   becoming a new account with Universal Samples.</p>
+
+<p>Your account details are:</p>
+
+</div>
+
+ <p class="pagebreak">改ページのテスト２ページ目</p>
+
+<table>
+<tr><th>Account Name</th>
+    <td>恐ろしい</td>
+    </tr>
+<tr><th>Account Rep</th>
+    <td>恐ろしい</td>
+    </tr>
+
+
+</table>
+ <p class="pagebreak">改ページのテスト２ページ目</p>
+
+    
+</apex:page>

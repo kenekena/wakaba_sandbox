@@ -12,9 +12,9 @@ public with sharing class ImportantNotesV2Controller {
     ------------------------------------------------ */
     @AuraEnabled
     public static List<ImportantNotes__c> findImportantNotes(String Year,String Kindergarten) {
-        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c 
+        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,PickUpTimeText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c
                 FROM ImportantNotes__c
-                WHERE FiscalYear__c =: Year AND School__c =:Kindergarten 
+                WHERE FiscalYear__c =: Year AND School__c =:Kindergarten
                 ORDER BY Number__c ASC NULLS LAST];
     }
 

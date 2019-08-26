@@ -1,0 +1,104 @@
+<apex:page id="Page"
+ standardStylesheets="false"
+ showHeader="false"
+ sidebar="false"
+ applyHtmlTag="false"
+ renderAs="PDF"
+ standardController="ChildcareFee__c">
+
+<head>
+  <style>
+  
+  <!--
+  @page {
+    size: 8.27in 11.69in;
+    padding: 0;
+  }
+  -->
+  @page {
+                size: A4 landscape; 
+                margin: 5mm;　/* 上下左右の余白10mm */
+            }
+  body {
+    font-family: Arial Unicode MS;
+    font-size: 10pt;
+    text-align: left;
+  }
+  #back{
+      width:100%;
+      padding-top:50px;
+  }
+  
+  .pagebreak {
+    page-break-before: always;
+  }
+  .center{
+    text-align: center;
+  }
+  .list01{
+    margin:0 50px;
+  }
+  dt{
+    float: left;
+    margin-left:25%;
+  }
+
+  dd{
+    margin-right:25%;
+    text-align: right;
+  }
+
+  .underLine{
+    width:54%;
+    margin:0 auto;
+    border-bottom: 1px solid #ccc;
+  }
+  .totalarea{
+    text-align: right;
+    margin-right:25%;
+  }
+  .tl{
+    text-align: left;
+    margin-left:25%;
+  }
+  .fl{
+    float: left;
+
+  }
+
+  .amontArea{
+    width:50%;
+    margin:0 auto;
+    border: 1px solid #ccc;
+    font-size:200%;
+  }
+
+  .font150{
+    font-size: 150%;
+  }
+      
+   </style>
+
+</head>
+
+
+<body>
+<div id="back">
+
+<h1 class="center">領　収　書</h1>
+<p class="totalarea">{!ChildcareFee__c.IssuingDateOutput__c}</p>
+<p class="tl font150">{!ChildcareFee__c.AddressName__c}様</p>
+ 
+
+<div class="amontArea">
+<p class="center"><apex:outputtext value="{0,number, ###,###}">¥<apex:param value="{!ChildcareFee__c.LunchCost__c}"></apex:param></apex:outputtext>-</p>
+</div>
+<p class="tl">但　給食費として</p>
+<p class="tl">上記正に領収いたしました。</p>
+<p class="totalarea">学校法人　明石学園　認定こども園　北広島わかば幼稚園</p>
+
+</div>
+</body>
+
+    
+</apex:page>

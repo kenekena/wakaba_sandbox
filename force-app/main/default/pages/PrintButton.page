@@ -1,0 +1,51 @@
+<apex:page showHeader="false" sidebar="false" standardController="ChildcareFee__c">
+<style>
+<!--
+.button1 {
+    display: inline-block;
+    width: 200px;
+    height: 54px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 54px;
+    outline: none;
+}
+.button1::before,
+.button1::after {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    content: '';
+}
+.button1,
+.button1::before,
+.button1::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+}
+.button1 {
+    background-color: #333;
+    color: #fff;
+    margin-left:15px;
+}
+.button1:hover {
+    letter-spacing: 5px;
+    text-decoration: none;
+    color:#fff;
+}
+-->
+h2{
+    font-size:150%;
+}
+</style>
+<h2>■請求書プリント</h2>
+<p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/InvoicePDF?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">請求書をプリントする</a></p>
+<p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/InvoicePDF2?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">未納請求書をプリントする</a></p>
+<h2>■領収書プリント</h2>
+<p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/ReceiptLunchCostPDF?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">給食費</a></p>
+
+
+ </apex:page>

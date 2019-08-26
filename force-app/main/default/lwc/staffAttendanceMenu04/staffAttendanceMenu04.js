@@ -1,6 +1,7 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-import { LightningElement,track,wire } from 'lwc';
+import { LightningElement,track,wire,api } from 'lwc';
 
 /* 選択リストを取得 */
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
@@ -44,7 +45,7 @@ const DefaultValueBase = "-- なし --";
 
 
 export default class StaffAttendanceMenu04 extends LightningElement {
-    ThisKindergarten = "北広島わかば";
+    @api ThisKindergarten = "北広島わかば";
     @track ThisYear;
     @track TodayYear;
     @track FiscalYearList  = [];
@@ -84,8 +85,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     @track SearchDayWeek = "(" + Week[this.SearchDay.getDay()] + ")";
     @track MinDateProcess;
     @track MaxDateProcess;
-    @track MinDate;
-    @track MaxDate;
+    @track MinDate = new Date();
+    @track MaxDate = new Date();
+    @track DateError = "";
     
     /* 園児日誌 */
     @track AbsenceReasonList = [];
@@ -196,6 +198,15 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     }
      /* END:wire findStaffs  */
 
+    get SearchDayTextClass() {
+        return `${this.SearchDayText}：出席簿`;
+    }
+    get SearchDayTextBus() {
+        return `${this.SearchDayText}：バス乗車管理`;
+    }
+    
+
+
     /********************************
       初回処理
     ********************************/
@@ -245,12 +256,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }else{
             this.ThisYear = this.SearchDay.getFullYear();
         }
-        this.MaxDate = new Date((Number(this.ThisYear) +1), 3 - 1, 31);
-        this.MinDate = new Date(this.ThisYear, 4 - 1, 1);
-        console.log("this.MaxDate");
-        console.log(this.MaxDate);
-        console.log("this.MinDate");
-        console.log(this.MinDate);
+        this.MaxDate.setFullYear(this.ThisYear+1);this.MaxDate.setMonth(3 - 1);this.MaxDate.setDate(31);
+        this.MinDate.setFullYear(this.ThisYear);this.MinDate.setMonth(4 - 1);this.MinDate.setDate(1);
+
         
         this.MaxDateProcess = ((Number(this.ThisYear) +1)) + "-03-31";
         this.MinDateProcess = this.ThisYear + "-04-01";
@@ -265,14 +273,13 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         })
         .then(result => {
             this.ImportantNotesList =[];
+            this.ImportantNotesList2 =[];
             this.ImportantNotesList = result;
             /* 要録リストをId名で連想配列にする */
             for(i = 0; i< result.length; i++){
                 this.ImportantNotesList2[result[i].Contact__c] = result[i];
-            } 
-            //console.info("this.ListCreate：要録一覧");
-            //console.table(result);
-            //console.info(this.ImportantNotesList);
+            }
+            
             this.ListCreate(result);
         })
         .catch(error => {
@@ -321,10 +328,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 }
             }
         }
-        //console.info("this.ClassList");
-        //console.log(this.ClassList);
-        //console.info("this.BusList");
-        //console.log(this.BusList);
+        
     }
 
     /********************************
@@ -332,6 +336,34 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ********************************/
     ChangeSelectDate(event){
         let num =0;
+        let CheckDate = this.SearchDay;
+
+        let MinDateNum = Number(this.MinDateProcess.replace( /-/g , "" ) ) ;
+        let MaxDateNum = Number(this.MaxDateProcess.replace( /-/g , "" ) ) ;
+
+        if(event.target.dataset.type === "DateButton"){
+            num = Number(event.target.value);
+            if(num === 0 ){
+                CheckDate = new Date(Today.getTime());
+            }else{
+                CheckDate.setDate(CheckDate.getDate() + num);
+            }
+        }else if(event.target.dataset.type === "DateSelect"){
+            CheckDate = new Date( event.target.value.substr(0,4),event.target.value.substr(5,2) -1,event.target.value.substr(8,2));
+        }
+        CheckDate = this.ChangeProcess(CheckDate);
+        CheckDate = Number(CheckDate.replace( /-/g , "" ) ) ;
+
+        if(CheckDate <= MinDateNum || CheckDate >= MaxDateNum){
+            this.DateError = "年度内の日付を選択してください。";
+            return;
+        }
+
+        this.DateError = "";
+        //画面表示・非表示の切り替え
+        this.Loading = true;
+        this.ClassShow = false;
+        this.BusShow = false;
 
         if(event.target.dataset.type === "DateButton"){
             num = Number(event.target.value);
@@ -350,6 +382,32 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         this.GetKindergartenDiary();
     }
 
+    sortsss(hash, key, order) {
+        if (!order || order && !order.match(/^(ASC|DESC)$/i)) {
+            order = 'ASC';
+        }
+     
+        if (hash && key) {
+            hash.sort(function(a, b) {
+                if (order.match(/^ASC$/i)) {
+                    if (a[key].toString() > b[key].toString()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    if (a[key].toString() < b[key].toString()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            });
+        }
+     
+        return hash;
+    }
+
 
     /********************************
         クラス・バス変更 
@@ -357,15 +415,31 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ChangeClassBus(event){
         let GroupValue = event.target.dataset.value;//クラス名 or バス名
         let v;let i=0;
+        let KariImportantNotesList = [];//並べ替え用
         this.EnjiList = [];
         this.Group = event.target.dataset.group;//クラス選択：Class or バス選択：Bus
         this.firstDisplay = false;
+
         if(this.Group === "Class"){
             for(v of this.ImportantNotesList) {
                 if(v.Class__c === GroupValue){
                     this.EnjiList.push(v.Contact__c);
                 }
             }
+            /* 並び替え:園児番号順 */
+            for(v of this.ImportantNotesList) {
+                if(v.Number__c === undefined){
+                    v.Number__c = "9999";
+                }
+            }
+            
+            console.log("■KariImportantNotesList4");
+            console.log(this.ImportantNotesList[0].Number__c);
+            //KariImportantNotesList = this.ImportantNotesList.sort();
+            KariImportantNotesList = this.sortsss(this.ImportantNotesList, 'Number__c');
+            console.log(KariImportantNotesList[0].Number__c);
+            console.log(KariImportantNotesList);
+            
         }
         if(this.Group === "Bus"){
             for(v of this.ImportantNotesList) {
@@ -373,7 +447,24 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                     this.EnjiList.push(v.Contact__c);
                 }
             }
+            /* 並び替え:バスならバス順 */
+            for(v of this.ImportantNotesList) {
+                if(v.BusDisplayOrder__c === undefined){
+                    v.BusDisplayOrder__c = "9999";
+                }
+            }
+            
+            console.log("■KariImportantNotesList4");
+            console.log(this.ImportantNotesList[0].Contact__r.kana__c);
+            //KariImportantNotesList = this.ImportantNotesList.sort();
+            KariImportantNotesList = this.sortsss(this.ImportantNotesList, 'BusDisplayOrder__c');
+            console.log(KariImportantNotesList[0].Contact__r.kana__c);
+            console.log(KariImportantNotesList);
+            
         }
+        console.log("this.ImportantNotesList2");
+        console.log(this.ImportantNotesList2);
+
 
         this.GetKindergartenDiary();
     }
@@ -423,6 +514,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         for(i = 0; i< result.length; i++){
             KindergartenDiaryB[result[i].Contact__c] = result[i];
             KindergartenDiaryB[result[i].Contact__c].Number__c = this.ImportantNotesList2[result[i].Contact__c].Number__c;
+            KindergartenDiaryB[result[i].Contact__c].BusDisplayOrder__c = this.ImportantNotesList2[result[i].Contact__c].BusDisplayOrder__c;
         }
         console.log("KindergartenDiaryB");
         console.table(KindergartenDiaryB);
@@ -455,12 +547,14 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             SetEnjiList[i].Contact__r.kana__c = this.ImportantNotesList2[v].Contact__r.kana__c;
             SetEnjiList[i].Contact__r.PassageRoute__c = this.ImportantNotesList2[v].Contact__r.PassageRoute__c;
             SetEnjiList[i].Contact__c = this.ImportantNotesList2[v].Contact__c;
+            SetEnjiList[i].DropOffText = this.ImportantNotesList2[v].DropOffText__c;
+            SetEnjiList[i].PickUpTimeText = this.ImportantNotesList2[v].PickUpTimeText__c;
             SetEnjiList[i].i = i;
 
             
             /* 日報がある場合 */
             if (KindergartenDiaryB[v]) {
-                console.log(v + "の日報はある");
+                //console.log(v + "の日報はある");
                 /* 該当日報の項目をセット */
                 SetEnjiList[i].AbsenceReason = KindergartenDiaryB[v].AbsenceReason__c;
                 SetEnjiList[i].NotRideReason = KindergartenDiaryB[v].NotRideReason__c;
@@ -472,10 +566,14 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 SetEnjiList[i].AbsentSchedule = KindergartenDiaryB[v].AbsentSchedule__c;
                 SetEnjiList[i].NoAttendingSchool = KindergartenDiaryB[v].BusGoingNotUse__c;
                 SetEnjiList[i].NoGoingBack = KindergartenDiaryB[v].BusBackNotUse__c;
-                console.log("KindergartenDiaryB[v].AbsenceReason");
-                console.log(KindergartenDiaryB[v].AbsenceReason);
-                
                 /* END:該当日報の項目をセット */
+
+            }
+                
+                /* 未選択なら */
+                if(SetEnjiList[i].AbsenceReason === undefined || SetEnjiList[i].AbsenceReason ===""){
+                    SetEnjiList[i].AbsenceReason = DefaultValueBase;
+                }
 
                 /*  欠席理由の値の数だけループ */  
                 for(i2 = 0; i2< AbsenceReasonListNow.length; i2++){
@@ -488,12 +586,13 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
-                /* 未選択なら */
-                if(SetEnjiList[i].AbsenceReason === undefined || SetEnjiList[i].AbsenceReason ===""){
-                    SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
-                }
+                
                 /*  END:欠席理由の値の数だけループ */  
         
+                /* 未選択なら */
+                if(SetEnjiList[i].NotRideReason === undefined || SetEnjiList[i].NotRideReason ===""){
+                    SetEnjiList[i].NotRideReason = DefaultValueBase;
+                }
 
                 /*  バス理由の値の数だけループ */  
                 for(i2 = 0; i2< NotRideReasonListNow.length; i2++){
@@ -506,13 +605,13 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
-                /* 未選択なら */
-                if(SetEnjiList[i].NotRideReason === undefined || SetEnjiList[i].NotRideReason ===""){
-                    SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
-                }
                 /*  END:バス理由の値の数だけループ */  
 
 
+                /* 未選択なら */
+                if(SetEnjiList[i].AttendanceStopReason === undefined || SetEnjiList[i].AttendanceStopReason ===""){
+                    SetEnjiList[i].AttendanceStopReason = DefaultValueBase;
+                }
                 /*  出席停止理由の値の数だけループ */  
                 for(i2 = 0; i2< AttendanceStopListNow.length; i2++){
                     /* 園児日誌の欠席理由：欠席理由の値と値の情報が一致したらseletedにして、CSSも追加する */
@@ -524,18 +623,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                         break;
                     }
                 }
-                /* 未選択なら */
-                if(SetEnjiList[i].AttendanceStopReason === undefined || SetEnjiList[i].AttendanceStopReason ===""){
-                    SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
-                }
                 /*  END:出席停止理由の値の数だけループ */  
-            
-            }else{
-                /* 園児日誌がない場合 */
-                SetEnjiList[i].AbsenceReasonList = AbsenceReasonListNow;
-                SetEnjiList[i].NotRideReasonList = NotRideReasonListNow;
-                SetEnjiList[i].AttendanceStopReasonList = AttendanceStopListNow;
-            }
+
 
             /* 
                 CSS：Class設定
@@ -584,8 +673,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             }
 
             /* 欠席理由 */ 
-            if(SetEnjiList[i].AttendanceSchedule ==='欠席' && AbsenceReasonNow === '' ){
-                SetEnjiList[i].AbsenceReasonListClass = AbsenceReasonListClass + 'border_Red ';
+            if(SetEnjiList[i].AttendanceSchedule ==='欠席' && (AbsenceReasonNow === '' || AbsenceReasonNow === undefined) ){
+                SetEnjiList[i].AbsenceReasonListClass = AbsenceReasonListClass + ' border_Red';
             }else{
                 SetEnjiList[i].AbsenceReasonListClass = AbsenceReasonListClass;
             }
@@ -599,7 +688,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         
         
 
-        console.log("SetEnjiList");
+        console.log("ssSetEnjiList");
         console.table(SetEnjiList);
         this.ShowEnjiList.length = 0;
         this.ShowEnjiList = [];
@@ -835,10 +924,15 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             }
         }  
         /* END:バス：バス理由の場合 */
+        console.log("あるん？fields[ID_FIELD.fieldApiName]");
+        console.log(fields[ID_FIELD.fieldApiName]);
+
 
         //もし選んだ要録に日報IDがセットされてなかったら日報を作成し、セットされてたら日報を更新
-        if(fields[ID_FIELD.fieldApiName]=== undefined || fields[ID_FIELD.fieldApiName]=== ''){
-        
+        if(fields[ID_FIELD.fieldApiName] === undefined || fields[ID_FIELD.fieldApiName]=== '' || fields[ID_FIELD.fieldApiName]=== 'undefined'){
+            console.log("新規やで");
+            console.log(fields);
+            fields[ID_FIELD.fieldApiName] = undefined;
             recordInput = {apiName: KindergartenDiary_OBJECT.objectApiName, fields };   //作成する情報をセット
 
             createRecord(recordInput)  
@@ -876,6 +970,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             });
         //日報を更新
         }else{
+            console.log("更新やで");
+            console.log(indexs);
             recordInput = { fields };
             updateRecord(recordInput)
             .then(() => {

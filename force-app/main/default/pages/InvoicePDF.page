@@ -1,0 +1,128 @@
+<apex:page id="Page"
+ standardStylesheets="false"
+ showHeader="false"
+ sidebar="false"
+ applyHtmlTag="false"
+ renderAs="PDF"
+ standardController="ChildcareFee__c">
+
+<head>
+  <style>
+  
+  <!--
+  @page {
+    size: 8.27in 11.69in;
+    padding: 0;
+  }
+  -->
+  @page {
+                size: A4 landscape; 
+                margin: 5mm;　/* 上下左右の余白10mm */
+            }
+  body {
+    font-family: Arial Unicode MS;
+    font-size: 10pt;
+    text-align: left;
+  }
+  #back{
+      width:100%;
+      margin-top:5%;
+  }
+  
+  .pagebreak {
+    page-break-before: always;
+  }
+  .center{
+    text-align: center;
+  }
+  .list01{
+    margin:0 50px;
+  }
+  dt{
+    float: left;
+    margin-left:25%;
+  }
+
+  dd{
+    margin-right:25%;
+    text-align: right;
+  }
+
+  .underLine{
+    width:54%;
+    margin:0 auto;
+    border-bottom: 1px solid #ccc;
+  }
+  .totalarea{
+    text-align: right;
+    margin-right:25%;
+  }
+  .tl{
+    text-align: left;
+    margin-left:10%;
+  }
+  .tr{
+    text-align: right;
+    margin-right:10%;
+  }
+      
+      
+   </style>
+
+</head>
+
+<!--<apex:stylesheet value="{!URLFOR($Resource.Styles,'pdf.css')}"/>-->
+<body>
+<div id="back">
+<p class="tl">
+{!ChildcareFee__c.ImportantNotes__r.Class__c}組<br />
+{!ChildcareFee__c.Contact__r.Name}様
+</p>
+
+<h1 class="center">保育料等 納入のお願い</h1>
+<div class="tr">
+  <p>
+  {!ChildcareFee__c.IssuingDateOutput__c}<br />
+  学校法人　明石学園　認定こども園　北広島わかば幼稚園
+  </p>
+</div>
+
+<p class="tl">
+日頃より本園の活動とご理解とご協力を賜りましてありがとうございます。<br />
+今回の保育料・諸経費納入額は下記の通りとなりますのでお知らせいたします。<br />
+振替日は{!ChildcareFee__c.TransferDateOutput__c}です。前日までに口座へご入金ください。
+</p>
+<!--
+<p>
+日頃より本園の活動にご理解とご協力を賜りましてありがとうございます。<br />
+早速ですが、下記の金額が未納となっておりますので、早急に幼稚園に現金にて納入して
+いただくようお願い申し上げます。<br />
+尚、本状と行き違いにより納入された場合は、何卒ご容赦ください。ご不明な点が
+ございましたら、幼稚園までお問い合わせ下さい。<br />
+※振替不能手数料として一回につき３００円を合わせてご請求いたします。
+</p>
+-->
+
+<p class="center">記</p>
+
+<dl class="List01">
+  <dt>保育料({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.ChildcareFee__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>特別教育費({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.EducationCosts__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>PTA会費({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.PTAFee__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>給食費</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.LunchCost__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>主食費</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.StapleFoodCost__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>おむつ破棄代</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.Diapers__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>預かり代({!ChildcareFee__c.LastMonth__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.MonthCustody__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>バス代</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.BusFare__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>個人持教材</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.TeachingMaterials__c}"></apex:param></apex:outputtext>円</dd>
+</dl>
+<div class="underLine"></div>
+<p class="totalarea">
+合計　<apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.TotalCost__c}"></apex:param></apex:outputtext>円
+</p>
+
+</div>
+</body>
+
+    
+</apex:page>

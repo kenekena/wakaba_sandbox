@@ -6,6 +6,11 @@
     border-radius: 5px;
     font-size:1em;
   }
+  .red{
+    color:#ff0000;
+  }
+
+
   
   .title:after {
     position: absolute;

@@ -15,7 +15,7 @@
     </div>
 </template>
 
-<!--<template if:true={mainmenu}>-->
+<template if:true={mainmenu}>
     <div class="slds-welcome-mat__tiles">
     <template if:true={ClassList}>
         <h2 class="title slds-m-bottom_medium">
@@ -83,6 +83,7 @@
         <div class="slds-welcome-mat__tiles">
             <lightning-layout multiple-rows>
                 <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+                    <p class="slds-form-element__label">年度選択</p>
                     <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
                         <template for:each={FiscalYearList} for:item="item">
                             <option key={item.value}  value={item.value} >{item.label}</option>
@@ -94,16 +95,9 @@
             <div class="slds-m-bottom_medium">
                 <lightning-layout multiple-rows>
                     <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
-                        <lightning-input 
-                            label="日付指定"
-                            onchange={ChangeSelectDate}
-                            data-type="DateSelect"
-                            type="date" name="input2"
-                            value={SearchDayProcess} 
-                            min={MinDateProcess}
-                            max={MaxDateProcess}
-                        ></lightning-input>
+                        <p class="slds-form-element__label">日付選択</p>
                         <input 
+                            class="selecttype02"
                             onchange={ChangeSelectDate}
                             data-type="DateSelect"
                             type="date" name="input2"
@@ -111,7 +105,9 @@
                             min={MinDateProcess}
                             max={MaxDateProcess}
                         ></input>
+                    <p class="red">{DateError}</p>
                     </lightning-layout-item>
+                    
                 </lightning-layout>
             </div>
             <div class="slds-m-left_small">
@@ -126,13 +122,9 @@
         
     </lightning-card>
     </div>
-    <!-- 日付設定の確認
-    {SearchDayProcess}
-    ：：：{MinDate}：：：max={MaxDate}
-    -->
 
     <template if:true={ClassShow}>
-        <lightning-card title={SearchDayText} icon-name="custom:custom68"></lightning-card>
+        <lightning-card title={SearchDayTextClass} icon-name="custom:custom68"></lightning-card>
         <div class="slds-welcome-mat__tiles">
             <!-- header -->
             <lightning-layout class="listheader">
@@ -147,7 +139,7 @@
             <template for:each={ShowEnjiList} for:item="item">
             <lightning-layout key={item.Id} class="dayslist">
                 <lightning-layout-item  key={item.Id} size="2">
-                    <p class="named">{item.Contact__r.kana__c}</p>
+                    <p class="named"><a data-kindergartendiaryid={item.kindergartenDiaryId} href={url} onclick={handleClick}>{item.Contact__r.kana__c}</a></p>
                 </lightning-layout-item>
                 <lightning-layout-item size="1">
                     <button onclick={changeType} type=button class={item.AttendanceClass} data-i={item.i} data-group="Class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
@@ -183,7 +175,7 @@
     </template>
 
     <template if:true={BusShow}>
-        <lightning-card title="バス乗車管理" icon-name="custom:custom68"></lightning-card>
+            <lightning-card title={SearchDayTextBus} icon-name="custom:custom68"></lightning-card>
         <div class="slds-welcome-mat__tiles">
             <!-- header -->
             <lightning-layout class="listheader">
@@ -204,9 +196,9 @@
                         <p class="named02">{item.Contact__r.kana__c}</p>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
-                        <p class="named03">{item.PickUpTimeText__c}</p>
+                        <p class="named03">{item.PickUpTimeText}</p>
                     </lightning-layout-item><lightning-layout-item size="1">
-                        <p class="named03">{item.DropOffText__c}</p>
+                        <p class="named03">{item.DropOffText}</p>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
                         <button onclick={changeType} type=button class={item.AttendingSchoolClass} data-i={item.i} data-group="Bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
@@ -247,6 +239,8 @@
             読込中
         </div>
     </template>
+
+</template>
 
 
 </template>
