@@ -16,7 +16,7 @@
   }
   -->
   @page {
-                size: A4 ; 
+                size: A4 landscape; 
                 margin: 5mm;　/* 上下左右の余白10mm */
             }
   body {
@@ -25,8 +25,10 @@
     text-align: left;
   }
   #back{
+      backgorund:#ddd;
+      //border:1px solid #ccc;
       width:100%;
-      padding-top:50px;
+      margin-top:5%;
   }
   
   .pagebreak {
@@ -57,14 +59,6 @@
     text-align: right;
     margin-right:25%;
   }
-  .tl{
-    text-align: left;
-    margin-left:10%;
-  }
-  .tr{
-    text-align: right;
-    margin-right:10%;
-  }
       
    </style>
 
@@ -73,22 +67,26 @@
 <!--<apex:stylesheet value="{!URLFOR($Resource.Styles,'pdf.css')}"/>-->
 <body>
 <div id="back">
-<p class="tl">
+<p>
 {!ChildcareFee__c.ImportantNotes__r.Class__c}組<br />
 {!ChildcareFee__c.Contact__r.Name}様
 </p>
 
-<h1 class="center">保育料等 納入のお願い</h1>
-<div class="tr">
+<h1 class="center">領収書</h1>
+<div style="text-align:right;">
   <p>
   {!ChildcareFee__c.IssuingDateOutput__c}<br />
-  <apex:image url="{!$Resource.wakaba_logo6}" width="150" height="30"/><br />
-  学校法人　明石学園　認定こども園　北広島わかば幼稚園<br />
-  <br />
+  学校法人　明石学園　認定こども園　北広島わかば幼稚園
   </p>
 </div>
 
-<p class="tl">
+<p>
+日頃より本園の活動とご理解とご協力を賜りましてありがとうございます。<br />
+今回の保育料・諸経費納入額は下記の通りとなりますのでお知らせいたします。<br />
+振替日は{!ChildcareFee__c.TransferDateOutput__c}です。前日までに口座へご入金ください。
+</p>
+<!--
+<p>
 日頃より本園の活動にご理解とご協力を賜りましてありがとうございます。<br />
 早速ですが、下記の金額が未納となっておりますので、早急に幼稚園に現金にて納入して
 いただくようお願い申し上げます。<br />
@@ -96,6 +94,7 @@
 ございましたら、幼稚園までお問い合わせ下さい。<br />
 ※振替不能手数料として一回につき３００円を合わせてご請求いたします。
 </p>
+-->
 
 <p class="center">記</p>
 

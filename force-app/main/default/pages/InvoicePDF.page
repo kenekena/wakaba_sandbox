@@ -83,7 +83,9 @@
 <div class="tr">
   <p>
   {!ChildcareFee__c.IssuingDateOutput__c}<br />
-  学校法人　明石学園　認定こども園　北広島わかば幼稚園
+  <apex:image url="{!$Resource.wakaba_logo6}" width="150" height="30"/><br />
+  学校法人　明石学園　認定こども園　北広島わかば幼稚園<br />
+  <br />
   </p>
 </div>
 

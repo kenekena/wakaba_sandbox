@@ -1,0 +1,41 @@
+<template>
+
+<!-- 年度選択 -->
+<lightning-layout multiple-rows>
+    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+        <p class="slds-form-element__label">年度選択</p>
+        <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+            <template for:each={FiscalYearList} for:item="item">
+                <option key={item.value}  value={item.value} selected={item.selected}>{item.label}</option>
+            </template>
+        </select>
+    </lightning-layout-item>
+</lightning-layout>
+
+<template if:true={ClassList}>
+<h2 class="title slds-m-bottom_medium">
+    <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
+    <p>くみ一覧</p>
+</h2>
+<p class="slds-m-bottom_large">
+    <template for:each={ClassList} for:item="item">
+        <button data-group="class" key={item.value} onclick={SelectEnji} value={item.value} type="submit" class="buttontype02 slds-button slds-button_neutral">{item.label}</button>
+    </template> 
+</p>
+</template>
+
+<lightning-layout>
+    <lightning-layout-item size="12" >
+    <p>園児一覧</p> 
+    <select class="selecttype02" onchange={handleChange} name="changeName">
+        <option value="Noarea">{placeholder}</option>
+        <template for:each={EnjiList} for:item="item">
+            <option key={item.Id} value={item.Id}  >{item.kana__c}</option>
+        </template>
+    </select>
+</lightning-layout-item>
+</lightning-layout>
+
+
+<!-- END:年度選択 -->
+</template>

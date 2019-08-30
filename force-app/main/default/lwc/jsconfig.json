@@ -3,6 +3,9 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/commonJs": [
+                "commonJs/commonJs.js"
+            ],
             "c/contactListItemBubbling": [
                 "contactListItemBubbling/contactListItemBubbling.js"
             ],
@@ -17,6 +20,9 @@
             ],
             "c/overtimeReservation": [
                 "overtimeReservation/overtimeReservation.js"
+            ],
+            "c/overtimeReservation02": [
+                "overtimeReservation02/overtimeReservation02.js"
             ],
             "c/pegeLinktest": [
                 "pegeLinktest/pegeLinktest.js"

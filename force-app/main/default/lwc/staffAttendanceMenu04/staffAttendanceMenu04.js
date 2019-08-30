@@ -3,6 +3,9 @@
 /* eslint-disable no-console */
 import { LightningElement,track,wire,api } from 'lwc';
 
+/* 共通jsの読み込み */
+import { SetListValue,ChangeText,ChangeProcess,padZero } from 'c/commonJs';
+
 /* 選択リストを取得 */
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import LIST_FiscalYear from '@salesforce/schema/ImportantNotes__c.FiscalYear__c';
@@ -45,9 +48,9 @@ const DefaultValueBase = "-- なし --";
 
 
 export default class StaffAttendanceMenu04 extends LightningElement {
+    TodayYear;
     @api ThisKindergarten = "北広島わかば";
     @track ThisYear;
-    @track TodayYear;
     @track FiscalYearList  = [];
     @track ImportantNotesList =[];
     @track ImportantNotesList2 =[];
@@ -76,12 +79,12 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     /* END:職員選択用 */                           
 
 
-    TodayText = this.ChangeText(Today);
-    TodayProcess = this.ChangeProcess(Today);
+    TodayText = ChangeText(Today);
+    TodayProcess = ChangeProcess(Today);
     TodayWeek = "(" + Week[Today.getDay()] + ")";
     @track SearchDay = new Date();
-    @track SearchDayText = this.ChangeText(this.SearchDay);
-    @track SearchDayProcess = this.ChangeProcess(this.SearchDay);
+    @track SearchDayText = ChangeText(this.SearchDay);
+    @track SearchDayProcess = ChangeProcess(this.SearchDay);
     @track SearchDayWeek = "(" + Week[this.SearchDay.getDay()] + ")";
     @track MinDateProcess;
     @track MaxDateProcess;
@@ -102,9 +105,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     })
     ListDefault_FiscalYear({error, data}) {
         if (data) {
-          this.FiscalYearList = this.SetListValue(data,false);
-          //console.log("this.FiscalYearList");
-          //console.log(this.FiscalYearList);
+            this.FiscalYearList = SetListValue(data,false,false,false,this.TodayYear);
+            //console.log("this.FiscalYearList");
+        //console.log(this.FiscalYearList);
 
         } else if (error) {
             this.dispatchEvent(
@@ -238,8 +241,8 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         this.ClassShow = false;
         this.ThisYear = event.target.value;
         this.SearchDay = new Date(this.ThisYear,this.SearchDay.getMonth(),this.SearchDay.getDate());
-        this.SearchDayProcess = this.ChangeProcess(this.SearchDay);
-        this.SearchDayText = this.ChangeText(this.SearchDay);
+        this.SearchDayProcess = ChangeProcess(this.SearchDay);
+        this.SearchDayText = ChangeText(this.SearchDay);
         if(this.TodayYear === this.ThisYear){this.TodayButton=false}else{this.TodayButton=true}
         this.GetImportantNotes();
     }
@@ -336,7 +339,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
     ********************************/
     ChangeSelectDate(event){
         let num =0;
-        let CheckDate = this.SearchDay;
+        let CheckDate = new Date(this.SearchDay);
 
         let MinDateNum = Number(this.MinDateProcess.replace( /-/g , "" ) ) ;
         let MaxDateNum = Number(this.MaxDateProcess.replace( /-/g , "" ) ) ;
@@ -351,7 +354,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }else if(event.target.dataset.type === "DateSelect"){
             CheckDate = new Date( event.target.value.substr(0,4),event.target.value.substr(5,2) -1,event.target.value.substr(8,2));
         }
-        CheckDate = this.ChangeProcess(CheckDate);
+        CheckDate = ChangeProcess(CheckDate);
         CheckDate = Number(CheckDate.replace( /-/g , "" ) ) ;
 
         if(CheckDate <= MinDateNum || CheckDate >= MaxDateNum){
@@ -371,12 +374,13 @@ export default class StaffAttendanceMenu04 extends LightningElement {
                 this.SearchDay = new Date(Today.getTime());
             }else{
                 this.SearchDay.setDate(this.SearchDay.getDate() + num);
+                console.log(this.SearchDay.getFullYear() + "年" + this.SearchDay.getMonth() +"月" + this.SearchDay.getDate());
             }
         }else if(event.target.dataset.type === "DateSelect"){
             this.SearchDay = new Date( event.target.value.substr(0,4),event.target.value.substr(5,2) -1,event.target.value.substr(8,2));
         }
-        this.SearchDayProcess = this.ChangeProcess(this.SearchDay);
-        this.SearchDayText = this.ChangeText(this.SearchDay);
+        this.SearchDayProcess = ChangeProcess(this.SearchDay);
+        this.SearchDayText = ChangeText(this.SearchDay);
         if(this.SearchDayProcess === this.MaxDateProcess){this.NextButton=true;}else{this.NextButton=false}
         if(this.SearchDayProcess === this.MinDateProcess){this.PrevButton=true;}else{this.PrevButton=false}
         this.GetKindergartenDiary();
@@ -1008,6 +1012,18 @@ export default class StaffAttendanceMenu04 extends LightningElement {
 
  
     }
+    /********************************
+        園児日誌レコードページへ
+    ********************************/
+    JampToKindergartenDiary(event){
+        if(event.target.dataset.kindergartendiaryid === undefined || event.target.dataset.kindergartendiaryid === "" || event.target.dataset.kindergartendiaryid === "undefined"){
+            return;
+        }
+        window.open( "/" + event.target.dataset.kindergartendiaryid ) ;
+    }
+
+
+    /* END:園児日誌レコードページへ */
 
 
 
@@ -1043,7 +1059,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         }
         return SetList;
         }
-     /* END:選択リストを作成SetListValue */
+    /* END:選択リストを作成SetListValue */
 
 
     /********************************
@@ -1053,9 +1069,9 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         let now = new Date();
         let res;
         now.setHours(now.getHours() - 9);//Salesforceに取り込んだときにずれる
-        res = "" + now.getFullYear() + "-" + this.padZero(now.getMonth() + 1) + 
-            "-" + this.padZero(now.getDate()) + "T" + this.padZero(now.getHours()) + ":" + 
-            this.padZero(now.getMinutes()) + ":" + this.padZero(now.getSeconds()) + ".000Z";
+        res = "" + now.getFullYear() + "-" + padZero(now.getMonth() + 1) + 
+            "-" + padZero(now.getDate()) + "T" + padZero(now.getHours()) + ":" + 
+            padZero(now.getMinutes()) + ":" + padZero(now.getSeconds()) + ".000Z";
         return res;
     }
     
@@ -1085,7 +1101,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         日付を処理用に変換
     ********************************/
     ChangeProcess(TargeDate) {
-        return TargeDate.getFullYear() + "-" + this.padZero((TargeDate.getMonth() + 1)) + "-"+ this.padZero(TargeDate.getDate());
+        return TargeDate.getFullYear() + "-" + padZero((TargeDate.getMonth() + 1)) + "-"+ padZero(TargeDate.getDate());
     }
     /* END:日付を処理用に変換 */
 
