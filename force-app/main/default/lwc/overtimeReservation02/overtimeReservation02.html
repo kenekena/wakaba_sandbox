@@ -1,4 +1,18 @@
 <template>
+<div class="slds-welcome-mat__tiles">
+    <template if:false={mainmenu}>
+        <lightning-layout>
+            <lightning-layout-item size="12" >
+            <p>職員一覧</p> 
+            <select class="selecttype02" onchange={selectStaff} name="changeNames">
+                <option value="">職員を選択</option>
+                <template for:each={StaffList} for:item="item">
+                    <option key={item.value}  value={item.value} >{item.label}</option>
+                </template>
+            </select>
+        </lightning-layout-item>
+        </lightning-layout>
+    </template>
 
 <!-- 年度選択 -->
 <lightning-layout multiple-rows>
@@ -11,6 +25,7 @@
         </select>
     </lightning-layout-item>
 </lightning-layout>
+<!-- END:年度選択 -->
 
 <template if:true={ClassList}>
 <h2 class="title slds-m-bottom_medium">
@@ -19,23 +34,126 @@
 </h2>
 <p class="slds-m-bottom_large">
     <template for:each={ClassList} for:item="item">
-        <button data-group="class" key={item.value} onclick={SelectEnji} value={item.value} type="submit" class="buttontype02 slds-button slds-button_neutral">{item.label}</button>
+        <button data-group="class" key={item.value} onclick={SelectClass} value={item.value} type="submit" class="buttontype02 slds-button slds-button_neutral">{item.label}</button>
     </template> 
+<template if:false={ClassList.length}>
+    {ThisYear}年度の要録情報はありません。
+</template>
 </p>
 </template>
 
 <lightning-layout>
     <lightning-layout-item size="12" >
     <p>園児一覧</p> 
-    <select class="selecttype02" onchange={handleChange} name="changeName">
+    <select class="selecttype02" onchange={SetEnjiId} name="changeName">
         <option value="Noarea">{placeholder}</option>
         <template for:each={EnjiList} for:item="item">
-            <option key={item.Id} value={item.Id}  >{item.kana__c}</option>
+            <option key={item.Id} value={item.Contact__c}  >{item.kana__c}</option>
         </template>
     </select>
 </lightning-layout-item>
 </lightning-layout>
 
+<template if:true={ShowCommand}>
+<!-- 月表示 -->
+<div class="slds-m-top_large sslds-m-bottom_medium">
+    <lightning-layout>
+        <lightning-layout-item size="12" small-device-size="12" medium-device-size="12" large-device-size="2" class="slds-m-bottom_small">
+            <button onclick={SetMonth} data-label="今月" value="ToMonth" type="button" class="slds-m-right_large slds-button slds-button_neutral mybutton">今月</button><br/>
+        </lightning-layout-item>
+    </lightning-layout>
+    <lightning-layout>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="4" value="4" type="button"  class="slds-button slds-button_neutral mybutton">4月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="5" value="5" type="button"  class="slds-button slds-button_neutral mybutton">5月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="6" value="6" type="button"  class="slds-button slds-button_neutral mybutton">6月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="7" value="7" type="button"  class="slds-button slds-button_neutral mybutton">7月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="8" value="8" type="button"  class="slds-button slds-button_neutral mybutton">8月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="9" value="9" type="button"  class="slds-button slds-button_neutral mybutton">9月</button>
+        </lightning-layout-item>
+    </lightning-layout>
+    <lightning-layout>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="10" value="10" type="button"  class="slds-button slds-button_neutral mybutton">10月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="11" value="11" type="button"  class="slds-button slds-button_neutral mybutton">11月</button>     
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="12" value="12" type="button"  class="slds-button slds-button_neutral mybutton">12月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="1" value="1" type="button"  class="slds-button slds-button_neutral mybutton">1月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="2" value="2" type="button"  class="slds-button slds-button_neutral mybutton">2月</button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2">
+            <button onclick={SetMonth} data-label="3" value="3" type="button"  class="slds-button slds-button_neutral mybutton">3月</button>
+        </lightning-layout-item>
+    </lightning-layout>
+</div>
 
-<!-- END:年度選択 -->
+</template>
+<!--END:ShowCommand-->
+
+<lightning-layout class="slds-m-bottom_medium">
+    <lightning-layout-item size="12" >
+        <div class="slds-m-top_large ikkatu">
+        <p class="title">一括登録</p>
+        <lightning-layout>
+            <lightning-layout-item size="5">
+                <select class="selecttype01" onchange={iikatuOutsideFastChange}>
+                    <template for:each={LumpOutsideFastList} for:item="lists">
+                        <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                    </template>
+                </select>
+            </lightning-layout-item>
+            <lightning-layout-item size="5">
+                <select class="selecttype01" onchange={iikatuOutsideChange}>
+                    <template for:each={LumpOutsideList} for:item="lists">
+                        <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                    </template>
+                </select>
+            </lightning-layout-item>
+            <lightning-layout-item size="2">
+                <button class="buttontype01 slds-button slds-button_neutral" onclick={AllCreate}>登録</button>    
+            </lightning-layout-item>
+        </lightning-layout>
+        <p class="size-s">※一括登録は今日以降の日曜日を除く、時間外/欠席予約が未入力の日を登録します。</p>
+        </div>
+    </lightning-layout-item>
+</lightning-layout>
+
+<p>出席日数：{AttendanceDays}日／保育日数：{ChildcareDays}日／欠席日数：{AbsenceDays}日</p>
+
+<!--
+<ul>
+<template for:each={AbsenceReasonList} for:item="item">
+    <li key={item.value} value={item.value}>{item.value}</li>
+</template>
+</ul>
+<ul>
+<template for:each={OutsideFastList} for:item="item">
+    <li key={item.value} value={item.value}>{item.value}</li>
+</template>
+</ul>
+<ul>
+<template for:each={OutsideList} for:item="item">
+    <li key={item.value} value={item.value}>{item.value}</li>
+</template>
+</ul>
+-->
+
+</div>
 </template>

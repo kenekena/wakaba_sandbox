@@ -54,6 +54,14 @@ const ChangeText = (TargeDate) =>{
 /* END:日付を文字列に変換 */
 
 /********************************
+    日付を文字列に変換
+********************************/
+const ChangeText2 = (TargeDate) =>{
+    return (TargeDate.getMonth() + 1) + "月"+ TargeDate.getDate() + "日(" + Week[TargeDate.getDay()] + ")";
+}
+/* END:日付を文字列に変換 */
+
+/********************************
     日付を処理用に変換
 ********************************/
 const ChangeProcess = (TargeDate) =>{
@@ -66,5 +74,6 @@ export {
     SetListValue,
     padZero,
     ChangeText,
+    ChangeText2,
     ChangeProcess
 };
