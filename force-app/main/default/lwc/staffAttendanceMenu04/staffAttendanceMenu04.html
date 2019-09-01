@@ -131,8 +131,9 @@
                 <lightning-layout-item size="1">出席</lightning-layout-item>
                 <lightning-layout-item size="1">欠席</lightning-layout-item>
                 <lightning-layout-item size="2">欠席理由</lightning-layout-item>
-                <lightning-layout-item size="3">出席停止</lightning-layout-item>
+                <lightning-layout-item size="2">出席停止</lightning-layout-item>
                 <lightning-layout-item size="2">バス理由</lightning-layout-item>
+                <lightning-layout-item size="2">出席/保育日数</lightning-layout-item>
             </lightning-layout>
             <!-- /header -->
             <template for:each={ShowEnjiList} for:item="item">
@@ -153,7 +154,7 @@
                         </template>
                     </select>
                 </lightning-layout-item>
-                <lightning-layout-item size="3">
+                <lightning-layout-item size="2">
                     <select onchange={changeType} class={item.AttendanceStopListClass} data-i={item.i} data-group="StopReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AttendanceStopReason">
                         <template for:each={item.AttendanceStopReasonList} for:item="lists">
                             <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
@@ -163,6 +164,9 @@
                 <lightning-layout-item size="2">
                     <p class="named slds-p-left_x-small">{item.NotRideReason}</p>
                 </lightning-layout-item>
+                <lightning-layout-item size="2">
+                        <p class="named slds-p-left_x-small">{item.AttendanceDays}</p>
+                    </lightning-layout-item>
             </lightning-layout>
             </template> 
             

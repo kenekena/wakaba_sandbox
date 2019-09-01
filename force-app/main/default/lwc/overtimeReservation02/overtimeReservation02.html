@@ -1,23 +1,26 @@
 <template>
 <div class="slds-welcome-mat__tiles">
-    <template if:false={mainmenu}>
-        <lightning-layout>
-            <lightning-layout-item size="12" >
-            <p>職員一覧</p> 
-            <select class="selecttype02" onchange={selectStaff} name="changeNames">
-                <option value="">職員を選択</option>
-                <template for:each={StaffList} for:item="item">
-                    <option key={item.value}  value={item.value} >{item.label}</option>
-                </template>
-            </select>
-        </lightning-layout-item>
-        </lightning-layout>
-    </template>
+<template if:false={mainmenu}>
+    <lightning-layout>
+        <lightning-layout-item size="12" >
+        <p>職員一覧</p> 
+        <select class="selecttype02" onchange={selectStaff} name="changeNames">
+            <option value="">職員を選択</option>
+            <template for:each={StaffList} for:item="item">
+                <option key={item.value}  value={item.value} >{item.label}</option>
+            </template>
+        </select>
+    </lightning-layout-item>
+    </lightning-layout>
+</template>
 
+
+<template if:true={mainmenu}>
 <!-- 年度選択 -->
+<div class="slds-m-bottom_medium">
 <lightning-layout multiple-rows>
-    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
-        <p class="slds-form-element__label">年度選択</p>
+    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6">
+        <p>年度選択</p>
         <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
             <template for:each={FiscalYearList} for:item="item">
                 <option key={item.value}  value={item.value} selected={item.selected}>{item.label}</option>
@@ -25,6 +28,7 @@
         </select>
     </lightning-layout-item>
 </lightning-layout>
+</div>
 <!-- END:年度選択 -->
 
 <template if:true={ClassList}>
@@ -42,8 +46,8 @@
 </p>
 </template>
 
-<lightning-layout>
-    <lightning-layout-item size="12" >
+<lightning-layout multiple-rows>
+    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6">
     <p>園児一覧</p> 
     <select class="selecttype02" onchange={SetEnjiId} name="changeName">
         <option value="Noarea">{placeholder}</option>
@@ -104,23 +108,20 @@
     </lightning-layout>
 </div>
 
-</template>
-<!--END:ShowCommand-->
-
 <lightning-layout class="slds-m-bottom_medium">
     <lightning-layout-item size="12" >
         <div class="slds-m-top_large ikkatu">
         <p class="title">一括登録</p>
         <lightning-layout>
             <lightning-layout-item size="5">
-                <select class="selecttype01" onchange={iikatuOutsideFastChange}>
+                <select class="selecttype01" onchange={IikatuOutsideFastChange}>
                     <template for:each={LumpOutsideFastList} for:item="lists">
                         <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
                     </template>
                 </select>
             </lightning-layout-item>
             <lightning-layout-item size="5">
-                <select class="selecttype01" onchange={iikatuOutsideChange}>
+                <select class="selecttype01" onchange={IikatuOutsideChange}>
                     <template for:each={LumpOutsideList} for:item="lists">
                         <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
                     </template>
@@ -135,25 +136,109 @@
     </lightning-layout-item>
 </lightning-layout>
 
-<p>出席日数：{AttendanceDays}日／保育日数：{ChildcareDays}日／欠席日数：{AbsenceDays}日</p>
+<lightning-layout class="slds-m-bottom_medium">
+    <lightning-layout-item size="4" >
+        <div class="slds-m-top_large ikkatu">
+        <p class="title">{ShowSelectMonth}月の日数</p>
+        <lightning-layout>
+            <lightning-layout-item size="4">
+                <p class="size-s tc">出席日数</p>
+                <p class="size-l tc">{AttendanceDays}日</p>
+            </lightning-layout-item>
+            <lightning-layout-item size="4">
+                <p class="size-s tc">保育日数</p>
+                <p class="size-l tc">{ChildcareDays}日</p>
+            </lightning-layout-item>
+            <lightning-layout-item size="4">
+                <p class="size-s tc">欠席日数</p>
+                <p class="size-l tc">{AbsenceDays}日</p>
+            </lightning-layout-item>
+        </lightning-layout>
+        </div>
+    </lightning-layout-item>
+</lightning-layout>
 
-<!--
-<ul>
-<template for:each={AbsenceReasonList} for:item="item">
-    <li key={item.value} value={item.value}>{item.value}</li>
-</template>
-</ul>
-<ul>
-<template for:each={OutsideFastList} for:item="item">
-    <li key={item.value} value={item.value}>{item.value}</li>
-</template>
-</ul>
-<ul>
-<template for:each={OutsideList} for:item="item">
-    <li key={item.value} value={item.value}>{item.value}</li>
-</template>
-</ul>
--->
+<div>
+    <!-- header -->
+    <lightning-layout class="listheader">
+        <lightning-layout-item size="2">日付</lightning-layout-item>
+        <lightning-layout-item size="2">早朝</lightning-layout-item>
+        <lightning-layout-item size="2">時間外</lightning-layout-item>
+        <lightning-layout-item size="1">欠席予約</lightning-layout-item>
+        <lightning-layout-item size="3">欠席理由</lightning-layout-item>
+        <lightning-layout-item size="1">行き✕</lightning-layout-item>
+        <lightning-layout-item size="1">帰り✕</lightning-layout-item>
+    </lightning-layout>
+    <!-- /header -->
+    <template if:false={ListShow}>
+        <div class="hegiht2000">
+        <lightning-layout>
+            <lightning-layout-item size="12">
+                <div class="Centers">
+                    <p>読込中</p>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+        </div>
+    </template>
+    <template if:true={ListShow}>
+    <template for:each={ShowKindergartenDiaryList} for:item="item" >
+    <div key={item.i} class="dayslist">
+        <lightning-layout>
+            <lightning-layout-item size="2">
+                <p class="named02">{item.DateText}</p>
+            </lightning-layout-item>
+            <lightning-layout-item size="2">
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                    <select class={item.OutsideFastClass} onchange={UpsertEvent} data-kdid={item.KdID} data-i={item.i} data-type="OutsideFast">
+                        <template for:each={item.OutsideFastList} for:item="lists">
+                            <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                        </template>
+                    </select>
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="2">
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                    <select class={item.OutsideClass} onchange={UpsertEvent} data-kdid={item.KdID} data-i={item.i} data-type="Outside">
+                        <template for:each={item.OutsideList} for:item="lists">
+                            <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                        </template>
+                    </select>
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="1">
+                <button  onclick={UpsertEvent} type="button" class={item.AbsentScheduleClass} value={item.AbsentSchedule__c} data-kdid={item.KdID} data-i={item.i}  data-type="Absent">欠席</button>
+            </lightning-layout-item>
+            <lightning-layout-item size="3">
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                    <select class={item.AbsenceReasonClass} onchange={UpsertEvent} data-kdid={item.KdID} data-i={item.i} data-type="Reason">
+                        <template for:each={item.AbsenceReasonList} for:item="lists">
+                            <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                        </template>
+                    </select>
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="1">
+                <button onclick={UpsertEvent} type=button class={item.BusGoingNotUseClass} data-type="BusGo" data-id={item.Id} data-kdid={item.KdID} data-i={item.i}>行き✕</button>
+            </lightning-layout-item>
+            <lightning-layout-item size="1">
+                <button onclick={UpsertEvent} type=button class={item.BusBackNotUseClass}  data-type="BasBack" data-id={item.Id} data-kdid={item.KdID} data-i={item.i}>帰り✕</button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+    </template>
+    </template>
+</div>
 
+</template>
+<!--END:ShowCommand-->
+
+</template>
 </div>
 </template>

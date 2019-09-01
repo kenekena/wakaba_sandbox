@@ -46,6 +46,17 @@ public with sharing class ImportantNotesV2Controller {
     }
 
     /* ------------------------------------------------
+        staffAttendanceMenu04:保育料リストを取得
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static List<ChildcareFee__c> findChildcareFees(String Year,String Month,List<Id> EnjiID) {
+        return [SELECT Id,AbsenceDays__c,AttendanceDays__c,AttendanceStopDays__c,ChildcareDays__c,Contact__c,Contact__r.kana__c
+                    FROM ChildcareFee__c 
+                    WHERE Contact__c in :EnjiID AND Year__c =:Year AND Month__c =:Month
+        ];
+    }
+
+    /* ------------------------------------------------
         overtimeReservation2:園児日誌一覧を取得
     ------------------------------------------------ */
     @AuraEnabled
@@ -72,4 +83,15 @@ public with sharing class ImportantNotesV2Controller {
                     LIMIT 1
         ];
     }
+    /* ------------------------------------------------
+        overtimeReservation2:園児日誌一括登録
+    ------------------------------------------------ */
+    @AuraEnabled
+    public static String UpsertKindergartenDiary(List<KindergartenDiary__c> UpsertList) {
+        System.debug(UpsertList);
+        upsert UpsertList KindergartenDiary__c.Fields.Id;
+
+        return 'OK';
+    }
+
 }

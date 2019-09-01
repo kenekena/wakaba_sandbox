@@ -575,7 +575,6 @@ export default class OvertimeReservation extends LightningElement {
                 fields[OUTSIDEFAST_FIELD.fieldApiName] = event.target.value;
                 OutsideFastClassNow = 'blue slds-select selecttype02';
             }
-            
         }
 
         /* 時間外保育 */

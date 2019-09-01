@@ -17,6 +17,7 @@ import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import findStaff from '@salesforce/apex/ImportantNotesV2Controller.findStaff';
 import findImportantNotes from '@salesforce/apex/ImportantNotesV2Controller.findImportantNotes';
 import findKindergartenDiary from '@salesforce/apex/ImportantNotesV2Controller.findKindergartenDiary';
+import findChildcareFees from '@salesforce/apex/ImportantNotesV2Controller.findChildcareFees';
 
 /* 日報アップデート */
 import { createRecord } from 'lightning/uiRecordApi';
@@ -49,7 +50,7 @@ const DefaultValueBase = "-- なし --";
 
 export default class StaffAttendanceMenu04 extends LightningElement {
     TodayYear;
-    @api ThisKindergarten = "北広島わかば";
+    @api ThisKindergarten = "";
     @track ThisYear;
     @track FiscalYearList  = [];
     @track ImportantNotesList =[];
@@ -383,7 +384,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         this.SearchDayText = ChangeText(this.SearchDay);
         if(this.SearchDayProcess === this.MaxDateProcess){this.NextButton=true;}else{this.NextButton=false}
         if(this.SearchDayProcess === this.MinDateProcess){this.PrevButton=true;}else{this.PrevButton=false}
-        this.GetKindergartenDiary();
+        this.SearchChildcareFee();
     }
 
     sortsss(hash, key, order) {
@@ -469,8 +470,36 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         console.log("this.ImportantNotesList2");
         console.log(this.ImportantNotesList2);
 
+        this.SearchChildcareFee();
+    }
+    @track ChildcareFeeList = [];
+    SearchChildcareFee(){
+        let i =0 ;
+        this.ChildcareFeeList = [];
+        console.log("保育料取得");
+        console.log(String(this.SearchDay.getFullYear()));
+        console.log(String(this.SearchDay.getMonth()+1));
+        console.log(this.EnjiList);
 
-        this.GetKindergartenDiary();
+        findChildcareFees({
+            Year : String(this.SearchDay.getFullYear()),
+            Month : String(this.SearchDay.getMonth()),
+            EnjiID : this.EnjiList
+        })
+        .then(result => {
+            console.log("保育料取得");
+            /* 保育リストを並べ変える */
+            for(i = 0; i< result.length; i++){
+                this.ChildcareFeeList[result[i].Contact__c] = result[i];
+            }
+            console.log(this.ChildcareFeeList);
+            this.GetKindergartenDiary();
+            
+        })
+        .catch(error => {
+            console.log("保育料取得error");
+            console.log(error);
+        })
     }
 
     /********************************
@@ -485,6 +514,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         .then(result => {
             //ShowKindergartenDiary()で集計処理
             this.ShowKindergartenDiary(result);
+
         })
         .catch(error => {
             this.dispatchEvent(
@@ -555,6 +585,19 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             SetEnjiList[i].PickUpTimeText = this.ImportantNotesList2[v].PickUpTimeText__c;
             SetEnjiList[i].i = i;
 
+            /* 出席日数チェック */
+
+            if(this.ChildcareFeeList[v]){
+                if(this.ImportantNotesList2[v].Belongs__c === "幼稚園部"){
+                    if(this.ChildcareFeeList[v].AbsenceDays__c ===undefined){this.ChildcareFeeList[v].AbsenceDays__c =0}
+                    SetEnjiList[i].AttendanceDays = "出席日数" + this.ChildcareFeeList[v].AbsenceDays__c + "日";
+                }else if(this.ImportantNotesList2[v].Belongs__c === "保育園部の標準時間" ||this.ImportantNotesList2[v].Belongs__c === "保育園部の短時間"){
+                    if(this.ChildcareFeeList[v].ChildcareDays__c ===undefined){this.ChildcareFeeList[v].ChildcareDays__c =0}
+                    SetEnjiList[i].AttendanceDays = "保育日数" + this.ChildcareFeeList[v].ChildcareDays__c + "日";
+                }
+            }else{
+                SetEnjiList[i].AttendanceDays = "集計データがありません。"
+            }
             
             /* 日報がある場合 */
             if (KindergartenDiaryB[v]) {
