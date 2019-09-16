@@ -38,10 +38,14 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <type>Default</type>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>FlexiPage4</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>DaysRelated</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
@@ -55,7 +59,7 @@
     <label>保育料</label>
     <nameField>
         <displayFormat>CF{YYYY}{MM}-{000}</displayFormat>
-        <label>保育料名</label>
+        <label>保育料ID</label>
         <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>

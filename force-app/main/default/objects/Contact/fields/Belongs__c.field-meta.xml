@@ -25,6 +25,16 @@
                 <default>false</default>
                 <label>保育園部の短時間</label>
             </value>
+            <value>
+                <fullName>退園</fullName>
+                <default>false</default>
+                <label>退園</label>
+            </value>
+            <value>
+                <fullName>卒園</fullName>
+                <default>false</default>
+                <label>卒園</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

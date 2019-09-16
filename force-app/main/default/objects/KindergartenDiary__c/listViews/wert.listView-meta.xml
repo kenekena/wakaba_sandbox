@@ -5,6 +5,7 @@
     <columns>Contact__c</columns>
     <columns>StaffId__c</columns>
     <columns>AbsentSchedule__c</columns>
+    <columns>AttendanceSchedule__c</columns>
     <columns>Date__c</columns>
     <columns>Week__c</columns>
     <columns>Outside__c</columns>

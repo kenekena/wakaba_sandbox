@@ -37,8 +37,11 @@ public with sharing class TestImportantNotesV2Controller {
         insert cnt1;
         Contact CNTID = cnt1;
 
-        // 園児日誌のテストデータを作成する
         Date TDY = date.today();
+        String YEAR = String.ValueOf(TDY.year());
+        String MONTH = String.ValueOf(TDY.month());
+
+        // 園児日誌のテストデータを作成する
         KindergartenDiary__c kgd1 = new KindergartenDiary__c(
 					Contact__c = CNTID.Id,
             		Date__c = TDY,
@@ -50,7 +53,7 @@ public with sharing class TestImportantNotesV2Controller {
 
         // 要録情報のテストデータを作成する
         ImportantNotes__c itn1 = new ImportantNotes__c(
-                    FiscalYear__c='2019',
+                    FiscalYear__c= YEAR,
                     Contact__c=CNTID.Id,
             		Class__c='ゆり',
             		PassageRoute__c = '犬１',
@@ -61,8 +64,18 @@ public with sharing class TestImportantNotesV2Controller {
         insert itn1;
         ImportantNotes__c ITNID = itn1;
 
+        // 保育料のテストデータを作成する
+        ChildcareFee__c  cdf1 = new ChildcareFee__c (
+                    Year__c = YEAR,
+            		Month__c = MONTH,
+                    Contact__c= CNTID.Id,
+            		ImportantNotes__c = ITNID.Id
+        );
+        insert cdf1;
+        ChildcareFee__c CDFID = cdf1;
 
-        // insertList設定
+
+        // 園児日誌insertList設定
         List<KindergartenDiary__c> insertList = new List<KindergartenDiary__c>();
         insertList.add(new KindergartenDiary__c(
 								Date__c = TDY,
@@ -72,7 +85,7 @@ public with sharing class TestImportantNotesV2Controller {
 								StaffId__c = STFID.Id)
         );
 
-        // updateList設定
+        // 園児日誌updateList設定
         List<KindergartenDiary__c> updateList = new List<KindergartenDiary__c>();
         updateList.add(new KindergartenDiary__c(
 								Id = KGDID.Id,
@@ -92,16 +105,18 @@ public with sharing class TestImportantNotesV2Controller {
         List<Staff__c> Staff = ImportantNotesV2Controller.findStaff('北広島わかば');
         List<Staff__c> Staff2 = ImportantNotesV2Controller.findStaff('');
 
-//        List<KindergartenDiary__c> KindergartenDiary1 = ImportantNotesV2Controller.findKindergartenDiary_OrList('2019-05-01 00:00:00','2019-05-31 00:00:00',CNTID.Id);
+        List<ImportantNotes__c> ImportantNotes1 = ImportantNotesV2Controller.findImportantNotes(YEAR,'北広島わかば');
+        List<ImportantNotes__c> ImportantNotes2 = ImportantNotesV2Controller.findImportantNotes(YEAR,'');
 
-        List<ImportantNotes__c> ImportantNotes1 = ImportantNotesV2Controller.findImportantNotes('2019','北広島わかば');
-        List<ImportantNotes__c> ImportantNotes2 = ImportantNotesV2Controller.findImportantNotes('2019','');
-//        List<ImportantNotes__c> ImportantNotes3 = ImportantNotesV2Controller.findImportantNotes('2019','北広島わかば');
-//        List<ImportantNotes__c> ImportantNotes4 = ImportantNotesV2Controller.findImportantNotes('2019','北広島わかば');
+        List<ChildcareFee__c> ChildcareFee1 = ImportantNotesV2Controller.findChildcareFees(YEAR,MONTH,ContactList);
+        List<ChildcareFee__c> ChildcareFee2 = ImportantNotesV2Controller.findChildcareFee(YEAR,MONTH,CNTID.Id);
 
-        List<KindergartenDiary__c> KindergartenDiary2 = ImportantNotesV2Controller.findKindergartenDiary('2019-08-29', ContactList);
+        //        List<ImportantNotes__c> ImportantNotes4 = ImportantNotesV2Controller.findImportantNotes('2019','北広島わかば');
 
-//        String result = ImportantNotesV2Controller.upsertKindergartenDiary( insertList, updateList );
+        List<KindergartenDiary__c> KindergartenDiary1 = ImportantNotesV2Controller.findKindergartenDiary_OrList('2019-09-01 00:00:00','2019-09-30 00:00:00',CNTID.Id);
+        List<KindergartenDiary__c> KindergartenDiary2 = ImportantNotesV2Controller.findKindergartenDiary('2019-09-02', ContactList);
+
+        String result = ImportantNotesV2Controller.UpsertKindergartenDiary( updateList );
 
         Test.stopTest();
     }    

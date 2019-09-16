@@ -20,12 +20,12 @@ public with sharing class ImportantNotesV2Controller {
         if(Kindergarten != ''){
 	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c,Belongs__c
                 FROM ImportantNotes__c
-                WHERE FiscalYear__c =: Year AND School__c =:Kindergarten
+                WHERE FiscalYear__c =: Year AND School__c =:Kindergarten AND AttendanceDisplay__c = TRUE
                 ORDER BY Number__c ASC NULLS LAST];
         }else{
 	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c
                 FROM ImportantNotes__c
-                WHERE FiscalYear__c =: Year
+                WHERE FiscalYear__c =: Year AND AttendanceDisplay__c = TRUE
                 ORDER BY Number__c ASC NULLS LAST];
         }
     }
@@ -40,8 +40,9 @@ public with sharing class ImportantNotesV2Controller {
         Date myDate = Date.valueOf(SearchDate);
         return [SELECT Id,AbsenceReason__c,NotRideReason__c ,AttendanceSchedule__c,BusBackNotUse__c,BusGoingNotUse__c,
                     Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , 
-                    attendingSchoolTime__c , GoingBack__c , GoingBackTime__c , AttendanceStopReason__c
-                    FROM KindergartenDiary__c 
+                    attendingSchoolTime__c , GoingBack__c , GoingBackTime__c , AttendanceStopReason__c,
+                    LeaveEarly__c, Lateness__c, ImportantNotes__c
+                    FROM KindergartenDiary__c
                     WHERE Date__c =:myDate AND Contact__c in :ContactIdList];
     }
 

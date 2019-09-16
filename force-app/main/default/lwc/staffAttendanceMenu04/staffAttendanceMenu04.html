@@ -133,7 +133,13 @@
                 <lightning-layout-item size="2">欠席理由</lightning-layout-item>
                 <lightning-layout-item size="2">出席停止</lightning-layout-item>
                 <lightning-layout-item size="2">バス理由</lightning-layout-item>
-                <lightning-layout-item size="2">出席/保育日数</lightning-layout-item>
+                <lightning-layout-item size="2">
+                    <lightning-layout>
+                        <lightning-layout-item size="4">出席数</lightning-layout-item>
+                        <lightning-layout-item size="4">保育数</lightning-layout-item>
+                        <lightning-layout-item size="4">欠席数</lightning-layout-item>
+                    </lightning-layout>
+                </lightning-layout-item>
             </lightning-layout>
             <!-- /header -->
             <template for:each={ShowEnjiList} for:item="item">
@@ -165,8 +171,18 @@
                     <p class="named slds-p-left_x-small">{item.NotRideReason}</p>
                 </lightning-layout-item>
                 <lightning-layout-item size="2">
-                        <p class="named slds-p-left_x-small">{item.AttendanceDays}</p>
-                    </lightning-layout-item>
+                    <lightning-layout>
+                        <lightning-layout-item size="4"><p class="named tc">
+                            <span class="font-m">{item.AttendanceDays}</span><span class="font-s">日</span></p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="4"><p class="named tc">
+                            <span class="font-m">{item.ChildcareDays}</span><span class="font-s">日</span></p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="4"><p class="named tc">
+                            <span class="font-m">{item.AbsenceDays}</span><span class="font-s">日</span></p>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </lightning-layout-item>
             </lightning-layout>
             </template> 
             

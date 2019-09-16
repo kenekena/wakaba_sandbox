@@ -45,6 +45,7 @@ h2{
 <p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/InvoicePDF?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">請求書をプリントする</a></p>
 <p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/InvoicePDF2?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">未納請求書をプリントする</a></p>
 <h2>■領収書プリント</h2>
+<p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/ChildcarefeeCostPDF?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">保育料</a></p>
 <p><a class="button1" href="javascript:void(0)" onclick="window.open('/apex/ReceiptLunchCostPDF?id={!ChildcareFee__c.Id}','test','width=910,menubar=no,toolbar=no,location=no')">給食費</a></p>
 
 

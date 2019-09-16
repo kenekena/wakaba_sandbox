@@ -6,13 +6,8 @@
     <columns>WorkDivision__c</columns>
     <columns>BreakTimeTarget__c</columns>
     <columns>School__c</columns>
-    <columns>CardNumber__c</columns>
     <columns>ListDisplayCheck__c</columns>
+    <columns>CardNumber__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>School__c</field>
-        <operation>equals</operation>
-        <value>北広島わかば</value>
-    </filters>
     <label>すべて選択</label>
 </ListView>

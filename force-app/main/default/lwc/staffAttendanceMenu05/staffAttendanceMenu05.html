@@ -1,0 +1,283 @@
+<template>
+    <template if:false={mainmenu}>
+        <div class="slds-welcome-mat__tiles">
+            <lightning-layout>
+                <lightning-layout-item size="12">
+                <p>職員一覧</p> 
+                <select class="selecttype02" onchange={selectStaff} name="changeNames">
+                    <option value="">職員を選択</option>
+                    <template for:each={StaffList} for:item="item">
+                        <option key={item.value}  value={item.value} >{item.label}</option>
+                    </template>
+                </select>
+            </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </template>
+    
+    <template if:true={mainmenu}>
+        <div class="slds-welcome-mat__tiles">
+        <template if:true={ClassList}>
+            <h2 class="title slds-m-bottom_medium">
+                <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
+                出席簿：くみ一覧
+            </h2>
+            <p class="slds-m-bottom_large">
+                <template for:each={ClassList} for:item="item">
+                    <button 
+                        key={item.value}
+                        class="buttontype02 slds-button slds-button_neutral"
+                        type="submit"
+                        data-group="Class"
+                        data-value={item.label}
+                        onclick={ChangeClassBus}
+                    >{item.label}</button>
+                </template> 
+            </p>
+        </template>
+        <template if:true={BusList}>
+            <h2 class="title slds-m-bottom_medium">
+                <!-- <lightning-icon icon-name="utility:animal_and_nature" variant="Success" alternative-text="Audio file" ></lightning-icon>-->
+                乗車管理：バス一覧
+            </h2>
+            <p class="slds-m-bottom_large">
+                <template for:each={BusList} for:item="item">
+                    <button
+                        key={item.value}
+                        class="buttontype02 slds-button slds-button_neutral"
+                        type="submit" 
+                        data-group="Bus"
+                        data-value={item.label}
+                        onclick={ChangeClassBus}
+                    >{item.label}</button>
+                </template> 
+            </p>
+        </template>
+        <!--
+        <lightning-combobox
+            name="FiscalYearList"
+            value={ThisYear}
+            placeholder="未選択"
+            options={FiscalYearList}
+            onchange={ChangeFiscalYear}
+            >
+        </lightning-combobox>
+        <p>くみ</p>
+        <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+            <template for:each={ClassShow} for:item="item">
+                <option key={item.value}  value={item.value} >{item.label}</option>
+            </template>
+        </select>
+        <p>バス</p>
+        <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+            <template for:each={BusList} for:item="item">
+                <option key={item.value}  value={item.value} >{item.label}</option>
+            </template>
+        </select>
+        -->
+        </div>
+        <!-- </template> -->
+    
+        <div class="slds-m-bottom_medium">
+        <lightning-card title="日付検索" icon-name="standard:search">
+            <div class="slds-welcome-mat__tiles">
+                <lightning-layout multiple-rows>
+                    <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+                        <p class="slds-form-element__label">年度選択</p>
+                        <select class="selecttype02" onchange={ChangeFiscalYear} name="changeNames">
+                            <template for:each={FiscalYearList} for:item="item">
+                                <option key={item.value}  value={item.value} selected={item.selected} >{item.label}</option>
+                            </template>
+                        </select>
+                    </lightning-layout-item>
+                </lightning-layout>
+                    
+                <div class="slds-m-bottom_medium">
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item size="12" medium-device-size="6" large-device-size="6" padding="around-small">
+                            <p class="slds-form-element__label">日付選択</p>
+                            <input 
+                                class="selecttype02"
+                                onchange={ChangeSelectDate}
+                                data-type="DateSelect"
+                                type="date" name="input2"
+                                value={SearchDayProcess} 
+                                min={MinDateProcess}
+                                max={MaxDateProcess}
+                            ></input>
+                        <p class="red">{DateError}</p>
+                        </lightning-layout-item>
+                        
+                    </lightning-layout>
+                </div>
+                <div class="slds-m-left_small">
+                <lightning-button-group>
+                    <lightning-button label="前日" onclick={ChangeSelectDate} data-type="DateButton" value="-1" icon-name="utility:left" alternative-text="前日" tooltip="前日" disabled={PrevButton} ></lightning-button>
+                    <lightning-button label="今日" onclick={ChangeSelectDate} data-type="DateButton" value="0" disabled={TodayButton}></lightning-button>
+                    <lightning-button label="翌日" onclick={ChangeSelectDate} data-type="DateButton" value="1" icon-name="utility:right" icon-position="right" alternative-text="翌日" tooltip="翌日" disabled={NextButton} ></lightning-button>
+                </lightning-button-group>   
+                </div>
+            </div>
+            
+        </lightning-card>
+        </div>
+    
+        <template if:true={ClassShow}>
+            <lightning-card title={SearchDayTextClass} icon-name="custom:custom68"></lightning-card>
+            <div class="slds-welcome-mat__tiles">
+                <!-- header -->
+                <lightning-layout class="listheader">
+                    <lightning-layout-item size="2">なまえ</lightning-layout-item>
+                    <lightning-layout-item size="1">出席</lightning-layout-item>
+                    <lightning-layout-item size="1">欠席</lightning-layout-item>
+                    <lightning-layout-item size="2">欠席理由</lightning-layout-item>
+                    <lightning-layout-item size="2">出席停止</lightning-layout-item>
+                    <lightning-layout-item size="1">遅刻</lightning-layout-item>
+                    <lightning-layout-item size="1">早退</lightning-layout-item>
+<!--
+                    <lightning-layout-item size="2">バス理由</lightning-layout-item>
+-->
+                    <lightning-layout-item size="2">
+                        <lightning-layout>
+                            <lightning-layout-item size="4">出席数</lightning-layout-item>
+                            <lightning-layout-item size="4">保育数</lightning-layout-item>
+                            <lightning-layout-item size="4">欠席数</lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+                </lightning-layout>
+                <!-- /header -->
+                <template for:each={ShowEnjiList} for:item="item">
+                <lightning-layout key={item.Id} class="dayslist">
+                    <lightning-layout-item  key={item.Id} size="2">
+<!--
+                        <p class="named"><a data-kindergartendiaryid={item.kindergartenDiaryId} onclick={JampToKindergartenDiary}>{item.Contact__r.kana__c}</a></p>
+-->
+                        <p class="named"><a data-i={item.i} data-kindergartendiaryid={item.kindergartenDiaryId} data-importantnotesid={item.ImportantNotesId} onclick={JampToImportantNotes}>{item.Contact__r.kana__c}</a></p>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                        <button onclick={changeType} type=button class={item.AttendanceClass} data-i={item.i} data-group="Class" data-value="出席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>出席</button>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                        <button onclick={changeType} type=button class={item.AbsenceClass} data-i={item.i} data-group="Class" data-value="欠席" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>欠席</button>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="2">
+                        <select onchange={changeType} class={item.AbsenceReasonListClass} data-i={item.i} data-group="Reason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AbsenceReason">
+                            <template for:each={item.AbsenceReasonList} for:item="lists">
+                                <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                            </template>
+                        </select>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="2">
+                        <select onchange={changeType} class={item.AttendanceStopListClass} data-i={item.i} data-group="StopReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="AttendanceStopReason">
+                            <template for:each={item.AttendanceStopReasonList} for:item="lists">
+                                <option key={lists.value} value={lists.value} selected={lists.selected}>{lists.value}</option>
+                            </template>
+                        </select>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                        <button onclick={changeType} type=button class={item.LatenessClass} data-i={item.i} data-group="Class2" data-value="遅刻" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>遅刻</button>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                        <button onclick={changeType} type=button class={item.LeaveEarlyClass} data-i={item.i} data-group="Class2" data-value="早退" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>早退</button>
+                    </lightning-layout-item>
+<!--
+                    <lightning-layout-item size="2">
+                        <p class="named slds-p-left_x-small">{item.NotRideReason}</p>
+                    </lightning-layout-item>
+-->
+                    <lightning-layout-item size="2">
+                        <lightning-layout>
+                            <lightning-layout-item size="4"><p class="named tc">
+                                <span class="font-m">{item.AttendanceDays}</span><span class="font-s">日</span></p>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4"><p class="named tc">
+                                <span class="font-m">{item.ChildcareDays}</span><span class="font-s">日</span></p>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4"><p class="named tc">
+                                <span class="font-m">{item.AbsenceDays}</span><span class="font-s">日</span></p>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+                </lightning-layout>
+                </template> 
+                
+                <template if:true={error}>
+                    <p></p>エラーですShowEnjiList：{error}</p>
+                </template>
+                
+            </div>
+        </template>
+    
+        <template if:true={BusShow}>
+                <lightning-card title={SearchDayTextBus} icon-name="custom:custom68"></lightning-card>
+            <div class="slds-welcome-mat__tiles">
+                <!-- header -->
+                <lightning-layout class="listheader">
+                    <lightning-layout-item size="2">なまえ</lightning-layout-item>
+                    <lightning-layout-item size="1">迎え</lightning-layout-item>
+                    <lightning-layout-item size="1">送り</lightning-layout-item>
+                    <lightning-layout-item size="1">登園</lightning-layout-item>
+                    <lightning-layout-item size="1">降園</lightning-layout-item>
+                    <lightning-layout-item size="1">行き✕</lightning-layout-item>
+                    <lightning-layout-item size="1">帰り✕</lightning-layout-item>
+                    <lightning-layout-item size="2">バス理由</lightning-layout-item>
+                    <!--<lightning-layout-item size="2">備考</lightning-layout-item>-->
+                </lightning-layout>
+                <!-- /header -->
+                <template for:each={ShowEnjiList} for:item="item">
+                    <lightning-layout key={item.Id} class="dayslist">
+                        <lightning-layout-item size="2">
+<!--
+                            <p class="named02"><a data-kindergartendiaryid={item.kindergartenDiaryId} onclick={JampToKindergartenDiary}>{item.Contact__r.kana__c}</a></p>
+-->
+                            <p class="named"><a data-i={item.i} data-kindergartendiaryid={item.kindergartenDiaryId} data-importantnotesid={item.ImportantNotesId} onclick={JampToImportantNotes}>{item.Contact__r.kana__c}</a></p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <p class="named03">{item.PickUpTimeText}</p>
+                        </lightning-layout-item><lightning-layout-item size="1">
+                            <p class="named03">{item.DropOffText}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <button onclick={changeType} type=button class={item.AttendingSchoolClass} data-i={item.i} data-group="Bus" data-value="登園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}>登園</button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <button onclick={changeType} type=button class={item.GoingBackClass} data-i={item.i} data-group="Bus" data-value="降園" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >降園</button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <button onclick={changeType} type=button class={item.NoAttendingSchoolClass} data-i={item.i} data-group="Bus" data-value="行き利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >行き✕</button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <button onclick={changeType} type=button class={item.NoGoingBackClass} data-i={item.i} data-group="Bus" data-value="帰り利用しない" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId} >帰り✕</button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <select onchange={changeType} class={item.AbsenceReasonListClass} data-i={item.i} data-group="RideReason" data-id={item.Id} data-kindergartendiaryid={item.kindergartenDiaryId}  data-type="RideReason">
+                                <template for:each={item.NotRideReasonList} for:item="lists">
+                                    <option key={lists.value}  value={lists.value} selected={lists.selected}>{lists.value}</option>
+                                </template>
+                            </select>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template> 
+                <template if:true={error}>
+                    <p></p>エラーですimportantNotes：{error}</p>
+                </template>
+            </div>
+        </template>
+        
+        <template if:true={firstDisplay}>
+                <lightning-card title="出席簿・バス乗車管理" icon-name="custom:custom68"></lightning-card>
+            <div class="slds-welcome-mat__tiles">
+                くみかバスを選択してください。
+            </div>
+        </template>
+    
+        <template if:true={Loading}>
+            <div class="slds-welcome-mat__tiles">
+                読込中
+            </div>
+        </template>
+    
+    </template>
+    
+    
+</template>

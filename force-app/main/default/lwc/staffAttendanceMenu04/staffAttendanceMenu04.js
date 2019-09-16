@@ -358,7 +358,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
         CheckDate = ChangeProcess(CheckDate);
         CheckDate = Number(CheckDate.replace( /-/g , "" ) ) ;
 
-        if(CheckDate <= MinDateNum || CheckDate >= MaxDateNum){
+        if(CheckDate < MinDateNum || CheckDate > MaxDateNum){
             this.DateError = "年度内の日付を選択してください。";
             return;
         }
@@ -483,7 +483,7 @@ export default class StaffAttendanceMenu04 extends LightningElement {
 
         findChildcareFees({
             Year : String(this.SearchDay.getFullYear()),
-            Month : String(this.SearchDay.getMonth()),
+            Month : String(this.SearchDay.getMonth()+1),
             EnjiID : this.EnjiList
         })
         .then(result => {
@@ -588,13 +588,12 @@ export default class StaffAttendanceMenu04 extends LightningElement {
             /* 出席日数チェック */
 
             if(this.ChildcareFeeList[v]){
-                if(this.ImportantNotesList2[v].Belongs__c === "幼稚園部"){
-                    if(this.ChildcareFeeList[v].AbsenceDays__c ===undefined){this.ChildcareFeeList[v].AbsenceDays__c =0}
-                    SetEnjiList[i].AttendanceDays = "出席日数" + this.ChildcareFeeList[v].AbsenceDays__c + "日";
-                }else if(this.ImportantNotesList2[v].Belongs__c === "保育園部の標準時間" ||this.ImportantNotesList2[v].Belongs__c === "保育園部の短時間"){
-                    if(this.ChildcareFeeList[v].ChildcareDays__c ===undefined){this.ChildcareFeeList[v].ChildcareDays__c =0}
-                    SetEnjiList[i].AttendanceDays = "保育日数" + this.ChildcareFeeList[v].ChildcareDays__c + "日";
-                }
+                if(this.ChildcareFeeList[v].AttendanceDays__c ===undefined){this.ChildcareFeeList[v].AttendanceDays__c =0}
+                SetEnjiList[i].AttendanceDays =this.ChildcareFeeList[v].AttendanceDays__c;
+                if(this.ChildcareFeeList[v].ChildcareDays__c ===undefined){this.ChildcareFeeList[v].ChildcareDays__c =0}
+                SetEnjiList[i].ChildcareDays =+ this.ChildcareFeeList[v].ChildcareDays__c;
+                if(this.ChildcareFeeList[v].AbsenceDays__c ===undefined){this.ChildcareFeeList[v].AbsenceDays__c =0}
+                SetEnjiList[i].AbsenceDays = this.ChildcareFeeList[v].AbsenceDays__c;
             }else{
                 SetEnjiList[i].AttendanceDays = "集計データがありません。"
             }

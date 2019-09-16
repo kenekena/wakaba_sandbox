@@ -65,6 +65,12 @@
             ],
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
+            ],
+            "c/attendanceCountButton": [
+                "attendanceCountButton/attendanceCountButton.js"
+            ],
+            "c/staffAttendanceMenu05": [
+                "staffAttendanceMenu05/staffAttendanceMenu05.js"
             ]
         }
     },

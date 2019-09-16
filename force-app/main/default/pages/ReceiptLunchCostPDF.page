@@ -73,6 +73,16 @@
     font-size:200%;
   }
 
+  .costArea{
+    position: relative;
+    height: 18mm;
+  }
+
+  .ｔaxfreeArea{
+    position: absolute;
+    left: 191mm;
+  }
+
   .font150{
     font-size: 150%;
   }
@@ -93,10 +103,14 @@
 <div class="amontArea">
 <p class="center"><apex:outputtext value="{0,number, ###,###}">¥<apex:param value="{!ChildcareFee__c.LunchCost__c}"></apex:param></apex:outputtext>-</p>
 </div>
-<p class="tl">但　給食費として</p>
+<div class="costArea">
+    <div class="ｔaxfreeArea">
+    <p class="totalarea"><apex:image url="{!$Resource.hikazei}" width="80" height="50" /></p>
+    </div>
+<p class="tl">但　給食費({!ChildcareFee__c.Month__c}月分) として</p>
 <p class="tl">上記正に領収いたしました。</p>
-<p class="totalarea"><apex:image url="{!$Resource.hikazei}" width="80" height="50" /></p>
-<p class="totalarea">学校法人　明石学園　認定こども園　北広島わかば幼稚園</p>
+</div>
+<p class="totalarea"><apex:image url="{!$Resource.wakaba_logo6}" width="150" height="30"/></p>
 <p class="totalarea"><apex:image url="{!$Resource.syahan}" width="80" height="80"/></p>
 
 </div>

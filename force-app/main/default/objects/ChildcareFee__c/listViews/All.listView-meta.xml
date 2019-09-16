@@ -6,13 +6,16 @@
     <columns>Month__c</columns>
     <columns>Contact__c</columns>
     <columns>TotalCost__c</columns>
-    <columns>MonthCustody__c</columns>
-    <columns>LongStorage__c</columns>
     <columns>EducationCosts__c</columns>
     <columns>PTAFee__c</columns>
+    <columns>MonthCustody__c</columns>
     <columns>LunchCost__c</columns>
     <columns>StapleFoodCost__c</columns>
     <columns>Diapers__c</columns>
+    <columns>BusFare__c</columns>
+    <columns>TeachingMaterials__c</columns>
+    <columns>AttendanceDays__c</columns>
+    <columns>ChildcareDays__c</columns>
     <filterScope>Everything</filterScope>
     <label>すべて選択</label>
 </ListView>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IssuingDateOutput__c</fullName>
+    <externalId>false</externalId>
+    <formula>TEXT ( YEAR( TODAY() ))  + &quot;年&quot; +  TEXT ( MONTH( TODAY() ))   + &quot;月&quot; + TEXT ( DAY( TODAY() )) + &quot;日&quot;</formula>
+    <label>[出力用]発行日</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

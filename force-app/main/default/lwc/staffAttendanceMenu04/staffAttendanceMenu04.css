@@ -1,3 +1,15 @@
+.tc{
+  text-align: center;
+}
+.font-m{
+  font-size:200%;
+  color:#333;
+}
+.font-s{
+  font-size:75%;
+  color:#666;
+}
+
 .title{
     background:#a4bcff7a;
     position: relative;

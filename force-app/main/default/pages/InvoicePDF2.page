@@ -83,7 +83,6 @@
   <p>
   {!ChildcareFee__c.IssuingDateOutput__c}<br />
   <apex:image url="{!$Resource.wakaba_logo6}" width="150" height="30"/><br />
-  学校法人　明石学園　認定こども園　北広島わかば幼稚園<br />
   <br />
   </p>
 </div>
@@ -109,6 +108,11 @@
   <dt>預かり代({!ChildcareFee__c.LastMonth__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.MonthCustody__c}"></apex:param></apex:outputtext>円</dd>
   <dt>バス代</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.BusFare__c}"></apex:param></apex:outputtext>円</dd>
   <dt>個人持教材</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.TeachingMaterials__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>預かり代(春休み)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.CustodySpring__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>預かり代(夏休み)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.CustodySummer__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>預かり代(冬休み)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.CustodyWinter__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>手数料</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.Fee__c}"></apex:param></apex:outputtext>円</dd>
+  <dt>区分変更手数料</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.ChangeFee__c}"></apex:param></apex:outputtext>円</dd>
 </dl>
 <div class="underLine"></div>
 <p class="totalarea">

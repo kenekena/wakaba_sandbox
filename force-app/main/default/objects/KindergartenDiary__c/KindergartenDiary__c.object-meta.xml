@@ -60,6 +60,6 @@
         <type>AutoNumber</type>
     </nameField>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

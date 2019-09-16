@@ -3,18 +3,18 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>FiscalYear__c</columns>
+    <columns>School__c</columns>
+    <columns>Belongs__c</columns>
+    <columns>AttendanceDisplay__c</columns>
     <columns>Class__c</columns>
+    <columns>Number__c</columns>
     <columns>Contact__c</columns>
-    <columns>Teacher__c</columns>
-    <columns>PassageRoute__c</columns>
-    <columns>BusStop__c</columns>
-    <columns>EducationDays__c</columns>
-    <columns>AttendanceDays__c</columns>
     <columns>Sex__c</columns>
+    <columns>Teacher__c</columns>
+    <columns>BusDisplayOrder__c</columns>
+    <columns>PassageRoute__c</columns>
     <columns>Birthdate__c</columns>
     <columns>Age__c</columns>
-    <columns>Guardian1__c</columns>
-    <columns>Guardian2__c</columns>
     <filterScope>Everything</filterScope>
     <label>すべて選択</label>
 </ListView>

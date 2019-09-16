@@ -77,7 +77,7 @@ export default class OvertimeReservation02 extends LightningElement {
     @track AttendanceDays = 0;
     @track ChildcareDays = 0;
     @track AbsenceDays = 0;
-    @track ShowSelectMonth = String(Today.getMonth());
+    @track ShowSelectMonth = String(Today.getMonth()+1);
 
     /* 表示系 */
     @track mainmenu = false;
@@ -203,7 +203,7 @@ export default class OvertimeReservation02 extends LightningElement {
             this.ThisYear = Today.getFullYear();
         }
         this.SelectYear = String(this.ThisYear);
-        this.SelectMonth = String(Today.getMonth());
+        this.SelectMonth = String(Today.getMonth()+1);
         this.GetImportantNotes();
     }
 
@@ -348,7 +348,7 @@ export default class OvertimeReservation02 extends LightningElement {
             this.SearchDate.setFullYear(this.ThisYear);
         }
         this.SelectYear = String(this.SearchDate.getFullYear());
-        this.SelectMonth = String(event.target.value -1);
+        this.SelectMonth = String(event.target.value);
         this.ShowSelectMonth = String(event.target.value);
 
         

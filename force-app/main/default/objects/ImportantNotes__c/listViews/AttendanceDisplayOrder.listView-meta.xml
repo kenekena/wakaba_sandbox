@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AttendanceDisplayOrder</fullName>
+    <columns>NAME</columns>
+    <columns>FiscalYear__c</columns>
+    <columns>Number__c</columns>
+    <columns>Contact__c</columns>
+    <columns>Class__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>School__c</field>
+        <operation>equals</operation>
+        <value>北広島わかば</value>
+    </filters>
+    <filters>
+        <field>FiscalYear__c</field>
+        <operation>equals</operation>
+        <value>2019</value>
+    </filters>
+    <label>01_出席簿表示順一覧</label>
+</ListView>

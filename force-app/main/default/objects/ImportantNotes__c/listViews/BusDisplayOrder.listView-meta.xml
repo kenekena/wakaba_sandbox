@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BusDisplayOrder</fullName>
+    <columns>NAME</columns>
+    <columns>FiscalYear__c</columns>
+    <columns>Contact__c</columns>
+    <columns>BusDisplayOrder__c</columns>
+    <columns>PassageRoute__c</columns>
+    <columns>PickUpTime__c</columns>
+    <columns>DropOff__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>School__c</field>
+        <operation>equals</operation>
+        <value>北広島わかば</value>
+    </filters>
+    <filters>
+        <field>PassageRoute__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>FiscalYear__c</field>
+        <operation>equals</operation>
+        <value>2019</value>
+    </filters>
+    <label>02_バス表示順一覧</label>
+</ListView>
