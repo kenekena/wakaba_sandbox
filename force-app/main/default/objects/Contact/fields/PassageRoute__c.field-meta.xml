@@ -35,6 +35,76 @@
                 <default>false</default>
                 <label>ビーバー</label>
             </value>
+            <value>
+                <fullName>オレンジ1</fullName>
+                <default>false</default>
+                <label>オレンジ1</label>
+            </value>
+            <value>
+                <fullName>オレンジ2</fullName>
+                <default>false</default>
+                <label>オレンジ2</label>
+            </value>
+            <value>
+                <fullName>ピンク1</fullName>
+                <default>false</default>
+                <label>ピンク1</label>
+            </value>
+            <value>
+                <fullName>ピンク2</fullName>
+                <default>false</default>
+                <label>ピンク2</label>
+            </value>
+            <value>
+                <fullName>ピンク3</fullName>
+                <default>false</default>
+                <label>ピンク3</label>
+            </value>
+            <value>
+                <fullName>黄色1</fullName>
+                <default>false</default>
+                <label>黄色1</label>
+            </value>
+            <value>
+                <fullName>黄色2</fullName>
+                <default>false</default>
+                <label>黄色2</label>
+            </value>
+            <value>
+                <fullName>黄色3</fullName>
+                <default>false</default>
+                <label>黄色3</label>
+            </value>
+            <value>
+                <fullName>水色1</fullName>
+                <default>false</default>
+                <label>水色1</label>
+            </value>
+            <value>
+                <fullName>水色2</fullName>
+                <default>false</default>
+                <label>水色2</label>
+            </value>
+            <value>
+                <fullName>水色3</fullName>
+                <default>false</default>
+                <label>水色3</label>
+            </value>
+            <value>
+                <fullName>緑1</fullName>
+                <default>false</default>
+                <label>緑1</label>
+            </value>
+            <value>
+                <fullName>緑2</fullName>
+                <default>false</default>
+                <label>緑2</label>
+            </value>
+            <value>
+                <fullName>緑3</fullName>
+                <default>false</default>
+                <label>緑3</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

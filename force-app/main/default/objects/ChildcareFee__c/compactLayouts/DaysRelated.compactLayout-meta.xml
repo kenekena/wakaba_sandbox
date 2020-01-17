@@ -2,8 +2,8 @@
 <CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>DaysRelated</fullName>
     <fields>Name</fields>
-    <fields>AttendanceDays__c</fields>
     <fields>ChildcareDays__c</fields>
+    <fields>AttendanceDays__c</fields>
     <fields>AbsenceDays__c</fields>
     <fields>AttendanceStopDays__c</fields>
     <fields>Lateness__c</fields>

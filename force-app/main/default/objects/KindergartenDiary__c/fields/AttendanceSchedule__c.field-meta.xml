@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>AttendanceSchedule__c</fullName>
     <externalId>false</externalId>
-    <label>出欠席予定</label>
+    <label>出欠席状況</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

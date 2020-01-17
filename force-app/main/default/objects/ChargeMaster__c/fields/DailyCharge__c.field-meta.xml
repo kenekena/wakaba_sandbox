@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>DailyCharge__c</fullName>
     <externalId>false</externalId>
-    <label>日割料金</label>
+    <label>日料金</label>
     <precision>18</precision>
     <required>false</required>
     <scale>0</scale>

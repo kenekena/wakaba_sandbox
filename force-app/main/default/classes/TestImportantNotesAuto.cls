@@ -70,6 +70,22 @@ public class TestImportantNotesAuto {
         insert insItn;
         String ITNID = insItn.Id;
 
+        // -----------------------------------------------------------
+        // 1秒ウェイト（更新が早いため）
+        // -----------------------------------------------------------
+        Long startTime = DateTime.now().getTime();
+        Long finishTime = DateTime.now().getTime();
+        while ((finishTime - startTime) < 1000) {
+            finishTime = DateTime.now().getTime();
+        }
+        
+        // 保育料データ削除
+//        ChildcareFee__c delCf = [SELECT Id FROM ChildcareFee__c WHERE Year__c = '2019' AND Month__c = '12' AND ImportantNotes__c = :ITNID];
+        LIST<ChildcareFee__c> delCf = [SELECT Id FROM ChildcareFee__c WHERE ImportantNotes__c = :ITNID];
+System.debug('delCfdelCf　'+[SELECT Id FROM ChildcareFee__c WHERE ImportantNotes__c = :ITNID]);
+        delete(delCf);
+System.debug('delCfdelCf　'+[SELECT Id FROM ChildcareFee__c WHERE ImportantNotes__c = :ITNID]);
+
         // 要録情報データ更新
         ImportantNotes__c itn = new ImportantNotes__c(
             Id = ITNID,

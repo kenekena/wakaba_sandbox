@@ -18,12 +18,13 @@ public with sharing class ImportantNotesV2Controller {
     @AuraEnabled
     public static List<ImportantNotes__c> findImportantNotes(String Year,String Kindergarten) {
         if(Kindergarten != ''){
-	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c,Belongs__c
+//	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c, Contact__r.Belongs__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c,Belongs__c
+	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c, Contact__r.Belongs__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c,Belongs__c
                 FROM ImportantNotes__c
                 WHERE FiscalYear__c =: Year AND School__c =:Kindergarten AND AttendanceDisplay__c = TRUE
                 ORDER BY Number__c ASC NULLS LAST];
         }else{
-	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c , Contact__r.PassageRoute__c ,BusDisplayOrder__c
+	        return [SELECT Id, Name ,Number__c,PickUpTimeText__c,PassageRoute__c,DropOffText__c,Class__c,Contact__r.Id, Contact__r.kana__c, Contact__r.Belongs__c, Contact__r.PassageRoute__c ,BusDisplayOrder__c,Belongs__c
                 FROM ImportantNotes__c
                 WHERE FiscalYear__c =: Year AND AttendanceDisplay__c = TRUE
                 ORDER BY Number__c ASC NULLS LAST];
@@ -39,7 +40,7 @@ public with sharing class ImportantNotesV2Controller {
         //ゆくゆくは、園児日誌objと保育料obj
         Date myDate = Date.valueOf(SearchDate);
         return [SELECT Id,AbsenceReason__c,NotRideReason__c ,AttendanceSchedule__c,BusBackNotUse__c,BusGoingNotUse__c,
-                    Contact__r.Id,Contact__r.kana__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , 
+                    Contact__r.Id,Contact__r.kana__c,Belongs__c,Date__c , AttendanceTime__c , AttendingSchool__c ,AbsentSchedule__c , 
                     attendingSchoolTime__c , GoingBack__c , GoingBackTime__c , AttendanceStopReason__c,
                     LeaveEarly__c, Lateness__c, ImportantNotes__c
                     FROM KindergartenDiary__c
@@ -68,7 +69,8 @@ public with sharing class ImportantNotesV2Controller {
         system.debug('StartDateS' + StartDateS);
         system.debug('EndDateS' + EndDateS);
         system.debug('EnjiID' + EnjiID);
-        return [SELECT Id,AbsenceReason__c,NotRideReason__c ,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Date__c 
+//        return [SELECT Id,AbsenceReason__c,NotRideReason__c ,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Contact__r.Belongs__c,Date__c
+        return [SELECT Id,AbsenceReason__c,NotRideReason__c ,BusBackNotUse__c,BusGoingNotUse__c,OutsideFast__c,Outside__c,AbsentSchedule__c ,Contact__r.Id,Contact__r.kana__c,Belongs__c,Date__c
                     FROM KindergartenDiary__c 
                     WHERE Contact__r.Id =:EnjiID AND Date__c >= :StartDateS AND Date__c <= :EndDateS
         ];

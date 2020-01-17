@@ -3,5 +3,5 @@
     <apiVersion>46.0</apiVersion>
     <availableInTouch>true</availableInTouch>
     <confirmationTokenRequired>false</confirmationTokenRequired>
-    <label>請求書</label>
+    <label>請求書PDF</label>
 </ApexPage>

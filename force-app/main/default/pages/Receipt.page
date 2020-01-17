@@ -1,0 +1,564 @@
+<apex:page showHeader="false" sidebar="false" standardController="ChildcareFee__c">
+
+<html>
+<head>
+
+<style type="text/css">
+@page { margin: 0 }
+body { margin: 0 }
+.sheet {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  page-break-after: always;
+  width:410mm; /* ここの調整 */
+  height:287mm;/* ここの調整 */
+}
+
+/** Paper sizes **/
+body.A3           .sheet { width: 297mm; height: 419mm }
+body.A3.landscape .sheet { width: 420mm; height: 296mm }
+body.A4           .sheet { width: 210mm; height: 296mm }
+body.A4.landscape .sheet { width: 297mm; height: 209mm }
+body.A5           .sheet { width: 148mm; height: 209mm }
+body.A5.landscape .sheet { width: 210mm; height: 147mm }
+
+/** Padding area **/
+.sheet.padding-10mm { padding: 10mm }
+.sheet.padding-15mm { padding: 15mm }
+.sheet.padding-20mm { padding: 20mm }
+.sheet.padding-25mm { padding: 25mm }
+
+/** For screen preview **/
+@media screen {
+  body { background: #e0e0e0 }
+  .sheet {
+    background: white;
+    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+    margin: 5mm;
+  }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+  body.A3.landscape { width: 420mm }
+  body.A3, body.A4.landscape { width: 297mm }
+  body.A4, body.A5.landscape { width: 210mm }
+  body.A5                    { width: 148mm }
+}
+
+
+
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@media print{
+  .NoPrint{
+    display:none;marin:0;padding:0;
+  }
+}
+
+/* この中に画面プレビュー用のスタイル指定を書く */
+@media screen {
+  .NoPrint{
+    width: 210mm;
+    margin: 5mm;
+  }
+}
+
+.cf:before,
+.cf:after{
+  content:"";
+  display: table;
+}
+.cf:after{
+  clear:both;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    text-align:left;
+}
+
+p,th,td{
+    font-size: 10pt;
+    color:#333;
+}
+
+body.inv{
+    font-family:"ヒラギノ角ゴ Pro W3","ＭＳ Ｐ明朝","MS PMincho",Arial Unicode MS;
+    /*border:1px solid #000;*/
+}
+
+.w50{
+    width:50%;
+}
+
+.fl{float:left;}
+.fr{float:right;}
+
+.all{
+    position:relative;
+    margin:25mm 10mm 10mm 10mm;
+}
+
+.inner{
+    width:100%;
+    border:4px double #5371FC;
+}
+
+.fontBill{font-size: 27pt;}
+.fontX{font-size: 20pt;}
+.fontLLL{font-size:14pt;}
+.fontLL{font-size:13pt;}
+.fontL{font-size:12pt;}
+.fontM{font-size:11pt;}
+.fontS{font-size:10pt;}
+.fontSS{font-size:9pt;}
+.fontSSS{font-size:8pt;}
+.font7{font-size:7pt;}
+.blue{color:#5371FC;}
+.bold{font-weight:bold;}
+.normal{font-weight:normal;}
+.mt4{margin-top:4mm;}
+.ml{margin-left:5mm;}
+.pl{padding-left:5mm;}
+.pl1{padding-left:1mm;}
+.pr1{padding-right:1mm;}
+.tl{text-align:left !important;}
+.tr{text-align:right !important;}
+.vaT{vertical-align:top;}
+.vaM{vertical-align:middle;}
+.w100{width:100%;}
+.bBn{border-bottom:none !important;}
+.bBd{border-bottom:dotted 1px #BCC8FF !important;}
+.bBs{border-bottom:solid 1px #5371FC !important;}
+.linehei{line-height:1.3;}
+
+.topBorderNone th,.topBorderNone td{border-top:none !important;}
+.bottomBorderNone th,.bottomBorderNone td{border-bottom:none !important;}
+
+/* AllHiroyuki */
+table{
+    border-collapse: collapse;
+}
+
+th,td{
+    line-height:1.3;
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+    padding-left: 3mm;
+}
+
+.block1 th,.block1 td{
+    font-size: 9pt;
+    border-bottom: dotted 1px #BCC8FF;
+    height: 4.4mm;
+}
+
+.block2 th,.block2 td{
+    font-size: 11pt;
+    border-bottom: solid 1px #5371FC;
+    height: 11.5mm;
+}
+
+.block3 th,.block3 td{
+    font-size: 10pt;
+    border-bottom: dotted 1px #5371FC;
+    /*height: 7.5mm;*/
+    height: 6.5mm;
+    padding-top:1mm;
+    padding-bottom:1mm;
+}
+
+.TableTc th,.TableTc td{
+    text-align:center !important;
+    padding-left:0;
+}
+/* tops */
+.tops td{
+    padding-top:0;
+    padding-bottom:0;
+}
+
+.chackers{
+    color: #5371FC;
+    position: absolute;
+    top: 3px;
+    left: 260px;
+    font-size: 11pt;
+}
+.chackers2{
+    color: #5371FC;
+    text-align:right;
+    margin:5px 0;
+    font-size:8pt;
+}
+
+/* header */
+
+.header{
+    height: 60mm;
+    /* height: 24.5mm; */
+    vertical-align: top;
+    overflow: hidden;
+}
+
+.bgGold{background:#FFFFBF;}
+.bgBlue{background:#BFDFFF;}
+.bgGreen{background:#CCFF99;}
+.bgYellow{background:#FFE599;}
+.bgRed{background:#FF9999;}
+.bgGlay{background:#eeeeee;}
+.bgGlay2{background:#888888;}
+    /* LeftArea */
+    .header table.leftArea{
+        width: 183.3mm;
+        border-collapse: collapse;
+        float:left;
+    }
+
+    .header .fiveLine th,
+    .header .fiveLine td{
+        width: 19.9mm;
+        padding-left: 0;
+        text-align: center;
+        border-right: solid 1px #5371FC;
+    }
+
+    .header .fiveLine td{
+        height:11.5mm;
+        padding: 0;
+    }
+
+    .header .fiveLine .dummy{
+        width: 78.3mm;
+    }
+    /* /LeftArea */
+    /* stamp */
+    .stamp{
+        background:#fff;
+        width: 80.5mm;
+        border-collapse: collapse;
+        position: absolute;
+        right: 3px;
+    }
+
+    .stamp th,
+    .stamp td{
+        border:solid 1px #5371FC;
+        text-align:center;
+    }
+
+    .stamp th{
+        height: 6mm;
+    }
+
+    .stamp .Stampname th{
+        /*height: 10mm;*/
+        height: 10.7mm;
+        font-size:8pt;
+        padding: 1.6mm 0;
+    }
+
+    .stamp td{
+        width:20mm;
+        height:18.5mm;
+    }
+
+    .stamp .bill{
+        height: 21.8mm;
+        text-align: left;
+        padding: 2mm;
+    }
+    /* /stamp */
+
+/* /header */
+
+/* section */
+.section{
+     border-bottom: solid 1px #5371FC;
+}
+
+.sectionEnd{
+    border-bottom: none;
+}
+
+
+.list{
+    border-collapse: collapse;
+}
+
+.list th{
+    border-bottom:1px dotted #5371FC;
+    width: 27mm;
+    font-size:10pt;
+}
+
+.list td{
+    border-bottom:1px dotted #5371FC;
+    width: 27mm;
+    /*font-size:10pt;*/
+    font-size:9pt;
+}
+
+.memoArea{
+    width:100%;
+}
+
+.memoArea th{
+    width: 90.8mm;
+    font-size:10pt;
+}
+
+.memoArea td{
+    width: 50%;
+    font-size:9pt;
+    height: 16mm;
+    vertical-align:top;
+}
+
+.memoArea td span{
+    overflow-y:hidden;
+    display:block;
+    height: 19.5mm;
+}
+
+.borderR{border-right: solid 1px #5371FC !important;}
+
+.mes{
+    color:#f00;
+    font-weight: bold;
+    font-size:20pt;
+    background:#ff0;
+    border: 4px solid #000;
+    margin-bottom:15px;
+    padding:10px;
+}
+
+.cat{
+    background:#6ffDec;
+    margin-right:5px;
+    padding:0 5px;
+}
+
+/* /section */
+
+        .center{
+            text-align: center;
+        }
+        .list01{
+            margin:0 50px;
+        }
+        dt{
+             float: left;
+            margin-left:20%;
+        }
+        dd{
+            margin-right:25%;
+            text-align: right;
+        }
+        .underLine{
+            width:54%;
+            margin:0 auto;
+            border-bottom: 1px solid #ccc;
+        }
+        .totalarea{
+            text-align: right;
+            margin-right:25%;
+        }
+        .tl{
+            text-align: left;
+            margin-left:25%;
+        }
+        .tr{
+            text-align: right;
+            margin-right:8%;
+        }
+
+        .amontArea{
+            width:50%;
+            margin:0 auto;
+            border: 1px solid #ccc;
+            padding: 30px;
+        }
+        .ｔaxfreeArea{
+            position: absolute;
+            margin-left:67.5%;
+        }
+        .font150{
+            font-size: 150%;
+        }
+        p3{
+            margin-left:25%;
+        }
+
+</style>
+<script type="text/javascript">
+function onLoads() {
+    today=new Date();
+    y=today.getFullYear();
+    m=today.getMonth()+1;
+    d=today.getDate();
+    document.getElementById("today").innerHTML = y + "年" + m + "月" + d +"日";
+}
+</script>
+</head>
+<!--<body class="inv A4.landscape" onload="onLoads();">-->
+<body class="inv A4.landscape">
+<div class="NoPrint">
+
+<p><a href="javascript:void(0)" onclick="prints()">このページを印刷</a></p>
+</div>
+
+<section class="sheet">
+<div class="all">
+
+    <script language="JavaScript" type="text/javascript">
+        var price = "";
+        var cost = 0;
+        console.log(cost);
+
+        if( "{!ChildcareFee__c.TotalCost__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_TotalCost__c}" == 'true'){
+                price = price + "費用合計　";
+                cost = cost + parseInt("{!ChildcareFee__c.TotalCost__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.ChildcareFee__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_ChildcareFee__c}" == 'true'){
+                price = price + "保育料({!ChildcareFee__c.Month__c}月分)　";
+                cost = cost + parseInt("{!ChildcareFee__c.ChildcareFee__c}", 10);
+                console.log(cost);
+            }
+        }
+        if( "{!ChildcareFee__c.EducationCosts__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_EducationCosts__c}" == 'true'){
+                price = price + "特別教育費　";
+                cost = cost + parseInt("{!ChildcareFee__c.EducationCosts__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.PTAFee__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_PTAFee__c}" == 'true'){
+                price = price + "PTA会費　";
+                cost = cost + parseInt("{!ChildcareFee__c.PTAFee__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.StapleFoodCost__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_StapleFoodCost__c}" == 'true'){
+                price = price + "主食費　";
+                cost = cost + parseInt("{!ChildcareFee__c.StapleFoodCost__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.SideDishCost__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_SideDishCost__c}" == 'true'){
+                price = price + "副食費　";
+                cost = cost + parseInt("{!ChildcareFee__c.SideDishCost__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.Diapers__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_Diapers__c}" == 'true'){
+                price = price + "おむつ破棄代　";
+                cost = cost + parseInt("{!ChildcareFee__c.Diapers__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.MonthCustody__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_MonthCustody__c}" == 'true'){
+                price = price + "預かり代　";
+                cost = cost + parseInt("{!ChildcareFee__c.MonthCustody__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.BusFare__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_BusFare__c}" == 'true'){
+               price = price + "バス代　";
+                cost = cost + parseInt("{!ChildcareFee__c.BusFare__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.TeachingMaterials__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_TeachingMaterials__c}" == 'true'){
+                price = price + "個人持教材　";
+                cost = cost + parseInt("{!ChildcareFee__c.TeachingMaterials__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.CustodySpring__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_CustodySpring__c}" == 'true'){
+            price = price + "預かり代(春休み)　";
+            cost = cost + parseInt("{!ChildcareFee__c.CustodySpring__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.CustodySummer__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_CustodySummer__c}" == 'true'){
+                price = price + "預かり代(夏休み)　";
+                cost = cost + parseInt("{!ChildcareFee__c.CustodySummer__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.CustodyWinter__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_CustodyWinter__c}" == 'true'){
+                price = price + "預かり代(冬休み)　";
+                cost = cost + parseInt("{!ChildcareFee__c.CustodyWinter__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.Fee__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_Fee__c}" == 'true'){
+                price = price + "手数料　";
+                cost = cost + parseInt("{!ChildcareFee__c.Fee__c}", 10);
+            }
+        }
+        if( "{!ChildcareFee__c.ChangeFee__c}" != ''){
+            if("{!ChildcareFee__c.Receipt_ChangeFee__c}" == 'true'){
+                price = price + "区分変更手数料　";
+                cost = cost + parseInt("{!ChildcareFee__c.ChangeFee__c}", 10);
+            }
+        }
+    </script>
+
+
+
+    <p class="center"><font class="fontX">領　収　書</font></p>
+    <br />
+    <p class="totalarea">{!ChildcareFee__c.IssuingDateOutput__c}</p>
+    <br />
+    <p class="tl font150">{!ChildcareFee__c.AddressName__c} 様</p>
+    <br />
+ 
+    <div class="amontArea">
+        <script language="JavaScript" type="text/javascript">
+            document.write("<p style='text-align:center; font-size:30px;'>¥" + cost.toLocaleString() + "-</p>");
+        </script>
+    </div>
+    
+    <br />
+
+    <div class="cf" style="width:50%;margin: 1em auto 0;">  
+        <div class="fl">
+            <script language="JavaScript" type="text/javascript">
+                document.write("<p>" + price + " として</p>");
+                document.write("<br /><br /><p>上記正に領収いたしました。</p>");
+            </script>   
+        </div><!-- /fl -->
+        <div class="fr">
+            <p style="text-align:right;"><apex:image url="{!$Resource.hikazei}" width="80" height="50" /></p>
+            <p style="text-align:right;margin: 10px 0;"><apex:image url="{!$Resource.wakaba_logo6}" width="150" height="30"/></p>
+            <p style="text-align:right;"><apex:image url="{!$Resource.syahan}" width="80" height="80"/></p>
+        </div><!-- /fr -->
+    </div><!-- /cf -->
+
+</div><!-- /.all -->
+</section>
+
+    <script>
+      function prints(){
+        setTimeout(function(){
+          window.print()
+          window.close()
+          }, 200)
+        }
+    </script>
+    </body>
+    </html>
+</apex:page>

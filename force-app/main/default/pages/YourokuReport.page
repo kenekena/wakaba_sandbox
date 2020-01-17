@@ -1,0 +1,258 @@
+<apex:page showHeader="false" sidebar="false" standardController="ImportantNotes__c">
+
+<html>
+<head>
+
+<apex:include pageName="YourokuCss"/>
+
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="ImportantNotes__c" jsShorthand="ImportantNotesList" fields="Id">
+        <apex:remoteObjectField name="ContactName__c" jsShorthand="ContactName"/>
+        <apex:remoteObjectField name="Contact__c" jsShorthand="Contact"/>
+        <apex:remoteObjectField name="Birthdate__c" jsShorthand="Birthdate"/>
+        <apex:remoteObjectField name="Sex__c" jsShorthand="Sex"/>
+        <apex:remoteObjectField name="JapaneseCalendar__c" jsShorthand="JapaneseCalendar"/>
+        <apex:remoteObjectField name="GradePointEmphasis__c" jsShorthand="GradePointEmphasis"/>
+        <apex:remoteObjectField name="PersonalEmphasis__c" jsShorthand="PersonalEmphasis"/>
+        <apex:remoteObjectField name="ReferenceItems__c" jsShorthand="ReferenceItems"/>
+        <apex:remoteObjectField name="Remarks__c" jsShorthand="Remarks"/>
+        <apex:remoteObjectField name="FiscalYear__c" jsShorthand="FiscalYear"/>
+        <apex:remoteObjectField name="ChildcareDays__c" jsShorthand="ChildcareDays"/>
+        <apex:remoteObjectField name="AttendanceDays__c" jsShorthand="AttendanceDays"/>
+        <apex:remoteObjectField name="Class__c" jsShorthand="Class"/>
+        <apex:remoteObjectField name="Teacher__c" jsShorthand="Teacher"/>
+        <apex:remoteObjectField name="Director__c" jsShorthand="Director"/>
+    </apex:remoteObjectModel>
+    <apex:remoteObjectModel name="Contact" jsShorthand="ContactList" fields="Id,Name">
+        <apex:remoteObjectField name="Address__c" jsShorthand="Address"/>
+        <apex:remoteObjectField name="Guardian1__c" jsShorthand="Guardian1"/>
+    </apex:remoteObjectModel>
+</apex:remoteObjects>
+
+</head>
+
+<body class="inv A4">
+
+<div class="NoPrint">
+    <p><a href="javascript:void(0)" onclick="prints()">このページを印刷</a></p>
+</div>
+
+<!-- １ページ目 start -->
+<section class="sheet">
+<div class="all">
+
+<div class="relative">
+    <apex:image url="{!$Resource.youroku_01}"  />
+    <div id="page1">
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+    var ResourceIMG = "{!$Resource.youroku_01}";
+    var ContactStr = "{!ImportantNotes__c.Contact__c}";
+    var FiscalYearStr = "{!ImportantNotes__c.FiscalYear__c}";
+    var Name = '';
+    var Address = '';
+    var Guardian1 = '';
+    var CTL = new SObjectModel.ContactList();
+    CTL.retrieve(
+        { where: {
+            Id: {eq: ContactStr}
+        },
+        limit: 1 }, 
+        function(err, records, event) {
+            if (err) {
+                alert(err);
+            } else {
+                Name = records[0].get("Name");
+                Address = records[0].get("Address");
+                Guardian1 = records[0].get("Guardian1");
+
+                var page1 = document.getElementById("page1");
+                var page1Head ='';
+                page1Head +=
+                    '<p class="absolute ContactName01">'+ Name +'</p>'+
+                    '<p class="absolute Contact01">'+ Name +'</p>';
+                console.log( page1Head );
+                page1.innerHTML =page1Head;
+            }
+        }
+    );
+    var ContactName = [];
+    var ReferenceItemsStr = [];
+    var INl = new SObjectModel.ImportantNotesList();
+    INl.retrieve(
+        { where: {
+            Contact__c: {eq: ContactStr},
+            FiscalYear__c: {lte: FiscalYearStr}
+        },
+        orderby: [ {FiscalYear__c: 'DESC'} ],
+        limit: 6 }, 
+        function(err, records, event) {
+            if (err) {
+                alert(err);
+            } else {
+                var cnt = 0;
+                var rec = records.length;
+                var ReferenceItems = [];
+                var strposition = 0;
+                var endposition = 0;
+                records.forEach(function(record) {
+                    ContactName[cnt] = record.get("ContactName");
+                    ReferenceItemsStr[cnt] = record.get("ReferenceItems");
+                    cnt++;
+                });
+
+                for(var j=0; j<cnt; j++){
+                    for(var i=0; i<20; i++){
+                        if(i == 0){
+                            strposition = ReferenceItemsStr[j].indexOf( '<p>' );
+                            endposition = ReferenceItemsStr[j].indexOf( '</p>' );
+                        }else{
+                            strposition = ReferenceItemsStr[j].indexOf( '<p>', endposition+4 );
+                            endposition = ReferenceItemsStr[j].indexOf( '</p>', endposition+4 );
+                        }
+                        console.log( strposition );
+                        if(strposition == -1){
+                            break;
+                        }
+                        ReferenceItems[i] = ReferenceItemsStr[j].substring(strposition+3, endposition-1);
+                        console.log( ReferenceItems[i] );
+                    }
+
+                    var page11 = document.getElementById("page1");
+                    var page11Head ='';
+                    page11Head +=
+                        '<p class="absolute ReferenceItems01">';
+                    console.log( i );
+                    for(var j=0; j<i; j++){
+                        page11Head +=
+                            ReferenceItems[j] +'<br />';
+                    }
+                    page11Head +=
+                        '</p>';
+                    page11.innerHTML =page11Head;
+
+                    if(rec>=2){
+                    }
+                    if(rec>=3){
+                    }
+
+                }
+            }
+        }
+    );
+
+
+/*
+    var ContactName01 = "{!ImportantNotes__c.ContactName__c}";
+    document.write("<p class=\"absolute ContactName01\">"+ContactName01+"</p>");
+*/
+</script>
+    
+    
+<!-- 氏名 -->
+<!--
+<p class="absolute Contact01">{!ImportantNotes__c.Contact__c}</p>
+-->
+<!-- 生年月日 -->
+<p class="absolute Birthdate01">{!ImportantNotes__c.Birthdate__c}生</p>
+<!-- 性別 -->
+<p class="absolute Sex01">{!ImportantNotes__c.Sex__c}</p>
+
+<!-- 和暦 -->
+<p class="absolute JapaneseCalendar01">{!ImportantNotes__c.JapaneseCalendar__c}度</p>
+<!-- 学園の重点 -->
+<p class="absolute GradePointEmphasis01">{!ImportantNotes__c.GradePointEmphasis__c}</p>
+<!-- 個人の重点 -->
+<p class="absolute PersonalEmphasis01">{!ImportantNotes__c.PersonalEmphasis__c}</p>
+<!-- 参考となる事項 -->
+<div>
+    <script language="JavaScript" type="text/javascript">
+
+        var ReferenceItemsStr = "{!ImportantNotes__c.ReferenceItems__c}";
+        var ReferenceItems = [];
+        var strposition = 0;
+        var endposition = 0;
+        for(var i=0; i<20; i++){
+            if(i == 0){
+                strposition = ReferenceItemsStr.indexOf( '<p>' );
+                endposition = ReferenceItemsStr.indexOf( '</p>' );
+            }else{
+                strposition = ReferenceItemsStr.indexOf( '<p>', endposition+4 );
+                endposition = ReferenceItemsStr.indexOf( '</p>', endposition+4 );
+            }
+            console.log( strposition );
+            if(strposition == -1){
+                break;
+            }
+            ReferenceItems[i] = ReferenceItemsStr.substring(strposition+3, endposition-1);
+            console.log( ReferenceItems[i] );
+        }
+        document.write("<p class=\"absolute ReferenceItems01\">");
+        console.log( i );
+        for(var j=0; j<i; j++){
+            document.write(ReferenceItems[j]+"<br />");
+        }
+        document.write("</p>");
+
+    </script>
+</div>
+<!-- 備考 -->
+<p class="absolute Remarks01">{!ImportantNotes__c.Remarks__c}</p>
+<!-- 年度 -->
+<p class="absolute FiscalYear01">{!ImportantNotes__c.FiscalYear__c}</p>
+<!-- 教育日数 -->
+<p class="absolute ChildcareDays01">{!ImportantNotes__c.ChildcareDays__c}</p>
+<!-- 出席日数 -->
+<p class="absolute AttendanceDays01">{!ImportantNotes__c.AttendanceDays__c}</p>
+
+</div>
+<!-- /.all -->
+</section>
+<!-- １ページ目 end -->
+
+<hr style="page-break-before: always;" />
+
+<!-- 3ページ目 start -->
+<section class="sheet">
+<div class="all">
+
+<div class="relative">
+    <apex:image url="{!$Resource.youroku_03}"  />
+</div>
+
+<!-- 和暦 -->
+<p class="absolute JapaneseCalendar031">{!ImportantNotes__c.JapaneseCalendar__c}度</p>
+<!-- 学級 -->
+<p class="absolute Class031">{!ImportantNotes__c.Class__c}</p>
+<!-- 番号 -->
+<p class="absolute Number031">{!ImportantNotes__c.Number__c}</p>
+
+<!-- ふりがな -->
+<p class="absolute ContactName03">{!ImportantNotes__c.ContactName__c}</p>
+<!-- 氏名 -->
+<p class="absolute Contact03">{!ImportantNotes__c.Contact__c}</p>
+<!-- 生年月日 -->
+<p class="absolute Birthdate03">{!ImportantNotes__c.Birthdate__c}生</p>
+<!-- 性別 -->
+<p class="absolute Sex03">{!ImportantNotes__c.Sex__c}</p>
+
+
+
+</div>
+<!-- /.all -->
+</section>
+<!-- 3ページ目 end -->
+
+<script>
+    function prints(){
+        setTimeout(function(){
+            window.print()
+            window.close()
+        }, 200)
+    }
+</script>
+</body>
+</html>
+</apex:page>

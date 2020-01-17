@@ -42,7 +42,7 @@ public with sharing class TestImportantNotesController {
         KindergartenDiary__c kgd1 = new KindergartenDiary__c(
 					Contact__c = CNTID.Id,
             		Date__c = TDY,
-            		AttendanceSchedule__c = '欠席予定',
+            		AttendanceSchedule__c = '欠席',
 					StaffId__c = STFID.Id
         );
         insert kgd1;

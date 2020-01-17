@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>TotalCost__c</fullName>
     <externalId>false</externalId>
-    <formula>ChildcareFee__c + EducationCosts__c + PTAFee__c + MonthCustody__c +  LunchCost__c + StapleFoodCost__c + Diapers__c + BusFare__c + TeachingMaterials__c + CustodySpring__c + CustodySummer__c+ CustodyWinter__c + Fee__c + ChangeFee__c</formula>
+    <formula>ChildcareFee__c + EducationCosts__c + PTAFee__c + MonthCustody__c + StapleFoodCost__c + Diapers__c + BusFare__c + TeachingMaterials__c + CustodySpring__c + CustodySummer__c+ CustodyWinter__c + Fee__c + ChangeFee__c + SideDishCost__c + GraduationAlbum__c +  StapleFoodCost2__c +  SideDishCost2__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>費用合計</label>
     <precision>18</precision>

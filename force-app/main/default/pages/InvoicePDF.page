@@ -88,6 +88,17 @@
   </p>
 </div>
 
+
+<script language="JavaScript" type="text/javascript">
+    var tanto  = "{!ChildcareFee__c.Receipt_ChildcareFee__c}";
+    if( tanto  == ''){
+        document.write("<p>チェックあり</p>");
+    }else{
+        document.write("<p>チェックあなし</p>");
+    }
+</script>
+
+
 <p class="tl">
 日頃より本園の活動とご理解とご協力を賜りましてありがとうございます。<br />
 今回の保育料・諸経費納入額は下記の通りとなりますのでお知らせいたします。<br />
@@ -110,7 +121,6 @@
   <dt>保育料({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.ChildcareFee__c}"></apex:param></apex:outputtext>円</dd>
   <dt>特別教育費({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.EducationCosts__c}"></apex:param></apex:outputtext>円</dd>
   <dt>PTA会費({!ChildcareFee__c.Month__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.PTAFee__c}"></apex:param></apex:outputtext>円</dd>
-  <dt>給食費</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.LunchCost__c}"></apex:param></apex:outputtext>円</dd>
   <dt>主食費</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.StapleFoodCost__c}"></apex:param></apex:outputtext>円</dd>
   <dt>おむつ破棄代</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.Diapers__c}"></apex:param></apex:outputtext>円</dd>
   <dt>預かり代({!ChildcareFee__c.LastMonth__c}月分)</dt><dd><apex:outputtext value="{0,number, ###,###}"><apex:param value="{!ChildcareFee__c.MonthCustody__c}"></apex:param></apex:outputtext>円</dd>

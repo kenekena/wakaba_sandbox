@@ -13,7 +13,7 @@
     <columns>Week__c</columns>
     <columns>AttendanceTime__c</columns>
     <columns>AttendingSchool__c</columns>
-    <columns>attendingSchoolTime__c</columns>
+    <columns>AttendingSchoolTime__c</columns>
     <columns>BusGoingNotUse__c</columns>
     <columns>BusBackNotUse__c</columns>
     <filterScope>Everything</filterScope>

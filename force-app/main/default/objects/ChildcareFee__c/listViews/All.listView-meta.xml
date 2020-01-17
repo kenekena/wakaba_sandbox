@@ -9,13 +9,13 @@
     <columns>EducationCosts__c</columns>
     <columns>PTAFee__c</columns>
     <columns>MonthCustody__c</columns>
-    <columns>LunchCost__c</columns>
     <columns>StapleFoodCost__c</columns>
     <columns>Diapers__c</columns>
     <columns>BusFare__c</columns>
     <columns>TeachingMaterials__c</columns>
     <columns>AttendanceDays__c</columns>
     <columns>ChildcareDays__c</columns>
+    <columns>SchoolLunchfree__c</columns>
     <filterScope>Everything</filterScope>
     <label>すべて選択</label>
 </ListView>

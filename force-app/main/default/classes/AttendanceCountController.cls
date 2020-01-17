@@ -23,12 +23,13 @@ System.debug('ImportantNotes　'+ImportantNotes);
         // 園児日誌データを検索
         List<KindergartenDiary__c> KindergartenDiaryList = [SELECT Id, AttendanceSchedule__c, Belongs__c,
                                                                                                                         AttendingSchool__c, AttendanceStop__c,
+                                                            															AttendanceStopReason__c, AbsenceReason__c,
                                                             															Lateness__c, LeaveEarly__c
                                                                                                             FROM KindergartenDiary__c 
                                                                                                             WHERE ImportantNotes__c = :ImportantNotesid];
 
 System.debug('KindergartenDiaryList.size()　'+KindergartenDiaryList.size());
-        // 園児日誌データあり
+        // 園児日誌データなし
         if(KindergartenDiaryList.size() == 0){
             // データなしメッセージ
             return '園児日誌データがありません！';
@@ -42,11 +43,23 @@ System.debug('KindergartenDiaryList.size()　'+KindergartenDiaryList.size());
         Decimal LeaveEarly = 0;
         Decimal Lateness = 0;
 
+        Decimal Influenza = 0;					// インフルエンザ
+        Decimal WhoopingCough = 0;		// 百日咳（百日咳）
+        Decimal Measles = 0;					// 麻風（はしか）
+        Decimal Mumps = 0;						// 流行性耳下腺炎（おたふくかぜ）
+        Decimal Rubella = 0;					// 風疹（三日はしか）
+        Decimal ChickenPox = 0;				// 水痘（みずぼうそう）
+        Decimal PoolHeat = 0;				// 咽頭結膜熱（プール熱）
+        Decimal Tuberculosis = 0;			// 結核（けっかく）
+        Decimal Meningitis = 0;				// 髄膜炎菌性髄膜炎（ずいまくえん）
+        Decimal Abduction = 0;				// 忌引き
+        Decimal HeadShirami = 0;			// 頭し
+        
         // 取得レコード数分処理
         for(integer i=0; KindergartenDiaryList.size()>i; i++){
             // レコード取得
             KindergartenDiary__c  KindergartenDiary = KindergartenDiaryList.get(i);
-System.debug('KindergartenDiary 　'+KindergartenDiary);
+//System.debug('KindergartenDiary 　'+KindergartenDiary);
 
             // IDを設定
             ID IKindergartenDiaryId = KindergartenDiary.Id;
@@ -92,6 +105,57 @@ System.debug('KindergartenDiary 　'+KindergartenDiary);
                 LeaveEarly = LeaveEarly + 1;
             }
 
+            // 出席停止理由がある場合
+            // 出席停止理由の日数を算出
+            if(KindergartenDiary.AttendanceStopReason__c != null){
+				// インフルエンザ                
+	            if(KindergartenDiary.AttendanceStopReason__c == 'インフルエンザ')
+                	Influenza = Influenza + 1;
+
+                // 百日咳（百日咳）                
+	            if(KindergartenDiary.AttendanceStopReason__c == '百日咳（百日咳）')
+                	WhoopingCough = WhoopingCough + 1;
+                
+                // 麻風（はしか）              
+	            if(KindergartenDiary.AttendanceStopReason__c == '麻風（はしか）')
+                	Measles = Measles + 1;
+                
+                // 流行性耳下腺炎（おたふくかぜ）                
+	            if(KindergartenDiary.AttendanceStopReason__c == '流行性耳下腺炎（おたふくかぜ）')
+                	Mumps = Mumps + 1;
+                
+                // 風疹（三日はしか）               
+	            if(KindergartenDiary.AttendanceStopReason__c == '風疹（三日はしか）')
+                	Rubella = Rubella + 1;
+                
+                // 水痘（みずぼうそう）               
+	            if(KindergartenDiary.AttendanceStopReason__c == '水痘（みずぼうそう）')
+                	ChickenPox = ChickenPox + 1;
+                
+                // 咽頭結膜熱（プール熱）                
+	            if(KindergartenDiary.AttendanceStopReason__c == '咽頭結膜熱（プール熱）')
+                	PoolHeat = PoolHeat + 1;
+                
+                // 結核（けっかく）               
+	            if(KindergartenDiary.AttendanceStopReason__c == '結核（けっかく）')
+                	Tuberculosis = Tuberculosis + 1;
+                
+                // 髄膜炎菌性髄膜炎（ずいまくえん）               
+	            if(KindergartenDiary.AttendanceStopReason__c == '髄膜炎菌性髄膜炎（ずいまくえん）')
+                	Meningitis = Meningitis + 1;
+            }
+            
+            // 欠席理由がある場合
+            // 忌引き、頭しの日数を算出
+            if(KindergartenDiary.AbsenceReason__c != null){
+                // 忌引き
+	            if(KindergartenDiary.AbsenceReason__c == '忌引き')
+                	Abduction = Abduction + 1;
+                // 頭し
+	            if(KindergartenDiary.AbsenceReason__c == '頭し')
+                	HeadShirami = HeadShirami + 1;
+            }
+            
         }
 
         // 要録情報OBJ
@@ -104,8 +168,20 @@ System.debug('KindergartenDiary 　'+KindergartenDiary);
                                                                     AttendanceDays__c = AttendanceDays,
                                                                     AbsenceDays__c = AbsenceDays,
                                                                     AttendanceStopDays__c = AttendanceStopDays,
-                                                                    LeaveEarly__c = LeaveEarly,
-                                                                    Lateness__c = Lateness
+																	Influenza__c = Influenza,
+																	WhoopingCough__c = WhoopingCough,
+																	Measles__c = Measles,
+																	Mumps__c = Mumps,
+																	Rubella__c = Rubella,
+																	ChickenPox__c= ChickenPox,
+																	PoolHeat__c = PoolHeat,
+																	Tuberculosis__c = Tuberculosis,
+																	Meningitis__c = Meningitis,
+																	Abduction__c = Abduction,
+																	HeadShirami__c= HeadShirami,
+																	LeaveEarly__c = LeaveEarly,
+                                                                    Lateness__c = Lateness,
+																	AggregationTime__c = Datetime.now()
                                                             )
         );
         

@@ -1,0 +1,657 @@
+<apex:page showHeader="false" sidebar="false" standardController="ImportantNotes__c">
+
+<html>
+<head>
+
+<style type="text/css">
+@page { margin: 0 }
+body { margin: 0 }
+.sheet {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  page-break-after: always;
+}
+
+/** Paper sizes **/
+body.A3           .sheet { width: 297mm; height: 419mm }
+body.A3.landscape .sheet { width: 420mm; height: 296mm }
+body.A4           .sheet { width: 210mm; height: 296mm }
+body.A4.landscape .sheet { width: 297mm; height: 209mm }
+body.A5           .sheet { width: 148mm; height: 209mm }
+body.A5.landscape .sheet { width: 210mm; height: 147mm }
+
+/** Padding area **/
+.sheet.padding-10mm { padding: 10mm }
+.sheet.padding-15mm { padding: 15mm }
+.sheet.padding-20mm { padding: 20mm }
+.sheet.padding-25mm { padding: 25mm }
+
+/** For screen preview **/
+@media screen {
+  body { background: #e0e0e0 }
+  .sheet {
+    background: white;
+    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+    margin: 5mm;
+  }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+           body.A3.landscape { width: 420mm }
+  body.A3, body.A4.landscape { width: 297mm }
+  body.A4, body.A5.landscape { width: 210mm }
+  body.A5                    { width: 148mm }
+}
+
+
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print{
+  .NoPrint{
+    display:none;marin:0;padding:0;
+  }
+}
+
+/* この中に画面プレビュー用のスタイル指定を書く */
+@media screen {
+  .NoPrint{
+    width: 210mm;
+    margin: 5mm;
+  }
+}
+
+.cf:before,
+.cf:after{
+  content:"";
+  display: table;
+}
+.cf:after{
+  clear:both;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    text-align:left;
+}
+
+p,th,td{
+    font-size: 11pt;
+    color:#333;
+}
+
+body.inv{
+    font-family:"ヒラギノ角ゴ Pro W3","ＭＳ Ｐ明朝","MS PMincho",Arial Unicode MS;
+    /*border:1px solid #000;*/
+}
+
+.w50{
+    width:50%;
+}
+
+.fl{float:left;}
+.fr{float:right;}
+
+.all{
+    position:relative;
+    /* margin:6mm 10mm 8mm 16mm; */
+}
+
+.inner{
+    width:100%;
+    border:4px double #5371FC;
+}
+
+/*
+.fontBill{font-size: 27pt;}
+.fontLLL{font-size:14pt;}
+.fontLL{font-size:13pt;}
+.fontL{font-size:12pt;}
+.fontM{font-size:11pt;}
+.fontS{font-size:10pt;}
+.fontSS{font-size:9pt;}
+.fontSSS{font-size:8pt;}
+.font7{font-size:7pt;}
+.blue{color:#5371FC;}
+.bold{font-weight:bold;}
+.normal{font-weight:normal;}
+.mt4{margin-top:4mm;}
+.ml{margin-left:5mm;}
+.pl{padding-left:5mm;}
+.pl1{padding-left:1mm;}
+.pr1{padding-right:1mm;}
+.tl{text-align:left !important;}
+.tr{text-align:right !important;}
+.vaT{vertical-align:top;}
+.vaM{vertical-align:middle;}
+.w100{width:100%;}
+.bBn{border-bottom:none !important;}
+.bBd{border-bottom:dotted 1px #BCC8FF !important;}
+.bBs{border-bottom:solid 1px #5371FC !important;}
+.linehei{line-height:1.3;}
+*/
+
+/*
+.topBorderNone th,.topBorderNone td{border-top:none !important;}
+.bottomBorderNone th,.bottomBorderNone td{border-bottom:none !important;}
+*/
+
+/* AllHiroyuki */
+/*
+table{
+    border-collapse: collapse;
+}
+
+th,td{
+    line-height:1.3;
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+    padding-left: 3mm;
+}
+
+.block1 th,.block1 td{
+    font-size: 9pt;
+    border-bottom: dotted 1px #BCC8FF;
+    height: 4.4mm;
+}
+
+.block2 th,.block2 td{
+    font-size: 11pt;
+    border-bottom: solid 1px #5371FC;
+    height: 11.5mm;
+}
+
+.block3 th,.block3 td{
+    font-size: 10pt;
+    border-bottom: dotted 1px #5371FC;
+    height: 6.5mm;
+    padding-top:1mm;
+    padding-bottom:1mm;
+}
+
+.TableTc th,.TableTc td{
+    text-align:center !important;
+    padding-left:0;
+}
+*/
+
+/* tops */
+/*
+.tops td{
+    padding-top:0;
+    padding-bottom:0;
+}
+
+.chackers{
+    color: #5371FC;
+    position: absolute;
+    top: 3px;
+    left: 260px;
+    font-size: 11pt;
+}
+.chackers2{
+    color: #5371FC;
+    text-align:right;
+    margin:5px 0;
+    font-size:8pt;
+}
+*/
+
+/* header */
+/*
+.header{
+    height: 60mm;
+    vertical-align: top;
+    overflow: hidden;
+}
+*/
+
+/* stamp */
+.stamp{
+    background:#fff;
+    width: 80.5mm;
+    border-collapse: collapse;
+    position: absolute;
+    right: 3px;
+}
+
+.stamp th,
+.stamp td{
+    border:solid 1px #5371FC;
+    text-align:center;
+}
+
+.stamp th{
+    height: 6mm;
+}
+
+.stamp .Stampname th{
+    height: 10.7mm;
+    font-size:8pt;
+    padding: 1.6mm 0;
+}
+
+.stamp td{
+    width:20mm;
+    height:18.5mm;
+}
+
+.stamp .bill{
+    height: 21.8mm;
+    text-align: left;
+    padding: 2mm;
+}
+/* /stamp */
+
+
+/* 絶対位置 */
+.relative img{
+    width:100%;
+}
+.absolute {
+    position: absolute;
+}
+
+/* 各項目の設定 */
+/* ふりがな */
+.ContactName01{
+    font-size:8pt; /* 文字サイズ */
+    top :59px;  /* 縦の位置指定 bottomでもOK */
+    left:95px;  /* 横の位置指定 rightでもOK */
+    width: 130px; /* テキストエリア横のサイズ */
+    height:16px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 氏名 */
+.Contact01{
+    font-size:12pt; /* 文字サイズ */
+    top :90px;  /* 縦の位置指定 bottomでもOK */
+    left:95px;  /* 横の位置指定 rightでもOK */
+    width: 130px; /* テキストエリア横のサイズ */
+    height:30px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 生年月日 */
+.Birthdate01{
+    font-size:8pt; /* 文字サイズ */
+    top :145px;  /* 縦の位置指定 bottomでもOK */
+    left:95px;  /* 横の位置指定 rightでもOK */
+    width: 130px; /* テキストエリア横のサイズ */
+    height:16px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 性別 */
+.Sex01{
+    text-align: center; /* 中央寄せ */
+    font-size:12pt; /* 文字サイズ */
+    top :180px;  /* 縦の位置指定 bottomでもOK */
+    left:95px;  /* 横の位置指定 rightでもOK */
+    width: 130px; /* テキストエリア横のサイズ */
+    height:25px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+
+
+/* 和暦 */
+.JapaneseCalendar01{
+    text-align: center; /* 中央寄せ */
+    font-size:9pt; /* 文字サイズ */
+    top :59px;  /* 縦の位置指定 bottomでもOK */
+    left:582px;  /* 横の位置指定 rightでもOK */
+    width: 157px; /* テキストエリア横のサイズ */
+    height:16px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 学年の重点 */
+.GradePointEmphasis01{
+    font-size:9pt; /* 文字サイズ */
+    top :90px;  /* 縦の位置指定 bottomでもOK */
+    left:582px;  /* 横の位置指定 rightでもOK */
+    width: 157px; /* テキストエリア横のサイズ */
+    height:80px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+ }
+/* 個人の重点 */
+.PersonalEmphasis01{
+    font-size:9pt; /* 文字サイズ */
+    top :185px;  /* 縦の位置指定 bottomでもOK */
+    left:582px;  /* 横の位置指定 rightでもOK */
+    width: 157px; /* テキストエリア横のサイズ */
+    height:80px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+ }
+/* 参考となる事項 */
+.ReferenceItems01{
+    font-size:7pt; /* 文字サイズ */
+    top :267px;  /* 縦の位置指定 bottomでもOK */
+    left:582px;  /* 横の位置指定 rightでもOK */
+    width: 157px; /* テキストエリア横のサイズ */
+    height:604px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing : border-box;
+    background: #ddd
+ }
+/* 備考 */
+.Remarks01{
+    font-size:9pt; /* 文字サイズ */
+    top :875px;  /* 縦の位置指定 bottomでもOK */
+    left:582px;  /* 横の位置指定 rightでもOK */
+    width: 157px; /* テキストエリア横のサイズ */
+    height:72px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing : border-box;
+    background: #ddd
+ }
+/* 年度 */
+.FiscalYear01{
+    text-align: center; /* 中央寄せ */
+    font-size:7pt; /* 文字サイズ */
+    top :875px;  /* 縦の位置指定 bottomでもOK */
+    left:194px;  /* 横の位置指定 rightでもOK */
+    width: 32px; /* テキストエリア横のサイズ */
+    height:12px; /* テキストエリア縦のサイズ */
+    padding:1px 2px 2px 2px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing : border-box;
+    background: #ddd
+ }
+/* 教育日数 */
+.ChildcareDays01{
+    text-align: center; /* 中央寄せ */
+    font-size:9pt; /* 文字サイズ */
+    top :905px;  /* 縦の位置指定 bottomでもOK */
+    left:194px;  /* 横の位置指定 rightでもOK */
+    width: 32px; /* テキストエリア横のサイズ */
+    height:15px; /* テキストエリア縦のサイズ */
+    padding:2px 2px 2px 2px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing : border-box;
+    background: #ddd
+ }
+/* 出席日数 */
+.AttendanceDays01{
+    text-align: center; /* 中央寄せ */
+    font-size:9pt; /* 文字サイズ */
+    top :928px;  /* 縦の位置指定 bottomでもOK */
+    left:194px;  /* 横の位置指定 rightでもOK */
+    width: 32px; /* テキストエリア横のサイズ */
+    height:15px; /* テキストエリア縦のサイズ */
+    padding:2px 2px 2px 2px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing : border-box;
+    background: #ddd
+ }
+
+
+/* 和暦 */
+.JapaneseCalendar031{
+    text-align: center; /* 中央寄せ */
+    font-size:7pt; /* 文字サイズ */
+    top :110px;  /* 縦の位置指定 bottomでもOK */
+    left:658px;  /* 横の位置指定 rightでもOK */
+    width: 76px; /* テキストエリア横のサイズ */
+    height:16px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 学級 */
+.Class031{
+    text-align: center; /* 中央寄せ */
+    font-size:7pt; /* 文字サイズ */
+    top :136px;  /* 縦の位置指定 bottomでもOK */
+    left:658px;  /* 横の位置指定 rightでもOK */
+    width: 76px; /* テキストエリア横のサイズ */
+    height:20px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 番号 */
+.Number031{
+    text-align: center; /* 中央寄せ */
+    font-size:7pt; /* 文字サイズ */
+    top :166px;  /* 縦の位置指定 bottomでもOK */
+    left:658px;  /* 横の位置指定 rightでもOK */
+    width: 76px; /* テキストエリア横のサイズ */
+    height:20px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+
+/* ふりがな */
+.ContactName03{
+    font-size:12pt; /* 文字サイズ */
+    top :220px;  /* 縦の位置指定 bottomでもOK */
+    left:250px;  /* 横の位置指定 rightでもOK */
+    width: 335px; /* テキストエリア横のサイズ */
+    height:18px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 氏名 */
+.Contact03{
+    font-size:22pt; /* 文字サイズ */
+    top :242px;  /* 縦の位置指定 bottomでもOK */
+    left:250px;  /* 横の位置指定 rightでもOK */
+    width: 335px; /* テキストエリア横のサイズ */
+    height:45px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 生年月日 */
+.Birthdate03{
+    font-size:12pt; /* 文字サイズ */
+    top :296px;  /* 縦の位置指定 bottomでもOK */
+    left:260px;  /* 横の位置指定 rightでもOK */
+    width: 240px; /* テキストエリア横のサイズ */
+    height:20px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+/* 性別 */
+.Sex03{
+    text-align: center; /* 中央寄せ */
+    font-size:16pt; /* 文字サイズ */
+    top :250px;  /* 縦の位置指定 bottomでもOK */
+    left:695px;  /* 横の位置指定 rightでもOK */
+    width: 50px; /* テキストエリア横のサイズ */
+    height:30px; /* テキストエリア縦のサイズ */
+    padding:3px 3px 3px 3px; /* テキストエリア内の余白、左から上、右、下、左の余白に対応 */
+    line-height: 1.0;/* 行間 */
+    overflow: hidden;  /* 縦方向に文字がはみ出したときに非表示にする */
+    box-sizing: border-box;
+    background: #ddd
+}
+
+ 
+/*  //絶対位置 */
+
+</style>
+<script type="text/javascript">
+function onLoads() {
+    today=new Date();
+    y=today.getFullYear();
+    m=today.getMonth()+1;
+    d=today.getDate();
+    document.getElementById("today").innerHTML = y + "年" + m + "月" + d +"日";
+}
+</script>
+</head>
+<body class="inv A4" onload="onLoads();">
+
+<div class="NoPrint">
+    <p><a href="javascript:void(0)" onclick="prints()">このページを印刷</a></p>
+</div>
+
+<!-- １ページ目 start -->
+<section class="sheet">
+<div class="all">
+
+<div class="relative">
+    <apex:image url="{!$Resource.youroku_01}"  />
+</div>
+<!-- ふりがな -->
+<p class="absolute ContactName01">{!ImportantNotes__c.ContactName__c}</p>
+<!-- 氏名 -->
+<p class="absolute Contact01">{!ImportantNotes__c.Contact__c}</p>
+<!-- 生年月日 -->
+<p class="absolute Birthdate01">{!ImportantNotes__c.Birthdate__c}生</p>
+<!-- 性別 -->
+<p class="absolute Sex01">{!ImportantNotes__c.Sex__c}</p>
+
+<!-- 和暦 -->
+<p class="absolute JapaneseCalendar01">{!ImportantNotes__c.JapaneseCalendar__c}度</p>
+<!-- 学園の重点 -->
+<p class="absolute GradePointEmphasis01">{!ImportantNotes__c.GradePointEmphasis__c}</p>
+<!-- 個人の重点 -->
+<p class="absolute PersonalEmphasis01">{!ImportantNotes__c.PersonalEmphasis__c}</p>
+<!-- 参考となる事項 -->
+<div>
+    <script language="JavaScript" type="text/javascript">
+        var ReferenceItemsStr = "{!ImportantNotes__c.ReferenceItems__c}";
+        var ReferenceItems = [];
+        var strposition = 0;
+        var endposition = 0;
+        for(var i=0; i<20; i++){
+            if(i == 0){
+                strposition = ReferenceItemsStr.indexOf( '<p>' );
+                endposition = ReferenceItemsStr.indexOf( '</p>' );
+            }else{
+                strposition = ReferenceItemsStr.indexOf( '<p>', endposition+4 );
+                endposition = ReferenceItemsStr.indexOf( '</p>', endposition+4 );
+            }
+            console.log( strposition );
+            if(strposition == -1){
+                break;
+            }
+            ReferenceItems[i] = ReferenceItemsStr.substring(strposition+3, endposition-1);
+            console.log( ReferenceItems[i] );
+        }
+        document.write("<p class=\"absolute ReferenceItems01\">");
+        console.log( i );
+        for(var j=0; j<i; j++){
+            document.write(ReferenceItems[j]+"<br />");
+        }
+        document.write("</p>");
+
+    </script>
+</div>
+<!-- 備考 -->
+<p class="absolute Remarks01">{!ImportantNotes__c.Remarks__c}</p>
+<!-- 年度 -->
+<p class="absolute FiscalYear01">{!ImportantNotes__c.FiscalYear__c}</p>
+<!-- 教育日数 -->
+<p class="absolute ChildcareDays01">{!ImportantNotes__c.ChildcareDays__c}</p>
+<!-- 出席日数 -->
+<p class="absolute AttendanceDays01">{!ImportantNotes__c.AttendanceDays__c}</p>
+
+</div>
+<!-- /.all -->
+</section>
+<!-- １ページ目 end -->
+
+<hr style="page-break-before: always;" />
+
+<!-- 3ページ目 start -->
+<section class="sheet">
+<div class="all">
+
+<div class="relative">
+    <apex:image url="{!$Resource.youroku_03}"  />
+</div>
+
+<!-- 和暦 -->
+<p class="absolute JapaneseCalendar031">{!ImportantNotes__c.JapaneseCalendar__c}度</p>
+<!-- 学級 -->
+<p class="absolute Class031">{!ImportantNotes__c.Class__c}</p>
+<!-- 番号 -->
+<p class="absolute Number031">{!ImportantNotes__c.Number__c}</p>
+
+<!-- ふりがな -->
+<p class="absolute ContactName03">{!ImportantNotes__c.ContactName__c}</p>
+<!-- 氏名 -->
+<p class="absolute Contact03">{!ImportantNotes__c.Contact__c}</p>
+<!-- 生年月日 -->
+<p class="absolute Birthdate03">{!ImportantNotes__c.Birthdate__c}生</p>
+<!-- 性別 -->
+<p class="absolute Sex03">{!ImportantNotes__c.Sex__c}</p>
+
+
+
+</div>
+<!-- /.all -->
+</section>
+<!-- 3ページ目 end -->
+
+
+    <script>
+      function prints(){
+        setTimeout(function(){
+          window.print()
+          window.close()
+          }, 200)
+        }
+    </script>
+    </body>
+    </html>
+</apex:page>

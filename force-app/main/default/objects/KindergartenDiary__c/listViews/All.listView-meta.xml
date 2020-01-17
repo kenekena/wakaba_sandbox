@@ -3,19 +3,29 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>Contact__c</columns>
-    <columns>StaffId__c</columns>
-    <columns>AbsentSchedule__c</columns>
     <columns>AttendanceSchedule__c</columns>
+    <columns>AttendanceStop__c</columns>
     <columns>LeaveEarly__c</columns>
     <columns>Lateness__c</columns>
     <columns>Date__c</columns>
-    <columns>Belongs__c</columns>
-    <columns>Outside__c</columns>
     <columns>Week__c</columns>
+    <columns>AttendingSchoolTime__c</columns>
+    <columns>GoingBackTime__c</columns>
+    <columns>Belongs__c</columns>
     <columns>AttendanceTime__c</columns>
     <columns>AttendingSchool__c</columns>
     <columns>GoingBack__c</columns>
     <columns>ImportantNotes__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Contact__c</field>
+        <operation>equals</operation>
+        <value>室橋 克己</value>
+    </filters>
+    <filters>
+        <field>Date__c</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH</value>
+    </filters>
     <label>すべて選択</label>
 </ListView>

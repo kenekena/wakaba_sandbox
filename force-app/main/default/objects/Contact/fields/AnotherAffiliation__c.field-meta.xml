@@ -25,6 +25,16 @@
                 <default>false</default>
                 <label>3号認定</label>
             </value>
+            <value>
+                <fullName>1号認定新2号</fullName>
+                <default>false</default>
+                <label>1号認定新2号</label>
+            </value>
+            <value>
+                <fullName>1号認定（2歳児）</fullName>
+                <default>false</default>
+                <label>1号認定（2歳児）</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

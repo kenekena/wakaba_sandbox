@@ -10,6 +10,9 @@
     <columns>Week__c</columns>
     <columns>Outside__c</columns>
     <columns>OutsideFast__c</columns>
+    <columns>AbsenceReason__c</columns>
+    <columns>AttendanceStop__c</columns>
+    <columns>AttendanceStopReason__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Contact__c</field>

@@ -12,14 +12,54 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>固定</fullName>
+                <fullName>保育料</fullName>
                 <default>false</default>
-                <label>固定</label>
+                <label>保育料</label>
             </value>
             <value>
-                <fullName>変動</fullName>
+                <fullName>PTA会費</fullName>
                 <default>false</default>
-                <label>変動</label>
+                <label>PTA会費</label>
+            </value>
+            <value>
+                <fullName>特別教育費</fullName>
+                <default>false</default>
+                <label>特別教育費</label>
+            </value>
+            <value>
+                <fullName>預かり保育料</fullName>
+                <default>false</default>
+                <label>預かり保育料</label>
+            </value>
+            <value>
+                <fullName>主食費</fullName>
+                <default>false</default>
+                <label>主食費</label>
+            </value>
+            <value>
+                <fullName>副食費</fullName>
+                <default>false</default>
+                <label>副食費</label>
+            </value>
+            <value>
+                <fullName>おむつ破棄代</fullName>
+                <default>false</default>
+                <label>おむつ破棄代</label>
+            </value>
+            <value>
+                <fullName>手数料</fullName>
+                <default>false</default>
+                <label>手数料</label>
+            </value>
+            <value>
+                <fullName>区分変更手数料</fullName>
+                <default>false</default>
+                <label>区分変更手数料</label>
+            </value>
+            <value>
+                <fullName>卒園アルバム費</fullName>
+                <default>false</default>
+                <label>卒園アルバム費</label>
             </value>
         </valueSetDefinition>
     </valueSet>

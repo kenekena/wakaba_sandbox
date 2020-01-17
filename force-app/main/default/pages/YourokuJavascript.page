@@ -1,0 +1,11 @@
+<apex:page id="YourokuJavascript" showHeader="false" applyBodyTag="false" applyHtmlTag="false">
+<script>
+/* 初期定義 */
+var INl = new SObjectModel.ImportantNotesList();
+var CTL = new SObjectModel.ContactList();
+
+
+
+
+</script>
+</apex:page>

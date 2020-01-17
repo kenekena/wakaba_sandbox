@@ -3,6 +3,9 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/attendanceCountButton": [
+                "attendanceCountButton/attendanceCountButton.js"
+            ],
             "c/commonJs": [
                 "commonJs/commonJs.js"
             ],
@@ -57,6 +60,9 @@
             "c/staffAttendanceMenu04": [
                 "staffAttendanceMenu04/staffAttendanceMenu04.js"
             ],
+            "c/staffAttendanceMenu05": [
+                "staffAttendanceMenu05/staffAttendanceMenu05.js"
+            ],
             "c/test01": [
                 "test01/test01.js"
             ],
@@ -66,11 +72,20 @@
             "c/testLwc2": [
                 "testLwc2/testLwc2.js"
             ],
-            "c/attendanceCountButton": [
-                "attendanceCountButton/attendanceCountButton.js"
+            "c/allChildcareFeeThisMonthButton": [
+                "allChildcareFeeThisMonthButton/allChildcareFeeThisMonthButton.js"
             ],
-            "c/staffAttendanceMenu05": [
-                "staffAttendanceMenu05/staffAttendanceMenu05.js"
+            "c/childcareFeeCalculationButton": [
+                "childcareFeeCalculationButton/childcareFeeCalculationButton.js"
+            ],
+            "c/staffAttendanceMenu06": [
+                "staffAttendanceMenu06/staffAttendanceMenu06.js"
+            ],
+            "c/importantNotesToEnjiButton": [
+                "importantNotesToEnjiButton/importantNotesToEnjiButton.js"
+            ],
+            "c/staffAttendanceMenu07": [
+                "staffAttendanceMenu07/staffAttendanceMenu07.js"
             ]
         }
     },

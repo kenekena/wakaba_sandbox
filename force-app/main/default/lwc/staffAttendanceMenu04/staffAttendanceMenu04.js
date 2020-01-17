@@ -29,7 +29,7 @@ import ENGJIID_FIELD from '@salesforce/schema/KindergartenDiary__c.Contact__c'; 
 import DATE_FIELD from '@salesforce/schema/KindergartenDiary__c.Date__c';                    //園児日誌obj:日付
 import ASTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendanceTime__c';        //園児日誌obj:出席時間
 import TOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendingSchool__c';        //園児日誌obj:登園
-import TOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.attendingSchoolTime__c';//園児日誌obj:登園時間
+import TOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.AttendingSchoolTime__c';//園児日誌obj:登園時間
 import KOUEN_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBack__c';              //園児日誌obj:降園
 import KOUENTIME_FIELD from '@salesforce/schema/KindergartenDiary__c.GoingBackTime__c';      //園児日誌obj:降園時間
 import GONOTUSE_FIELD from '@salesforce/schema/KindergartenDiary__c.BusGoingNotUse__c';      //園児日誌obj:行き利用しない

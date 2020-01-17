@@ -1,0 +1,44 @@
+<apex:page >
+<style type="text/css">
+.area{
+position: relative;
+    height: 210mm;
+    width: 296mm;
+}
+}
+
+.relative {
+    position: relative;
+}
+
+.relative img{
+    width:100%;
+}
+
+.absolute {
+    position: absolute;
+}
+.n01{
+    top : 150px;
+    left:150px;
+ }
+ 
+ .n02{
+    top : 250px;
+    left:150px;
+ }
+ 
+</style>
+  <!-- Begin Default Content REMOVE THIS -->
+ <div class="area">
+     <div class="relative">
+       <apex:image url="{!$Resource.testImg}"  />
+     </div>
+
+         <p class="absolute n01">テスト　０１<br />ああああ<br />あああああ</p>
+         <p class="absolute n02">テスト　０2</p>
+         
+
+ </div>
+ <!-- End Default Content REMOVE THIS -->
+</apex:page>

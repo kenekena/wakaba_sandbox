@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>JapaneseCalendar__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE( FiscalYear__c ,
+&quot;2010&quot;, &quot;平成 22 年&quot;,
+&quot;2011&quot;, &quot;平成 23 年&quot;,
+&quot;2012&quot;, &quot;平成 24 年&quot;,
+&quot;2013&quot;, &quot;平成 25 年&quot;,
+&quot;2014&quot;, &quot;平成 26 年&quot;,
+&quot;2015&quot;, &quot;平成 27 年&quot;,
+&quot;2016&quot;, &quot;平成 28 年&quot;,
+&quot;2017&quot;, &quot;平成 29 年&quot;,
+&quot;2018&quot;, &quot;平成 30 年&quot;,
+&quot;2019&quot;, &quot;令和 元 年&quot;,
+&quot;2020&quot;, &quot;令和 2 年&quot;,
+&quot;2021&quot;, &quot;令和 3 年&quot;,
+&quot;2022&quot;, &quot;令和 4 年&quot;,
+&quot;2023&quot;, &quot;令和 5 年&quot;,
+&quot;2024&quot;, &quot;令和 6 年&quot;,
+&quot;2025&quot;, &quot;令和 7 年&quot;,
+&quot;2026&quot;, &quot;令和 8 年&quot;,
+&quot;2027&quot;, &quot;令和 9 年&quot;,
+&quot;2028&quot;, &quot;令和 10 年&quot;,
+&quot;2029&quot;, &quot;令和 11 年&quot;,
+&quot;2030&quot;, &quot;令和 12 年&quot;,
+&quot;2031&quot;, &quot;令和 13 年&quot;,
+&quot;2032&quot;, &quot;令和 14 年&quot;,
+&quot;2033&quot;, &quot;令和 15 年&quot;,
+&quot;&quot;)</formula>
+    <label>和暦</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
